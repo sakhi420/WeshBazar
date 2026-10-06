@@ -69,7 +69,10 @@ export class AdminListingsController {
 
   @Get(':id')
   @RequirePermissions('LISTING_REVIEW')
-  @ApiOperation({ summary: 'Listing detail any state, with moderation trail', operationId: 'admin_listings_detail' })
+  @ApiOperation({
+    summary: 'Listing detail any state, with moderation trail',
+    operationId: 'admin_listings_detail',
+  })
   @ApiOkResponse({ type: AdminListingDetailDto })
   detail(
     @CurrentUser() user: AuthenticatedUser,
@@ -82,7 +85,10 @@ export class AdminListingsController {
   @Post(':id/approve')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions('LISTING_REVIEW')
-  @ApiOperation({ summary: 'Approve a pending listing and publish it', operationId: 'admin_listings_approve' })
+  @ApiOperation({
+    summary: 'Approve a pending listing and publish it',
+    operationId: 'admin_listings_approve',
+  })
   @ApiOkResponse({ type: OwnerListingDto })
   approve(
     @CurrentUser() user: AuthenticatedUser,
@@ -101,7 +107,10 @@ export class AdminListingsController {
   @Post(':id/reject')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions('LISTING_REJECT')
-  @ApiOperation({ summary: 'Reject a pending listing with a machine-readable reason', operationId: 'admin_listings_reject' })
+  @ApiOperation({
+    summary: 'Reject a pending listing with a machine-readable reason',
+    operationId: 'admin_listings_reject',
+  })
   @ApiOkResponse({ type: OwnerListingDto })
   reject(
     @CurrentUser() user: AuthenticatedUser,
@@ -122,7 +131,10 @@ export class AdminListingsController {
   @Post(':id/archive')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions('LISTING_ARCHIVE')
-  @ApiOperation({ summary: 'Take down a live listing (admin archive)', operationId: 'admin_listings_archive' })
+  @ApiOperation({
+    summary: 'Take down a live listing (admin archive)',
+    operationId: 'admin_listings_archive',
+  })
   @ApiOkResponse({ type: OwnerListingDto })
   archive(
     @CurrentUser() user: AuthenticatedUser,
@@ -140,7 +152,10 @@ export class AdminListingsController {
   @Post(':id/restore')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions('LISTING_ARCHIVE')
-  @ApiOperation({ summary: 'Restore an archived listing with a fresh runway', operationId: 'admin_listings_restore' })
+  @ApiOperation({
+    summary: 'Restore an archived listing with a fresh runway',
+    operationId: 'admin_listings_restore',
+  })
   @ApiOkResponse({ type: OwnerListingDto })
   restore(
     @CurrentUser() user: AuthenticatedUser,

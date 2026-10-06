@@ -24,7 +24,10 @@ export class CategoriesController {
 
   @Public()
   @Get()
-  @ApiOperation({ summary: 'List visible categories (flat, with parent links and hasChildren)', operationId: 'categories_list' })
+  @ApiOperation({
+    summary: 'List visible categories (flat, with parent links and hasChildren)',
+    operationId: 'categories_list',
+  })
   @ApiOkResponse({ type: [PublicCategorySummaryDto] })
   list(@Query() query: LocaleQueryDto): ReturnType<TaxonomyService['listCategories']> {
     return this.taxonomy.listCategories(resolveLocale(query.locale));
@@ -34,7 +37,10 @@ export class CategoriesController {
   // precedence rules.
   @Public()
   @Get('tree')
-  @ApiOperation({ summary: 'Visible category tree (roots with nested children)', operationId: 'categories_tree' })
+  @ApiOperation({
+    summary: 'Visible category tree (roots with nested children)',
+    operationId: 'categories_tree',
+  })
   @ApiOkResponse({ type: [PublicCategoryNodeDto] })
   tree(@Query() query: LocaleQueryDto): Promise<PublicCategoryNode[]> {
     return this.taxonomy.getTree(resolveLocale(query.locale));
@@ -42,7 +48,10 @@ export class CategoriesController {
 
   @Public()
   @Get(':slug')
-  @ApiOperation({ summary: 'Category detail by slug (with ancestors and direct children)', operationId: 'categories_bySlug' })
+  @ApiOperation({
+    summary: 'Category detail by slug (with ancestors and direct children)',
+    operationId: 'categories_bySlug',
+  })
   @ApiOkResponse({ type: PublicCategoryDetailDto })
   bySlug(
     @Param('slug') slug: string,
@@ -53,7 +62,10 @@ export class CategoriesController {
 
   @Public()
   @Get(':id/filter-schema')
-  @ApiOperation({ summary: 'Effective attribute/filter schema for a category (by id)', operationId: 'categories_filterSchema' })
+  @ApiOperation({
+    summary: 'Effective attribute/filter schema for a category (by id)',
+    operationId: 'categories_filterSchema',
+  })
   @ApiOkResponse({ type: [FilterSchemaFieldDto] })
   filterSchema(@Param('id') id: string): Promise<FilterSchemaField[]> {
     return this.taxonomy.getFilterSchema(id);

@@ -62,7 +62,10 @@ export class ListingsController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Edit a listing (material changes may re-enter review)', operationId: 'listings_update' })
+  @ApiOperation({
+    summary: 'Edit a listing (material changes may re-enter review)',
+    operationId: 'listings_update',
+  })
   @ApiOkResponse({ type: OwnerListingDto })
   update(
     @CurrentUser() user: AuthenticatedUser,
@@ -75,7 +78,10 @@ export class ListingsController {
 
   @Post(':id/submit')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Submit the listing for review (publishes under auto-approve)', operationId: 'listings_submit' })
+  @ApiOperation({
+    summary: 'Submit the listing for review (publishes under auto-approve)',
+    operationId: 'listings_submit',
+  })
   @ApiOkResponse({ type: OwnerListingDto })
   submit(
     @CurrentUser() user: AuthenticatedUser,
@@ -114,7 +120,10 @@ export class ListingsController {
 
   @Post(':id/renew')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Renew an active listing or republish an archived one', operationId: 'listings_renew' })
+  @ApiOperation({
+    summary: 'Renew an active listing or republish an archived one',
+    operationId: 'listings_renew',
+  })
   @ApiOkResponse({ type: OwnerListingDto })
   renew(
     @CurrentUser() user: AuthenticatedUser,
@@ -126,7 +135,10 @@ export class ListingsController {
   }
 
   @Get(':id/revisions')
-  @ApiOperation({ summary: 'Listing revision history (newest first)', operationId: 'listings_listRevisions' })
+  @ApiOperation({
+    summary: 'Listing revision history (newest first)',
+    operationId: 'listings_listRevisions',
+  })
   @ApiOkResponse({ type: [ListingRevisionDto] })
   listRevisions(
     @CurrentUser() user: AuthenticatedUser,

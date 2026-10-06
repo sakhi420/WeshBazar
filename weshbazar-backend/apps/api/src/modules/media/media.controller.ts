@@ -54,7 +54,10 @@ export class MediaController {
       required: ['file'],
     },
   })
-  @ApiOperation({ summary: 'Upload one image for a listing (multipart, single file)', operationId: 'listings_media_upload' })
+  @ApiOperation({
+    summary: 'Upload one image for a listing (multipart, single file)',
+    operationId: 'listings_media_upload',
+  })
   @ApiCreatedResponse({ type: OwnerListingDto })
   async upload(
     @CurrentUser() user: AuthenticatedUser,
@@ -67,7 +70,10 @@ export class MediaController {
   }
 
   @Delete(':id/images/:imageId')
-  @ApiOperation({ summary: 'Delete one image from a listing gallery', operationId: 'listings_media_remove' })
+  @ApiOperation({
+    summary: 'Delete one image from a listing gallery',
+    operationId: 'listings_media_remove',
+  })
   @ApiOkResponse({ type: OwnerListingDto })
   async remove(
     @CurrentUser() user: AuthenticatedUser,
@@ -79,7 +85,10 @@ export class MediaController {
   }
 
   @Patch(':id/images/:imageId/order')
-  @ApiOperation({ summary: 'Reorder an image and/or flag it as the primary image', operationId: 'listings_media_reorder' })
+  @ApiOperation({
+    summary: 'Reorder an image and/or flag it as the primary image',
+    operationId: 'listings_media_reorder',
+  })
   @ApiOkResponse({ type: OwnerListingDto })
   async reorder(
     @CurrentUser() user: AuthenticatedUser,

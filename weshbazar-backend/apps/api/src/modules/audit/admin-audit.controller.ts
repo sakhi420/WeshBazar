@@ -20,7 +20,10 @@ export class AdminAuditController {
   constructor(private readonly audit: AuditService) {}
 
   @Get('audit-logs')
-  @ApiOperation({ summary: 'Search the audit trail (newest first; exact-match filters)', operationId: 'admin_audit_list' })
+  @ApiOperation({
+    summary: 'Search the audit trail (newest first; exact-match filters)',
+    operationId: 'admin_audit_list',
+  })
   @ApiOkResponse({ type: [AuditLogDto] })
   list(@Query() query: AuditLogQueryDto): Promise<PagePaginated<AuditLogView>> {
     return this.audit.search(query);

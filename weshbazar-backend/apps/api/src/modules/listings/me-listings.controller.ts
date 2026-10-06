@@ -26,7 +26,10 @@ export class MeListingsController {
   constructor(private readonly listings: ListingsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'My listings (cursor pagination, newest first)', operationId: 'me_listings_list' })
+  @ApiOperation({
+    summary: 'My listings (cursor pagination, newest first)',
+    operationId: 'me_listings_list',
+  })
   @ApiOkResponse({ type: [OwnerListingSummaryDto] })
   list(
     @CurrentUser() user: AuthenticatedUser,

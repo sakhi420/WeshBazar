@@ -12,7 +12,7 @@
  *            duplicates across the entire document.
  *   - Shape: every operation has responses defined (>=1 success code)
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { generateOpenapiDocument, summarizeDocument } from '../../scripts/generate-openapi.js';
 
@@ -21,7 +21,10 @@ const OUTPUT_PATH = resolve(__dirname, '../../../../../docs/openapi.json');
 type OpenapiDocument = {
   openapi?: string;
   info?: { title?: string; version?: string };
-  paths?: Record<string, Record<string, { operationId?: string; responses?: Record<string, unknown> }>>;
+  paths?: Record<
+    string,
+    Record<string, { operationId?: string; responses?: Record<string, unknown> }>
+  >;
   components?: { schemas?: Record<string, unknown> };
 };
 
@@ -73,8 +76,8 @@ describe('OpenAPI contract stability', () => {
   });
 
   it('defines at least one 2xx response for every operation (no transport-surprise 404s)', () => {
-    for (const [path, pathItem] of Object.entries(document.paths ?? {})) {
-      for (const [method, op] of Object.entries(pathItem)) {
+    for (const pathItem of Object.values(document.paths ?? {})) {
+      for (const op of Object.values(pathItem)) {
         const codes = Object.keys(op.responses ?? {});
         const has2xx = codes.some((c) => c.startsWith('2'));
         expect(has2xx).toBe(true);

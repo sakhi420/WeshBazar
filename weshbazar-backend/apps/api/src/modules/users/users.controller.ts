@@ -19,14 +19,20 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @ApiOperation({ summary: 'My profile (user account + personal seller account)', operationId: 'me_users_getMe' })
+  @ApiOperation({
+    summary: 'My profile (user account + personal seller account)',
+    operationId: 'me_users_getMe',
+  })
   @ApiOkResponse({ type: MyProfileDto })
   getMe(@CurrentUser() user: AuthenticatedUser): Promise<MyProfile> {
     return this.usersService.getMyProfile(user.id);
   }
 
   @Patch()
-  @ApiOperation({ summary: 'Update my profile (display name, avatar, seller profile)', operationId: 'me_users_updateMe' })
+  @ApiOperation({
+    summary: 'Update my profile (display name, avatar, seller profile)',
+    operationId: 'me_users_updateMe',
+  })
   @ApiOkResponse({ type: MyProfileDto })
   updateMe(@CurrentUser() user: AuthenticatedUser, @Body() dto: UpdateMeDto): Promise<MyProfile> {
     return this.usersService.updateMyProfile(user.id, dto);

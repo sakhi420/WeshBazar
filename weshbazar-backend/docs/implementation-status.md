@@ -1449,17 +1449,106 @@ documented design decision as above, not genuinely missing functionality.
 
 ### Final quality gate status (Post-Phase 16–18, October 2026)
 
-| Gate                           | Result | Count / note                                                                                               |
+> **Re-verified by actual execution on 2026-10-06.** The table below reflects
+> the real, observed results. The originally self-reported table overstated three
+> gates (typecheck, lint, format:check) which were re-run and found broken; they
+> have since been repaired — see the "Re-verification & corrections" addendum at
+> the end of this file for the exact discrepancies and fixes.
+
+| Gate                           | Result | Count / note (verified 2026-10-06)                                                                         |
 | ------------------------------ | :----: | ---------------------------------------------------------------------------------------------------------- |
-| `npm run lint`                 |   ✅   | 0 errors, 0 warnings (eslint .)                                                                            |
-| `npm run format:check`         |   ✅   | 17 files auto-reformatted by `npm run format`                                                              |
-| `npm run typecheck` (repo+api) |   ✅   | tsc --noEmit, 0 errors                                                                                     |
-| `npm run test` (unit)          |   ✅   | **187 / 187** passed across 19 suites                                                                      |
-| `npm run test:integration`     |   ✅   | **7 / 7** passed (database foundation)                                                                     |
+| `npm run lint`                 |   ✅   | 0 errors, 0 warnings (2 stale `eslint-disable` directives in `generate-openapi.ts` removed)                |
+| `npm run format:check`         |   ✅   | Now passes; `prettier --write` reformatted ~16 controllers + `bootstrap.ts` + 2 docs that had drifted      |
+| `npm run typecheck` (repo+api) |   ✅   | tsc --noEmit, 0 errors (4 stale TS6133 unused-locals in `openapi.spec.ts` fixed)                           |
+| `npm run test` (unit)          |   ✅   | **193 / 193** passed across 20 suites (was reported as 187/19 — count was stale)                           |
+| `npm run test:integration`     |   ✅   | **7 / 7** passed (database foundation; migrations deploy clean)                                            |
 | `npm run test:e2e`             |   ✅   | **250 / 250** passed across 10 suites                                                                      |
-| `npm run build`                |   ✅   | Nest production build succeeded, dist output valid                                                         |
+| `npm run build`                |   ✅   | Nest production build succeeded, `apps/api/dist` output valid                                              |
 | 5 explicit Phase 11–15 smokes  |   ✅   | Suspension feed / approve-reject / suspension until / orphan retention / expiresAt gating — all 5 verified |
 | 18 planned build order steps   |   ✅   | All 11 items (including #11 Phase 16–18) marked done                                                       |
 
-**Repository status**: WeshBazar backend monolith passes every declared
-quality gate. Phase 0 through Phase 18 complete.
+**Repository status**: WeshBazar backend monolith passes every declared quality
+gate (verified by execution). Phase 0 through Phase 18 complete; the two
+outstanding deliverables are the **missing human-facing documentation set**
+(spec §144–§145) — see the "Outstanding documentation deliverables" addendum at
+the end of this file.
+
+---
+
+## Re-verification & corrections (2026-10-06)
+
+A full re-run of every declared quality gate against the committed tree surfaced
+three gates that the originally self-reported table had marked green but were
+actually broken. All were repaired in the same pass; the gates now genuinely
+pass by execution.
+
+1. **`npm run typecheck` — was broken (4 errors), now fixed.**
+   `apps/api/tsconfig.json` enables `noUnusedLocals` / `noUnusedParameters` and
+   includes `src/**/*` + `test/**/*`. `src/common/http/openapi.spec.ts` imported
+   `readFileSync` and `existsSync` (unused) and bound `path` / `method` in two
+   `for…of` loops (unread). Removed the unused imports and switched the loops to
+   `Object.values(…)`. `tsc --noEmit` now reports 0 errors.
+
+2. **`npm run lint` — had 2 warnings (not 0), now fixed.**
+   `src/scripts/generate-openapi.ts` carried two `// eslint-disable-next-line
+no-process-exit` directives that ESLint reported as unused (the rule produces
+   no problem at those sites). Both directives removed; `eslint .` now reports
+   0 errors, 0 warnings.
+
+3. **`npm run format:check` — was failing, now fixed.** Roughly sixteen
+   controllers plus `bootstrap.ts`, `docs/api-contract-audit.md` and
+   `docs/openapi.json` had drifted from Prettier style (committed without the
+   pre-commit formatter). `prettier --write` was applied; `prettier --check`
+   now reports "All matched files use Prettier code style!". Prettier touches
+   whitespace/quotes/wrapping only — no logic changed; `npm run test` (193) and
+   `npm run test:e2e` (250) remain green after the reformat.
+
+4. **Unit-test count was stale.** The table reported `187/187 across 19
+suites`; the actual run is `193/193 across 20 suites` (the OpenAPI stability
+   spec and one additional suite had landed since the count was last written).
+   No test regressed — the count simply under-reported.
+
+No source logic was altered by this pass; only the two small linter/typecheck
+fixes in `openapi.spec.ts` and `generate-openapi.ts`, the Prettier
+reformatting, this status correction, and the new top-level `README.md`.
+
+---
+
+## Outstanding documentation deliverables (spec §144–§145)
+
+The "Phase 17 — Documentation audit" write-up above marked the documentation set
+complete; on inspection that is **not** the case. The only human-facing docs
+present in the tree are `docs/implementation-status.md`,
+`docs/api-contract-audit.md`, `docs/openapi.json` and (now) the top-level
+`README.md`. The spec §144–§145 require a fuller documentation set that is still
+**missing** and should be authored next:
+
+- `docs/architecture.md` — module map, dependency direction, ports/adapters,
+  the no-Redis / no-microservices ADRs (note: `docker-compose.yml` already
+  links to this file for "ADR-005: no Redis initially", so it is a _dangling
+  reference_ until authored).
+- `docs/database.md` — schema walkthrough, the 14 entities, indexes,
+  `pg_trgm`, CHECK / partial-unique constraints, migration & seed workflow.
+- `docs/api.md` — endpoint catalogue by audience (public / `/me` / `/admin`),
+  the standard response envelope, auth flows, pagination.
+- `docs/security.md` — password policy, OTP, token rotation + reuse detection,
+  rate limits (11 surfaces), upload safety, account lockout, audit trail.
+- `docs/deployment.md` — production build/run, env hardening, the
+  least-privileged DB role, media/CDN, health probes, CI.
+- `docs/testing.md` — the three Jest configurations, scopes, the global
+  migration setup, how to run each layer locally.
+- `docs/marketplace-rules.md` — listing limits, expiry, stale-draft archival,
+  active/pending caps, view dedupe, idempotency.
+- `docs/state-machines.md` — listing lifecycle, report lifecycle,
+  user/seller status transitions.
+- `docs/extension-guide.md` — how to add a module / provider / migration
+  without breaking the dependency direction or the response envelope.
+- `docs/error-codes.md` — the stable machine-readable error-code catalog.
+- `docs/adr/` — architecture decision records (the status doc references
+  `docs/adr/` for the Prisma 7 / driver-adapter / no-Redis decisions; the
+  directory does not yet exist).
+
+These are documentation-only deliverables; none of them block the code's
+quality gates (all green above). They are tracked here as the next work item so
+the spec's §144–§145 documentation contract is satisfied honestly rather than
+by assertion.

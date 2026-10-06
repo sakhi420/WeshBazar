@@ -17,7 +17,10 @@ export class LocationsController {
 
   @Public()
   @Get('provinces')
-  @ApiOperation({ summary: 'List active provinces (localized names)', operationId: 'locations_listProvinces' })
+  @ApiOperation({
+    summary: 'List active provinces (localized names)',
+    operationId: 'locations_listProvinces',
+  })
   @ApiOkResponse({ type: [PublicProvinceSummaryDto] })
   listProvinces(@Query() query: LocaleQueryDto): ReturnType<LocationsService['listProvinces']> {
     return this.locations.listProvinces(resolveLocale(query.locale));
@@ -25,7 +28,10 @@ export class LocationsController {
 
   @Public()
   @Get('provinces/:provinceId/cities')
-  @ApiOperation({ summary: 'List active cities of an active province', operationId: 'locations_listCities' })
+  @ApiOperation({
+    summary: 'List active cities of an active province',
+    operationId: 'locations_listCities',
+  })
   @ApiOkResponse({ type: [PublicCitySummaryDto] })
   listCities(
     @Param('provinceId') provinceId: string,

@@ -18,7 +18,10 @@ export class SellersController {
 
   @Public()
   @Get(':slug')
-  @ApiOperation({ summary: 'Public seller profile by slug', operationId: 'sellers_getPublicProfile' })
+  @ApiOperation({
+    summary: 'Public seller profile by slug',
+    operationId: 'sellers_getPublicProfile',
+  })
   @ApiOkResponse({ type: PublicSellerProfileDto })
   getPublicProfile(@Param('slug') slug: string): Promise<PublicSellerProfile> {
     return this.sellerAccounts.getPublicBySlug(slug);

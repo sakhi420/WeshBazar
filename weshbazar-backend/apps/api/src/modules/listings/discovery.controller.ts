@@ -43,7 +43,10 @@ export class DiscoveryController {
 
   @Public()
   @Get(':slug')
-  @ApiOperation({ summary: 'Public listing detail by slug (ACTIVE or SOLD only)', operationId: 'listings_discovery_detail' })
+  @ApiOperation({
+    summary: 'Public listing detail by slug (ACTIVE or SOLD only)',
+    operationId: 'listings_discovery_detail',
+  })
   @ApiOkResponse({ type: PublicListingDetailDto })
   detail(
     @Req() request: FastifyRequest,

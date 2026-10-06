@@ -39,7 +39,10 @@ export class AdminUsersController {
 
   @Get()
   @RequirePermissions('USER_READ')
-  @ApiOperation({ summary: 'Search users (page/limit; phone, name, role, status filters)', operationId: 'admin_users_list' })
+  @ApiOperation({
+    summary: 'Search users (page/limit; phone, name, role, status filters)',
+    operationId: 'admin_users_list',
+  })
   @ApiOkResponse({ type: [AdminUserDto] })
   list(@Query() query: AdminUsersQueryDto): Promise<PagePaginated<AdminUserView>> {
     return this.users.search(query);
@@ -47,7 +50,10 @@ export class AdminUsersController {
 
   @Get(':id')
   @RequirePermissions('USER_READ')
-  @ApiOperation({ summary: 'User detail with listing and report counters', operationId: 'admin_users_detail' })
+  @ApiOperation({
+    summary: 'User detail with listing and report counters',
+    operationId: 'admin_users_detail',
+  })
   @ApiOkResponse({ type: AdminUserDetailDto })
   detail(@Param('id', new ParseUUIDPipe()) id: string): Promise<AdminUserDetailView> {
     return this.users.detail(id);
@@ -74,7 +80,10 @@ export class AdminUsersController {
   @Post(':id/ban')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions('USER_BAN')
-  @ApiOperation({ summary: 'Ban an account indefinitely (revokes sessions)', operationId: 'admin_users_ban' })
+  @ApiOperation({
+    summary: 'Ban an account indefinitely (revokes sessions)',
+    operationId: 'admin_users_ban',
+  })
   @ApiOkResponse({ type: AdminUserDto })
   ban(
     @CurrentUser() user: AuthenticatedUser,
@@ -88,7 +97,10 @@ export class AdminUsersController {
   @Post(':id/restore')
   @HttpCode(HttpStatus.OK)
   @RequirePermissions('USER_RESTORE')
-  @ApiOperation({ summary: 'Restore a suspended or banned account', operationId: 'admin_users_restore' })
+  @ApiOperation({
+    summary: 'Restore a suspended or banned account',
+    operationId: 'admin_users_restore',
+  })
   @ApiOkResponse({ type: AdminUserDto })
   restore(
     @CurrentUser() user: AuthenticatedUser,

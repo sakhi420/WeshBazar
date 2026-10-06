@@ -40,7 +40,10 @@ export class FavoritesController {
   constructor(private readonly favorites: FavoritesService) {}
 
   @Post('favorites/:listingId')
-  @ApiOperation({ summary: 'Add a listing to my favorites (409 when already saved)', operationId: 'favorites_add' })
+  @ApiOperation({
+    summary: 'Add a listing to my favorites (409 when already saved)',
+    operationId: 'favorites_add',
+  })
   @ApiCreatedResponse({ type: FavoriteViewDto })
   add(
     @CurrentUser() user: AuthenticatedUser,
@@ -51,7 +54,10 @@ export class FavoritesController {
 
   @Delete('favorites/:listingId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Remove a listing from my favorites (404 when not saved)', operationId: 'favorites_remove' })
+  @ApiOperation({
+    summary: 'Remove a listing from my favorites (404 when not saved)',
+    operationId: 'favorites_remove',
+  })
   @ApiNoContentResponse({ description: 'Favorite removed.' })
   remove(
     @CurrentUser() user: AuthenticatedUser,
@@ -61,7 +67,10 @@ export class FavoritesController {
   }
 
   @Get('me/favorites')
-  @ApiOperation({ summary: 'My favorites (cursor pagination, newest first)', operationId: 'favorites_list' })
+  @ApiOperation({
+    summary: 'My favorites (cursor pagination, newest first)',
+    operationId: 'favorites_list',
+  })
   @ApiOkResponse({ type: [FavoriteItemDto] })
   list(
     @CurrentUser() user: AuthenticatedUser,

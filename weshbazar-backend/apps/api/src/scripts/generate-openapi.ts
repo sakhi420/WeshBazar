@@ -61,13 +61,17 @@ export async function generateOpenapiDocument() {
       )
       .setVersion('1.0')
       .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'access-token')
-      .addCookieAuth(env.REFRESH_COOKIE_NAME, {
-        type: 'apiKey',
-        in: 'cookie',
-        name: env.REFRESH_COOKIE_NAME,
-        description:
-          'HttpOnly refresh cookie (sent automatically by the browser to /api/v1/auth only).',
-      }, 'refresh-cookie')
+      .addCookieAuth(
+        env.REFRESH_COOKIE_NAME,
+        {
+          type: 'apiKey',
+          in: 'cookie',
+          name: env.REFRESH_COOKIE_NAME,
+          description:
+            'HttpOnly refresh cookie (sent automatically by the browser to /api/v1/auth only).',
+        },
+        'refresh-cookie',
+      )
       .build(),
   );
 
@@ -124,13 +128,15 @@ async function main(): Promise<void> {
 
   if (summary.duplicateOperationIds.length > 0) {
     // eslint-disable-next-line no-console
-    console.error(`[openapi] WARNING: duplicate operationIds detected: ${summary.duplicateOperationIds.join(', ')}`);
+    console.error(
+      `[openapi] WARNING: duplicate operationIds detected: ${summary.duplicateOperationIds.join(', ')}`,
+    );
   }
-  // eslint-disable-next-line no-process-exit
   process.exit(0);
 }
 
-const IS_DIRECT_RUN = process.argv[1]?.replace(/\\/g, '/').endsWith('/generate-openapi.js') ||
+const IS_DIRECT_RUN =
+  process.argv[1]?.replace(/\\/g, '/').endsWith('/generate-openapi.js') ||
   process.argv[1]?.replace(/\\/g, '/').endsWith('/generate-openapi.ts') ||
   false;
 
@@ -139,9 +145,10 @@ if (IS_DIRECT_RUN) {
     // eslint-disable-next-line no-console
     console.error(
       'Fatal OpenAPI generation error:',
-      error instanceof Error ? `${error.name}: ${error.message}\n${error.stack ?? ''}` : String(error),
+      error instanceof Error
+        ? `${error.name}: ${error.message}\n${error.stack ?? ''}`
+        : String(error),
     );
-    // eslint-disable-next-line no-process-exit
     process.exit(1);
   });
 }

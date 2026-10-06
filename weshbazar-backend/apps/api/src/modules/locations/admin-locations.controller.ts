@@ -56,7 +56,10 @@ export class AdminLocationsController {
   // --- Provinces -------------------------------------------------------------------
 
   @Get('provinces')
-  @ApiOperation({ summary: 'List all provinces (any status) with translations and city counts', operationId: 'admin_locations_listProvinces' })
+  @ApiOperation({
+    summary: 'List all provinces (any status) with translations and city counts',
+    operationId: 'admin_locations_listProvinces',
+  })
   @ApiOkResponse({ type: [AdminProvinceDto] })
   listProvinces(
     @Query() query: LocaleQueryDto,
@@ -103,7 +106,10 @@ export class AdminLocationsController {
 
   @Delete('provinces/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a province (blocked while cities or listings exist)', operationId: 'admin_locations_deleteProvince' })
+  @ApiOperation({
+    summary: 'Delete a province (blocked while cities or listings exist)',
+    operationId: 'admin_locations_deleteProvince',
+  })
   @ApiNoContentResponse()
   deleteProvince(
     @CurrentUser() user: AuthenticatedUser,
@@ -116,7 +122,10 @@ export class AdminLocationsController {
   // --- Cities ------------------------------------------------------------------------
 
   @Get('provinces/:provinceId/cities')
-  @ApiOperation({ summary: 'List all cities of a province (any status)', operationId: 'admin_locations_listCities' })
+  @ApiOperation({
+    summary: 'List all cities of a province (any status)',
+    operationId: 'admin_locations_listCities',
+  })
   @ApiOkResponse({ type: [AdminCityDto] })
   listCities(
     @Param('provinceId', new ParseUUIDPipe()) provinceId: string,
@@ -166,7 +175,10 @@ export class AdminLocationsController {
 
   @Delete('cities/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a city (blocked while listings exist)', operationId: 'admin_locations_deleteCity' })
+  @ApiOperation({
+    summary: 'Delete a city (blocked while listings exist)',
+    operationId: 'admin_locations_deleteCity',
+  })
   @ApiNoContentResponse()
   deleteCity(
     @CurrentUser() user: AuthenticatedUser,

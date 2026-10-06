@@ -64,7 +64,10 @@ export class AdminTaxonomyController {
   // --- Categories ---------------------------------------------------------------
 
   @Get('categories')
-  @ApiOperation({ summary: 'List all categories (any status) with translation rows and counts', operationId: 'admin_taxonomy_listCategories' })
+  @ApiOperation({
+    summary: 'List all categories (any status) with translation rows and counts',
+    operationId: 'admin_taxonomy_listCategories',
+  })
   @ApiOkResponse({ type: [AdminCategoryDto] })
   listCategories(
     @Query() query: LocaleQueryDto,
@@ -92,7 +95,10 @@ export class AdminTaxonomyController {
   }
 
   @Get('categories/:id')
-  @ApiOperation({ summary: 'Category detail (any status)', operationId: 'admin_taxonomy_getCategory' })
+  @ApiOperation({
+    summary: 'Category detail (any status)',
+    operationId: 'admin_taxonomy_getCategory',
+  })
   @ApiOkResponse({ type: AdminCategoryDto })
   getCategory(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -102,7 +108,10 @@ export class AdminTaxonomyController {
   }
 
   @Patch('categories/:id')
-  @ApiOperation({ summary: 'Update a category (parent moves are cycle-checked)', operationId: 'admin_taxonomy_updateCategory' })
+  @ApiOperation({
+    summary: 'Update a category (parent moves are cycle-checked)',
+    operationId: 'admin_taxonomy_updateCategory',
+  })
   @ApiOkResponse({ type: AdminCategoryDto })
   updateCategory(
     @CurrentUser() user: AuthenticatedUser,
@@ -121,7 +130,10 @@ export class AdminTaxonomyController {
 
   @Delete('categories/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete a category (blocked while children or listings exist)', operationId: 'admin_taxonomy_deleteCategory' })
+  @ApiOperation({
+    summary: 'Delete a category (blocked while children or listings exist)',
+    operationId: 'admin_taxonomy_deleteCategory',
+  })
   @ApiNoContentResponse()
   deleteCategory(
     @CurrentUser() user: AuthenticatedUser,
@@ -134,7 +146,10 @@ export class AdminTaxonomyController {
   // --- Attributes -----------------------------------------------------------------
 
   @Get('categories/:id/attributes')
-  @ApiOperation({ summary: 'List the attributes defined on a category (own rows, not inherited)', operationId: 'admin_taxonomy_listAttributes' })
+  @ApiOperation({
+    summary: 'List the attributes defined on a category (own rows, not inherited)',
+    operationId: 'admin_taxonomy_listAttributes',
+  })
   @ApiOkResponse({ type: [AdminAttributeDto] })
   listAttributes(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -143,7 +158,10 @@ export class AdminTaxonomyController {
   }
 
   @Post('categories/:id/attributes')
-  @ApiOperation({ summary: 'Create a category attribute', operationId: 'admin_taxonomy_createAttribute' })
+  @ApiOperation({
+    summary: 'Create a category attribute',
+    operationId: 'admin_taxonomy_createAttribute',
+  })
   @ApiCreatedResponse({ type: AdminAttributeDto })
   createAttribute(
     @CurrentUser() user: AuthenticatedUser,
@@ -155,7 +173,10 @@ export class AdminTaxonomyController {
   }
 
   @Patch('attributes/:id')
-  @ApiOperation({ summary: 'Update an attribute (key/type changes blocked once listings use it)', operationId: 'admin_taxonomy_updateAttribute' })
+  @ApiOperation({
+    summary: 'Update an attribute (key/type changes blocked once listings use it)',
+    operationId: 'admin_taxonomy_updateAttribute',
+  })
   @ApiOkResponse({ type: AdminAttributeDto })
   updateAttribute(
     @CurrentUser() user: AuthenticatedUser,
@@ -168,7 +189,10 @@ export class AdminTaxonomyController {
 
   @Delete('attributes/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete an attribute (blocked once listings use it)', operationId: 'admin_taxonomy_deleteAttribute' })
+  @ApiOperation({
+    summary: 'Delete an attribute (blocked once listings use it)',
+    operationId: 'admin_taxonomy_deleteAttribute',
+  })
   @ApiNoContentResponse()
   deleteAttribute(
     @CurrentUser() user: AuthenticatedUser,
@@ -181,7 +205,10 @@ export class AdminTaxonomyController {
   // --- Attribute options ------------------------------------------------------------
 
   @Post('attributes/:id/options')
-  @ApiOperation({ summary: 'Add an option to a SELECT/MULTI_SELECT attribute', operationId: 'admin_taxonomy_createOption' })
+  @ApiOperation({
+    summary: 'Add an option to a SELECT/MULTI_SELECT attribute',
+    operationId: 'admin_taxonomy_createOption',
+  })
   @ApiCreatedResponse({ type: AdminAttributeOptionDto })
   createOption(
     @CurrentUser() user: AuthenticatedUser,
@@ -193,7 +220,10 @@ export class AdminTaxonomyController {
   }
 
   @Patch('options/:id')
-  @ApiOperation({ summary: 'Update an option (value changes blocked once listings use it)', operationId: 'admin_taxonomy_updateOption' })
+  @ApiOperation({
+    summary: 'Update an option (value changes blocked once listings use it)',
+    operationId: 'admin_taxonomy_updateOption',
+  })
   @ApiOkResponse({ type: AdminAttributeOptionDto })
   updateOption(
     @CurrentUser() user: AuthenticatedUser,
@@ -206,7 +236,10 @@ export class AdminTaxonomyController {
 
   @Delete('options/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete an option (deactivate instead once listings use it)', operationId: 'admin_taxonomy_deleteOption' })
+  @ApiOperation({
+    summary: 'Delete an option (deactivate instead once listings use it)',
+    operationId: 'admin_taxonomy_deleteOption',
+  })
   @ApiNoContentResponse()
   deleteOption(
     @CurrentUser() user: AuthenticatedUser,

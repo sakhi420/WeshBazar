@@ -38,7 +38,10 @@ export class AdminReportsController {
   constructor(private readonly reports: AdminReportsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Report queue (open reports FIFO; closed newest first)', operationId: 'admin_reports_queue' })
+  @ApiOperation({
+    summary: 'Report queue (open reports FIFO; closed newest first)',
+    operationId: 'admin_reports_queue',
+  })
   @ApiOkResponse({ type: [AdminReportDto] })
   queue(@Query() query: AdminReportsQueryDto): Promise<PagePaginated<AdminReportView>> {
     return this.reports.queue(query);
@@ -46,7 +49,10 @@ export class AdminReportsController {
 
   @Post(':id/resolve')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Resolve a report with the documented outcome', operationId: 'admin_reports_resolve' })
+  @ApiOperation({
+    summary: 'Resolve a report with the documented outcome',
+    operationId: 'admin_reports_resolve',
+  })
   @ApiOkResponse({ type: AdminReportDto })
   resolve(
     @CurrentUser() user: AuthenticatedUser,
@@ -60,7 +66,10 @@ export class AdminReportsController {
 
   @Post(':id/dismiss')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Dismiss a report (no action taken)', operationId: 'admin_reports_dismiss' })
+  @ApiOperation({
+    summary: 'Dismiss a report (no action taken)',
+    operationId: 'admin_reports_dismiss',
+  })
   @ApiOkResponse({ type: AdminReportDto })
   dismiss(
     @CurrentUser() user: AuthenticatedUser,

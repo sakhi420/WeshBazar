@@ -23,7 +23,10 @@ export class AdminAnalyticsController {
   constructor(private readonly analytics: AdminAnalyticsService) {}
 
   @Get('dashboard')
-  @ApiOperation({ summary: 'Dashboard counters: users, listings by status, reports', operationId: 'admin_analytics_dashboard' })
+  @ApiOperation({
+    summary: 'Dashboard counters: users, listings by status, reports',
+    operationId: 'admin_analytics_dashboard',
+  })
   @ApiOkResponse({ type: AdminDashboardDto })
   dashboard(): Promise<AdminDashboardView> {
     return this.analytics.dashboard();

@@ -76,7 +76,10 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  @ApiOperation({ summary: 'Create an account and start phone verification', operationId: 'auth_register' })
+  @ApiOperation({
+    summary: 'Create an account and start phone verification',
+    operationId: 'auth_register',
+  })
   @ApiCreatedResponse({ type: AuthResponseDto })
   async register(
     @Body() dto: RegisterDto,
@@ -160,7 +163,10 @@ export class AuthController {
   @Get('sessions')
   @ApiBearerAuth('access-token')
   @ApiCookieAuth('refresh-cookie')
-  @ApiOperation({ summary: 'List active sessions of the account', operationId: 'auth_listSessions' })
+  @ApiOperation({
+    summary: 'List active sessions of the account',
+    operationId: 'auth_listSessions',
+  })
   @ApiOkResponse({ type: SessionSummaryDto, isArray: true })
   listSessions(@CurrentUser() user: AuthenticatedUser) {
     return this.authService.listSessions(user);
@@ -170,7 +176,10 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth('access-token')
   @ApiCookieAuth('refresh-cookie')
-  @ApiOperation({ summary: 'Revoke one of the account sessions', operationId: 'auth_revokeSession' })
+  @ApiOperation({
+    summary: 'Revoke one of the account sessions',
+    operationId: 'auth_revokeSession',
+  })
   @ApiNoContentResponse()
   async revokeSession(
     @CurrentUser() user: AuthenticatedUser,
@@ -201,7 +210,10 @@ export class AuthController {
   @Post('verify-phone')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Verify the account phone with the SMS code', operationId: 'auth_verifyPhone' })
+  @ApiOperation({
+    summary: 'Verify the account phone with the SMS code',
+    operationId: 'auth_verifyPhone',
+  })
   @ApiOkResponse({ type: MeResponseDto })
   verifyPhone(
     @CurrentUser() user: AuthenticatedUser,
@@ -214,7 +226,10 @@ export class AuthController {
   @Post('verify-phone/resend')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Request a new phone verification code', operationId: 'auth_resendPhoneVerification' })
+  @ApiOperation({
+    summary: 'Request a new phone verification code',
+    operationId: 'auth_resendPhoneVerification',
+  })
   @ApiOkResponse({ type: ResendVerificationResponseDto })
   resendPhoneVerification(
     @CurrentUser() user: AuthenticatedUser,
@@ -296,7 +311,10 @@ export class AuthController {
   @Post('change-phone/verify')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Confirm a phone change with the SMS code', operationId: 'auth_verifyPhoneChange' })
+  @ApiOperation({
+    summary: 'Confirm a phone change with the SMS code',
+    operationId: 'auth_verifyPhoneChange',
+  })
   @ApiOkResponse({ type: MeResponseDto })
   verifyPhoneChange(
     @CurrentUser() user: AuthenticatedUser,

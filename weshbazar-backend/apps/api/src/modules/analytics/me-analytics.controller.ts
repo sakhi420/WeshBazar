@@ -19,7 +19,10 @@ export class MeAnalyticsController {
   constructor(private readonly analytics: SellerAnalyticsService) {}
 
   @Get('summary')
-  @ApiOperation({ summary: 'My listing analytics summary for a range (default 30 days)', operationId: 'me_analytics_summary' })
+  @ApiOperation({
+    summary: 'My listing analytics summary for a range (default 30 days)',
+    operationId: 'me_analytics_summary',
+  })
   @ApiOkResponse({ type: SellerSummaryDto })
   summary(
     @CurrentUser() user: AuthenticatedUser,

@@ -128,13 +128,17 @@ export async function configureApp(app: NestFastifyApplication, env: Env): Promi
         )
         .setVersion('1.0')
         .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'access-token')
-        .addCookieAuth(env.REFRESH_COOKIE_NAME, {
-          type: 'apiKey',
-          in: 'cookie',
-          name: env.REFRESH_COOKIE_NAME,
-          description:
-            'HttpOnly refresh cookie (sent automatically by the browser to /api/v1/auth only).',
-        }, 'refresh-cookie')
+        .addCookieAuth(
+          env.REFRESH_COOKIE_NAME,
+          {
+            type: 'apiKey',
+            in: 'cookie',
+            name: env.REFRESH_COOKIE_NAME,
+            description:
+              'HttpOnly refresh cookie (sent automatically by the browser to /api/v1/auth only).',
+          },
+          'refresh-cookie',
+        )
         .build(),
     );
     SwaggerModule.setup('docs', app, document, {
