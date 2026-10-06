@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Generated code (Prisma client is generated, not committed)
+apps/api/src/generated/
+
+# Environment configuration (never commit real secrets)
+.env
+.env.local
+.env.*.local
+
+# Local storage for uploaded media (development only)
+var/
+storage/
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# Test coverage
+coverage/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Husky internals
+.husky/_/
+
+# Prisma local artifacts
+prisma/*.db
+prisma/*.db-journal

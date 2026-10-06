@@ -1,0 +1,80 @@
+{
+  "name": "weshbazar",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WeshBazar — Afghanistan-focused C2C marketplace backend (production-minded modular monolith).",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=11.0.0"
+  },
+  "workspaces": [
+    "apps/api"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @weshbazar/api",
+    "build": "npm run build --workspace @weshbazar/api",
+    "start": "npm run start:prod --workspace @weshbazar/api",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run typecheck:repo && npm run typecheck --workspace @weshbazar/api",
+    "typecheck:repo": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run test --workspace @weshbazar/api",
+    "test:integration": "npm run test:integration --workspace @weshbazar/api",
+    "test:e2e": "npm run test:e2e --workspace @weshbazar/api",
+    "test:security": "npm run test:security --workspace @weshbazar/api",
+    "prisma:generate": "prisma generate",
+    "prisma:validate": "prisma validate",
+    "prisma:format": "prisma format",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:reset": "prisma migrate reset",
+    "prisma:migrate:status": "prisma migrate status",
+    "db:seed": "prisma db seed",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
+    "dotenv": "18.0.5",
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
+    "prettier": "3.9.9",
+    "prisma": "7.10.0",
+    "tsx": "4.23.15",
+    "typescript-eslint": "8.71.0"
+  },
+  "lint-staged": {
+    "apps/api/src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "apps/api/test/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "prisma/**/*.prisma": [
+      "prisma format"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true,
+    "@prisma/engines@7.10.0": true,
+    "argon2@0.45.1": true,
+    "esbuild@0.28.2": true,
+    "prisma@7.10.0": true,
+    "unrs-resolver@1.12.2": true,
+    "@scarf/scarf": false
+  }
+}

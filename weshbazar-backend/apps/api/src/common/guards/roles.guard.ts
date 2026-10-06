@@ -1,0 +1,37 @@
+/**
+ * Role-based access guard.
+ *
+ * Registered globally after `JwtAuthGuard`. Routes without `@Roles(...)`
+ * metadata are unaffected; routes that declare roles require an authenticated
+ * principal whose role is in the allowed set.
+ */
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { ROLES_KEY } from '../decorators/roles.decorator';
+import { AppException } from '../errors/app.exception';
+import type { AuthenticatedRequest } from '../types/authenticated-user';
+import type { UserRole } from '../../generated/prisma/enums';
+
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private readonly reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return true;
+    }
+
+    const user = context.switchToHttp().getRequest<AuthenticatedRequest>().user;
+    if (!user) {
+      throw new AppException('UNAUTHORIZED');
+    }
+    if (!requiredRoles.includes(user.role)) {
+      throw new AppException('FORBIDDEN');
+    }
+    return true;
+  }
+}

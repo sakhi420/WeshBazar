@@ -1,0 +1,769 @@
+// =============================================================================
+// WeshBazar — Prisma schema (PostgreSQL)
+//
+// Design notes:
+//  - All timestamps are timezone-aware (`timestamptz`) and stored in UTC.
+//  - Public-facing objects use UUID primary keys; sequential ids are never
+//    exposed.
+//  - Category-specific listing fields are data-driven (`Listing.attributes`
+//    JSONB validated against CategoryAttribute definitions) — product fields
+//    are never hard-coded on Listing.
+//  - Money uses `Decimal` (never floating point).
+//  - Marketplace history (reports, moderation, audit) is preserved via
+//    soft deletes and append-only tables.
+//  - The pg_trgm GIN index on Listing.searchText and several CHECK/partial
+//    constraints are added in the initial migration SQL (Prisma schema cannot
+//    express them).
+// =============================================================================
+
+generator client {
+  provider               = "prisma-client"
+  output                 = "../apps/api/src/generated/prisma"
+  moduleFormat           = "cjs"
+  runtime                = "nodejs"
+  generatedFileExtension = "ts"
+  // Generated files import each other with explicit `.ts` specifiers so they
+  // work under tsx (seed), tsc (with rewriteRelativeImportExtensions) and Jest.
+  importFileExtension    = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -----------------------------------------------------------------------------
+// Users & authentication
+// -----------------------------------------------------------------------------
+
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+  DEACTIVATED
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  /// Original user-entered phone formatting (informational only).
+  phone        String     @db.VarChar(32)
+  /// Canonical E.164 representation — the only uniqueness/authentication key.
+  phoneNormalized String  @unique @db.VarChar(20)
+  passwordHash String     @db.VarChar(255)
+  displayName  String     @db.VarChar(80)
+  role         UserRole   @default(USER)
+  status       UserStatus @default(ACTIVE)
+
+  phoneVerifiedAt DateTime? @db.Timestamptz(3)
+
+  avatarKey String? @db.VarChar(300)
+
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime? @db.Timestamptz(3)
+
+  /// Reason for the current suspension/ban (set by moderation).
+  suspensionReason String? @db.VarChar(500)
+  /// When a temporary suspension ends (null = permanent / ban).
+  suspendedUntil   DateTime? @db.Timestamptz(3)
+
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(3)
+  deletedAt DateTime? @db.Timestamptz(3)
+
+  sellerAccount         SellerAccount?
+  refreshSessions       RefreshSession[]
+  verificationChallenges VerificationChallenge[]
+  favorites             Favorite[]
+  reportsSubmitted      Report[]              @relation("ReportReporter")
+  reportsAbout          Report[]              @relation("ReportReportedUser")
+  reportsResolved       Report[]              @relation("ReportResolver")
+  moderationActions     ModerationAction[]
+  auditLogs             AuditLog[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum SellerAccountType {
+  INDIVIDUAL
+}
+
+enum SellerAccountStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+model SellerAccount {
+  id String @id @default(uuid()) @db.Uuid
+
+  ownerUserId String @unique @db.Uuid
+  owner       User   @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
+
+  type        SellerAccountType   @default(INDIVIDUAL)
+  displayName String              @db.VarChar(80)
+  slug        String              @unique @db.VarChar(140)
+  bio         String?             @db.VarChar(500)
+  status      SellerAccountStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  listings Listing[]
+
+  @@index([status])
+}
+
+model RefreshSession {
+  id       String @id @default(uuid()) @db.Uuid
+  userId   String @db.Uuid
+  familyId String @db.Uuid
+
+  /// HMAC-SHA256 (hex) of the raw refresh token — raw tokens are never stored.
+  tokenHash String @unique @db.VarChar(128)
+
+  createdAt  DateTime  @default(now()) @db.Timestamptz(3)
+  lastUsedAt DateTime? @db.Timestamptz(3)
+  expiresAt  DateTime  @db.Timestamptz(3)
+  revokedAt  DateTime? @db.Timestamptz(3)
+
+  /// Session that replaced this one through rotation (audit trail).
+  replacedBySessionId String? @db.Uuid
+
+  /// Machine-readable revocation cause: LOGOUT | LOGOUT_ALL | ROTATION |
+  /// REUSE_DETECTED | PASSWORD_CHANGED | PASSWORD_RESET | ADMIN_ACTION.
+  revokedReason String? @db.VarChar(40)
+
+  ipAddress  String? @db.VarChar(64)
+  userAgent  String? @db.VarChar(512)
+  deviceName String? @db.VarChar(120)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([familyId])
+  @@index([expiresAt])
+}
+
+enum VerificationPurpose {
+  REGISTER
+  CHANGE_PHONE
+  PASSWORD_RESET
+}
+
+model VerificationChallenge {
+  id String @id @default(uuid()) @db.Uuid
+
+  userId String? @db.Uuid
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Normalized (E.164) phone the challenge was issued for.
+  phone   String              @db.VarChar(20)
+  purpose VerificationPurpose
+
+  /// HMAC-SHA256 (hex) of the one-time code — raw codes are never stored.
+  codeHash String @db.VarChar(128)
+
+  expiresAt  DateTime @db.Timestamptz(3)
+  attempts   Int      @default(0)
+  maxAttempts Int
+
+  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+  lastSentAt   DateTime  @default(now()) @db.Timestamptz(3)
+  resendAvailableAt DateTime @db.Timestamptz(3)
+  usedAt       DateTime? @db.Timestamptz(3)
+  invalidatedAt DateTime? @db.Timestamptz(3)
+
+  @@index([phone, purpose, createdAt(sort: Desc)])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// -----------------------------------------------------------------------------
+// Marketplace taxonomy
+// -----------------------------------------------------------------------------
+
+enum CategoryStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum ModerationMode {
+  REVIEW_REQUIRED
+  AUTO_APPROVE
+}
+
+model Category {
+  id String @id @default(uuid()) @db.Uuid
+
+  parentId String?   @db.Uuid
+  parent   Category? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children Category[] @relation("CategoryHierarchy")
+
+  slug            String          @unique @db.VarChar(140)
+  status          CategoryStatus  @default(ACTIVE)
+  sortOrder       Int             @default(0)
+  iconKey         String?         @db.VarChar(80)
+  moderationMode  ModerationMode  @default(REVIEW_REQUIRED)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  translations CategoryTranslation[]
+  attributes   CategoryAttribute[]
+  listings     Listing[]
+
+  @@index([parentId])
+  @@index([status, sortOrder])
+}
+
+model CategoryTranslation {
+  id String @id @default(uuid()) @db.Uuid
+
+  categoryId String   @db.Uuid
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  locale      String  @db.VarChar(10)
+  name        String  @db.VarChar(140)
+  description String? @db.VarChar(300)
+
+  @@unique([categoryId, locale])
+  @@index([locale])
+}
+
+enum AttributeType {
+  TEXT
+  LONG_TEXT
+  INTEGER
+  DECIMAL
+  BOOLEAN
+  SELECT
+  MULTI_SELECT
+  YEAR
+  DATE
+}
+
+model CategoryAttribute {
+  id String @id @default(uuid()) @db.Uuid
+
+  categoryId String   @db.Uuid
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  /// Stable machine key used inside Listing.attributes (e.g. "ram").
+  key   String @db.VarChar(50)
+  label String @db.VarChar(140)
+  type  AttributeType
+
+  required   Boolean @default(false)
+  filterable Boolean @default(false)
+  searchable Boolean @default(false)
+
+  unit        String? @db.VarChar(20)
+  placeholder String? @db.VarChar(140)
+
+  minValue  Decimal? @db.Decimal(18, 4)
+  maxValue  Decimal? @db.Decimal(18, 4)
+  minLength Int?
+  maxLength Int?
+  pattern   String?  @db.VarChar(200)
+
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  options CategoryAttributeOption[]
+
+  @@unique([categoryId, key])
+  @@index([categoryId, isActive])
+}
+
+model CategoryAttributeOption {
+  id String @id @default(uuid()) @db.Uuid
+
+  attributeId String            @db.Uuid
+  attribute   CategoryAttribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  /// Machine value stored in listing attributes.
+  value String @db.VarChar(80)
+  label String @db.VarChar(140)
+
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  @@unique([attributeId, value])
+  @@index([attributeId, isActive])
+}
+
+// -----------------------------------------------------------------------------
+// Locations
+// -----------------------------------------------------------------------------
+
+enum LocationStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Province {
+  id String @id @default(uuid()) @db.Uuid
+
+  code      String         @unique @db.VarChar(10)
+  slug      String         @unique @db.VarChar(140)
+  status    LocationStatus @default(ACTIVE)
+  sortOrder Int            @default(0)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  translations ProvinceTranslation[]
+  cities       City[]
+  listings     Listing[]
+
+  @@index([status, sortOrder])
+}
+
+model ProvinceTranslation {
+  id String @id @default(uuid()) @db.Uuid
+
+  provinceId String   @db.Uuid
+  province   Province @relation(fields: [provinceId], references: [id], onDelete: Cascade)
+
+  locale String @db.VarChar(10)
+  name   String @db.VarChar(140)
+
+  @@unique([provinceId, locale])
+}
+
+model City {
+  id String @id @default(uuid()) @db.Uuid
+
+  provinceId String   @db.Uuid
+  province   Province @relation(fields: [provinceId], references: [id], onDelete: Restrict)
+
+  slug      String         @db.VarChar(140)
+  status    LocationStatus @default(ACTIVE)
+  sortOrder Int            @default(0)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  translations CityTranslation[]
+  listings     Listing[]
+
+  @@unique([provinceId, slug])
+  @@index([provinceId, status, sortOrder])
+}
+
+model CityTranslation {
+  id String @id @default(uuid()) @db.Uuid
+
+  cityId String @db.Uuid
+  city   City   @relation(fields: [cityId], references: [id], onDelete: Cascade)
+
+  locale String @db.VarChar(10)
+  name   String @db.VarChar(140)
+
+  @@unique([cityId, locale])
+}
+
+// -----------------------------------------------------------------------------
+// Listings
+// -----------------------------------------------------------------------------
+
+enum PricingType {
+  PAID
+  FREE
+  CONTACT
+}
+
+enum ListingCondition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+}
+
+enum ListingStatus {
+  DRAFT
+  PENDING_REVIEW
+  ACTIVE
+  REJECTED
+  SOLD
+  ARCHIVED
+}
+
+model Listing {
+  id String @id @default(uuid()) @db.Uuid
+
+  sellerAccountId String        @db.Uuid
+  sellerAccount   SellerAccount @relation(fields: [sellerAccountId], references: [id], onDelete: Restrict)
+
+  categoryId String   @db.Uuid
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  provinceId String   @db.Uuid
+  province   Province @relation(fields: [provinceId], references: [id], onDelete: Restrict)
+
+  cityId String @db.Uuid
+  city   City   @relation(fields: [cityId], references: [id], onDelete: Restrict)
+
+  /// Immutable, SEO-friendly slug (stable once published).
+  slug String @unique @db.VarChar(180)
+
+  title       String @db.VarChar(120)
+  description String @db.Text
+
+  price       Decimal?    @db.Decimal(14, 2)
+  currency    String      @default("AFN") @db.VarChar(3)
+  pricingType PricingType @default(PAID)
+  negotiable  Boolean     @default(true)
+
+  condition ListingCondition
+
+  status ListingStatus @default(DRAFT)
+
+  /// Category-specific attributes validated against CategoryAttribute
+  /// definitions (see CategoryAttributeEngine).
+  attributes Json @default("{}")
+
+  views         Int @default(0)
+  favoriteCount Int @default(0)
+
+  publishedAt DateTime? @db.Timestamptz(3)
+  soldAt      DateTime? @db.Timestamptz(3)
+  archivedAt  DateTime? @db.Timestamptz(3)
+  expiresAt   DateTime? @db.Timestamptz(3)
+
+  /// Optimistic-concurrency counter, incremented on every successful mutation.
+  version Int @default(1)
+
+  /// Normalized Persian/Dari-safe search text maintained on write.
+  searchText String? @db.Text
+
+  /// Last machine-readable rejection reason (cleared on resubmission).
+  rejectedReason String? @db.VarChar(64)
+  rejectedNote   String? @db.VarChar(500)
+
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(3)
+  deletedAt DateTime? @db.Timestamptz(3)
+
+  images          ListingImage[]
+  contactMethods  ListingContactMethod[]
+  revisions       ListingRevision[]
+  favorites       Favorite[]
+  reports         Report[]
+  moderationActions ModerationAction[]
+  dailyStats      ListingDailyStat[]
+
+  @@index([status, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([status, categoryId, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([status, provinceId, cityId, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([sellerAccountId, status])
+  @@index([categoryId])
+  @@index([provinceId])
+  @@index([cityId])
+  @@index([price])
+  @@index([expiresAt])
+}
+
+enum ListingRevisionChangeType {
+  CREATE
+  UPDATE
+  SUBMIT
+  APPROVE
+  REJECT
+  MARK_SOLD
+  ARCHIVE
+  RENEW
+  RESTORE
+  SYSTEM
+}
+
+model ListingRevision {
+  id String @id @default(uuid()) @db.Uuid
+
+  listingId String  @db.Uuid
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  version    Int
+  changeType ListingRevisionChangeType
+
+  /// Important seller-facing state at the time of this revision.
+  snapshot Json
+
+  /// Attribute schema (key/type) reference used when the snapshot was taken.
+  attributeSchemaReference Json?
+
+  createdByUserId String? @db.Uuid
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+
+  @@unique([listingId, version])
+  @@index([listingId, createdAt(sort: Desc)])
+}
+
+model ListingImage {
+  id String @id @default(uuid()) @db.Uuid
+
+  listingId String  @db.Uuid
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  /// Server-generated storage key of the original re-encoded image.
+  storageKey String @db.VarChar(300)
+
+  /// Server-generated variant descriptors: { thumbnail: { key, width, height, size }, ... }.
+  variants Json @default("{}")
+
+  mimeType String @db.VarChar(64)
+  size     Int
+  width    Int
+  height   Int
+  /// SHA-256 (hex) of the stored original bytes.
+  checksum String @db.VarChar(64)
+
+  sortOrder Int     @default(0)
+  isPrimary Boolean @default(false)
+
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(3)
+  deletedAt DateTime? @db.Timestamptz(3)
+
+  @@index([listingId, sortOrder])
+  @@index([deletedAt])
+}
+
+enum ListingContactType {
+  PHONE
+  WHATSAPP
+  TELEGRAM
+}
+
+model ListingContactMethod {
+  id String @id @default(uuid()) @db.Uuid
+
+  listingId String  @db.Uuid
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  type    ListingContactType
+  enabled Boolean            @default(true)
+
+  /// Optional per-listing override (e.g. a dedicated WhatsApp number).
+  /// Falls back to the seller's verified phone when null.
+  valueOverride String? @db.VarChar(160)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@unique([listingId, type])
+}
+
+// -----------------------------------------------------------------------------
+// Favorites, reports, moderation, audit
+// -----------------------------------------------------------------------------
+
+model Favorite {
+  id String @id @default(uuid()) @db.Uuid
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  listingId String  @db.Uuid
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@unique([userId, listingId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([listingId])
+}
+
+enum ReportReason {
+  SCAM
+  STOLEN
+  PROHIBITED_ITEM
+  SPAM
+  MISLEADING
+  DUPLICATE
+  OFFENSIVE
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  UNDER_REVIEW
+  RESOLVED
+  DISMISSED
+}
+
+model Report {
+  id String @id @default(uuid()) @db.Uuid
+
+  reporterUserId String @db.Uuid
+  reporter       User   @relation("ReportReporter", fields: [reporterUserId], references: [id], onDelete: Restrict)
+
+  listingId String?  @db.Uuid
+  listing   Listing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+
+  reportedUserId String? @db.Uuid
+  reportedUser   User?   @relation("ReportReportedUser", fields: [reportedUserId], references: [id], onDelete: SetNull)
+
+  reason      ReportReason
+  description String?      @db.VarChar(1000)
+
+  status ReportStatus @default(OPEN)
+
+  resolvedByUserId String?   @db.Uuid
+  resolvedBy       User?     @relation("ReportResolver", fields: [resolvedByUserId], references: [id], onDelete: SetNull)
+  resolvedAt       DateTime? @db.Timestamptz(3)
+  resolutionNote   String?   @db.VarChar(1000)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([status, createdAt(sort: Desc)])
+  @@index([listingId, status])
+  @@index([reportedUserId, status])
+}
+
+enum ModerationActionType {
+  APPROVE
+  REJECT
+  ARCHIVE
+  RESTORE
+}
+
+model ModerationAction {
+  id String @id @default(uuid()) @db.Uuid
+
+  listingId String  @db.Uuid
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  adminUserId String @db.Uuid
+  adminUser   User   @relation(fields: [adminUserId], references: [id], onDelete: Restrict)
+
+  action ModerationActionType
+  /// Machine-readable rejection reason where applicable.
+  reason String? @db.VarChar(64)
+  note   String? @db.VarChar(1000)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([listingId, createdAt(sort: Desc)])
+  @@index([adminUserId])
+}
+
+enum AuditAction {
+  USER_SUSPENDED
+  USER_BANNED
+  USER_RESTORED
+  USER_DEACTIVATED
+  LISTING_APPROVED
+  LISTING_REJECTED
+  LISTING_ARCHIVED_BY_ADMIN
+  LISTING_RESTORED_BY_ADMIN
+  REPORT_RESOLVED
+  REPORT_DISMISSED
+  CATEGORY_CREATED
+  CATEGORY_UPDATED
+  CATEGORY_ARCHIVED
+  CATEGORY_DELETED
+  ATTRIBUTE_CREATED
+  ATTRIBUTE_UPDATED
+  ATTRIBUTE_DELETED
+  ATTRIBUTE_OPTION_CREATED
+  ATTRIBUTE_OPTION_UPDATED
+  ATTRIBUTE_OPTION_DELETED
+  LOCATION_CREATED
+  LOCATION_UPDATED
+  LOCATION_DELETED
+  SECURITY_SESSION_REVOKED
+  SECURITY_REFRESH_REUSE_DETECTED
+  SECURITY_LOGOUT_ALL
+  AUTH_PASSWORD_CHANGED
+  AUTH_PASSWORD_RESET
+  AUTH_PHONE_CHANGED
+}
+
+/// Append-only audit trail for admin/security-sensitive actions.
+model AuditLog {
+  id String @id @default(uuid()) @db.Uuid
+
+  actorUserId String? @db.Uuid
+  actorUser   User?   @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  action AuditAction
+
+  entityType String  @db.VarChar(50)
+  entityId   String? @db.VarChar(64)
+
+  metadata Json @default("{}")
+
+  ipAddress String? @db.VarChar(64)
+  userAgent String? @db.VarChar(512)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([entityType, entityId, createdAt(sort: Desc)])
+  @@index([actorUserId, createdAt(sort: Desc)])
+  @@index([action, createdAt(sort: Desc)])
+}
+
+// -----------------------------------------------------------------------------
+// Analytics
+// -----------------------------------------------------------------------------
+
+model ListingDailyStat {
+  id String @id @default(uuid()) @db.Uuid
+
+  listingId String  @db.Uuid
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  date DateTime @db.Date
+
+  views          Int @default(0)
+  phoneClicks    Int @default(0)
+  whatsappClicks Int @default(0)
+  telegramClicks Int @default(0)
+  favoriteAdds   Int @default(0)
+  reports        Int @default(0)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@unique([listingId, date])
+  @@index([date])
+}
+
+// -----------------------------------------------------------------------------
+// Idempotency (selected write commands)
+// -----------------------------------------------------------------------------
+
+model IdempotencyKey {
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Command scope, e.g. "listings.create".
+  scope String @db.VarChar(80)
+  /// Requester subject: "u:<userId>" or "anon:<sha256(ip)>".
+  subject String @db.VarChar(120)
+  /// Client-provided Idempotency-Key.
+  key String @db.VarChar(120)
+
+  /// SHA-256 of the canonical request payload (mismatch => 422).
+  requestHash String @db.VarChar(64)
+
+  responseStatus Int?
+  responseBody   Json?
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  expiresAt DateTime @db.Timestamptz(3)
+
+  @@unique([scope, subject, key])
+  @@index([expiresAt])
+}
