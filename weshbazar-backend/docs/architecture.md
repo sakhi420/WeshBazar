@@ -24,6 +24,7 @@ reference for the `docker-compose.yml` note "ADR-005: no Redis initially".
 ## High-level topology
 
 ```
+┌────────────────────┐
                          HTTP / JSON
                              │
         ┌────────────────────▼────────────────────┐
