@@ -39,3 +39,7 @@ Thumbs.db
 # Prisma local artifacts
 prisma/*.db
 prisma/*.db-journal
+# Development scratch / analysis artifacts and captured credential dumps
+_cookie*
+_*.txt
+_*.mjs

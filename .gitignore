@@ -1,0 +1,5 @@
+# Development scratch / analysis artifacts and captured credential dumps.
+# These are never application code and must not be committed.
+_cookie*
+_*.txt
+_*.mjs
