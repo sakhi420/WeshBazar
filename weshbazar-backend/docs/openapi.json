@@ -19,7 +19,9 @@
           }
         },
         "summary": "Liveness probe",
-        "tags": ["health"]
+        "tags": [
+          "health"
+        ]
       }
     },
     "/health/ready": {
@@ -40,7 +42,9 @@
           }
         },
         "summary": "Readiness probe",
-        "tags": ["health"]
+        "tags": [
+          "health"
+        ]
       }
     },
     "/api/v1/auth/register": {
@@ -70,7 +74,9 @@
           }
         },
         "summary": "Create an account and start phone verification",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/login": {
@@ -100,7 +106,9 @@
           }
         },
         "summary": "Sign in with phone and password",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/refresh": {
@@ -136,7 +144,9 @@
           }
         ],
         "summary": "Rotate the refresh session and issue new tokens",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/logout": {
@@ -157,7 +167,9 @@
           }
         ],
         "summary": "Revoke the current session",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/logout-all": {
@@ -185,7 +197,9 @@
           }
         ],
         "summary": "Revoke every session of the account",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/sessions": {
@@ -216,7 +230,9 @@
           }
         ],
         "summary": "List active sessions of the account",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/sessions/{sessionId}": {
@@ -246,7 +262,9 @@
           }
         ],
         "summary": "Revoke one of the account sessions",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/me": {
@@ -271,7 +289,9 @@
           }
         ],
         "summary": "Current user and session info",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/verify-phone": {
@@ -306,7 +326,9 @@
           }
         ],
         "summary": "Verify the account phone with the SMS code",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/verify-phone/resend": {
@@ -331,7 +353,9 @@
           }
         ],
         "summary": "Request a new phone verification code",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/change-password": {
@@ -360,7 +384,9 @@
           }
         ],
         "summary": "Change the password",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/forgot-password": {
@@ -391,7 +417,9 @@
           }
         },
         "summary": "Request a password reset code",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/reset-password": {
@@ -415,7 +443,9 @@
           }
         },
         "summary": "Reset the password with an SMS code",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/change-phone": {
@@ -451,7 +481,9 @@
           }
         ],
         "summary": "Start a phone change",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/change-phone/verify": {
@@ -486,7 +518,9 @@
           }
         ],
         "summary": "Confirm a phone change with the SMS code",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/sellers/{slug}": {
@@ -515,7 +549,9 @@
           }
         },
         "summary": "Public seller profile by slug",
-        "tags": ["sellers"]
+        "tags": [
+          "sellers"
+        ]
       }
     },
     "/api/v1/admin/audit-logs": {
@@ -629,7 +665,9 @@
           }
         ],
         "summary": "Search the audit trail (newest first; exact-match filters)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/me": {
@@ -654,7 +692,9 @@
           }
         ],
         "summary": "My profile (user account + personal seller account)",
-        "tags": ["me"]
+        "tags": [
+          "me"
+        ]
       },
       "patch": {
         "operationId": "me_users_updateMe",
@@ -687,7 +727,9 @@
           }
         ],
         "summary": "Update my profile (display name, avatar, seller profile)",
-        "tags": ["me"]
+        "tags": [
+          "me"
+        ]
       }
     },
     "/api/v1/categories": {
@@ -722,7 +764,9 @@
           }
         },
         "summary": "List visible categories (flat, with parent links and hasChildren)",
-        "tags": ["categories"]
+        "tags": [
+          "categories"
+        ]
       }
     },
     "/api/v1/categories/tree": {
@@ -757,7 +801,9 @@
           }
         },
         "summary": "Visible category tree (roots with nested children)",
-        "tags": ["categories"]
+        "tags": [
+          "categories"
+        ]
       }
     },
     "/api/v1/categories/{slug}": {
@@ -797,7 +843,9 @@
           }
         },
         "summary": "Category detail by slug (with ancestors and direct children)",
-        "tags": ["categories"]
+        "tags": [
+          "categories"
+        ]
       }
     },
     "/api/v1/categories/{id}/filter-schema": {
@@ -829,7 +877,9 @@
           }
         },
         "summary": "Effective attribute/filter schema for a category (by id)",
-        "tags": ["categories"]
+        "tags": [
+          "categories"
+        ]
       }
     },
     "/api/v1/admin/categories": {
@@ -869,7 +919,9 @@
           }
         ],
         "summary": "List all categories (any status) with translation rows and counts",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "post": {
         "operationId": "admin_taxonomy_createCategory",
@@ -914,7 +966,9 @@
           }
         ],
         "summary": "Create a category (slug generated from the English name when omitted)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/categories/{id}": {
@@ -959,7 +1013,9 @@
           }
         ],
         "summary": "Category detail (any status)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "patch": {
         "operationId": "admin_taxonomy_updateCategory",
@@ -1012,7 +1068,9 @@
           }
         ],
         "summary": "Update a category (parent moves are cycle-checked)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "delete": {
         "operationId": "admin_taxonomy_deleteCategory",
@@ -1037,7 +1095,9 @@
           }
         ],
         "summary": "Delete a category (blocked while children or listings exist)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/categories/{id}/attributes": {
@@ -1074,7 +1134,9 @@
           }
         ],
         "summary": "List the attributes defined on a category (own rows, not inherited)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "post": {
         "operationId": "admin_taxonomy_createAttribute",
@@ -1116,7 +1178,9 @@
           }
         ],
         "summary": "Create a category attribute",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/attributes/{id}": {
@@ -1160,7 +1224,9 @@
           }
         ],
         "summary": "Update an attribute (key/type changes blocked once listings use it)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "delete": {
         "operationId": "admin_taxonomy_deleteAttribute",
@@ -1185,7 +1251,9 @@
           }
         ],
         "summary": "Delete an attribute (blocked once listings use it)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/attributes/{id}/options": {
@@ -1229,7 +1297,9 @@
           }
         ],
         "summary": "Add an option to a SELECT/MULTI_SELECT attribute",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/options/{id}": {
@@ -1273,7 +1343,9 @@
           }
         ],
         "summary": "Update an option (value changes blocked once listings use it)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "delete": {
         "operationId": "admin_taxonomy_deleteOption",
@@ -1298,7 +1370,9 @@
           }
         ],
         "summary": "Delete an option (deactivate instead once listings use it)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/locations/provinces": {
@@ -1333,7 +1407,9 @@
           }
         },
         "summary": "List active provinces (localized names)",
-        "tags": ["locations"]
+        "tags": [
+          "locations"
+        ]
       }
     },
     "/api/v1/locations/provinces/{provinceId}/cities": {
@@ -1376,7 +1452,9 @@
           }
         },
         "summary": "List active cities of an active province",
-        "tags": ["locations"]
+        "tags": [
+          "locations"
+        ]
       }
     },
     "/api/v1/admin/provinces": {
@@ -1416,7 +1494,9 @@
           }
         ],
         "summary": "List all provinces (any status) with translations and city counts",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "post": {
         "operationId": "admin_locations_createProvince",
@@ -1461,7 +1541,9 @@
           }
         ],
         "summary": "Create a province (slug generated from the English name when omitted)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/provinces/{id}": {
@@ -1516,7 +1598,9 @@
           }
         ],
         "summary": "Update a province",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "delete": {
         "operationId": "admin_locations_deleteProvince",
@@ -1541,7 +1625,9 @@
           }
         ],
         "summary": "Delete a province (blocked while cities or listings exist)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/provinces/{provinceId}/cities": {
@@ -1589,7 +1675,9 @@
           }
         ],
         "summary": "List all cities of a province (any status)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "post": {
         "operationId": "admin_locations_createCity",
@@ -1642,7 +1730,9 @@
           }
         ],
         "summary": "Create a city in a province (slug generated from the English name when omitted)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/cities/{id}": {
@@ -1697,7 +1787,9 @@
           }
         ],
         "summary": "Update a city",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       },
       "delete": {
         "operationId": "admin_locations_deleteCity",
@@ -1722,7 +1814,9 @@
           }
         ],
         "summary": "Delete a city (blocked while listings exist)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/listings": {
@@ -1805,7 +1899,12 @@
               "type": "array",
               "items": {
                 "type": "string",
-                "enum": ["NEW", "LIKE_NEW", "GOOD", "FAIR"]
+                "enum": [
+                  "NEW",
+                  "LIKE_NEW",
+                  "GOOD",
+                  "FAIR"
+                ]
               }
             }
           },
@@ -1815,7 +1914,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["newest", "price_asc", "price_desc", "most_viewed"]
+              "enum": [
+                "newest",
+                "price_asc",
+                "price_desc",
+                "most_viewed"
+              ]
             }
           },
           {
@@ -1866,7 +1970,9 @@
           }
         },
         "summary": "Search active listings (q, category, province, city, price, condition, sort, attribute filters)",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       },
       "post": {
         "operationId": "listings_create",
@@ -1911,7 +2017,9 @@
           }
         ],
         "summary": "Create a listing draft",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/listings/{slug}": {
@@ -1951,7 +2059,9 @@
           }
         },
         "summary": "Public listing detail by slug (ACTIVE or SOLD only)",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/listings/{id}": {
@@ -2006,7 +2116,9 @@
           }
         ],
         "summary": "Edit a listing (material changes may re-enter review)",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/listings/{id}/submit": {
@@ -2061,7 +2173,9 @@
           }
         ],
         "summary": "Submit the listing for review (publishes under auto-approve)",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/listings/{id}/mark-sold": {
@@ -2116,7 +2230,9 @@
           }
         ],
         "summary": "Mark an active listing as sold",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/listings/{id}/archive": {
@@ -2171,7 +2287,9 @@
           }
         ],
         "summary": "Archive an active listing",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/listings/{id}/renew": {
@@ -2226,7 +2344,9 @@
           }
         ],
         "summary": "Renew an active listing or republish an archived one",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/listings/{id}/revisions": {
@@ -2282,7 +2402,9 @@
           }
         ],
         "summary": "Listing revision history (newest first)",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/me/listings": {
@@ -2325,7 +2447,14 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["DRAFT", "PENDING_REVIEW", "ACTIVE", "REJECTED", "SOLD", "ARCHIVED"]
+              "enum": [
+                "DRAFT",
+                "PENDING_REVIEW",
+                "ACTIVE",
+                "REJECTED",
+                "SOLD",
+                "ARCHIVED"
+              ]
             }
           }
         ],
@@ -2350,7 +2479,9 @@
           }
         ],
         "summary": "My listings (cursor pagination, newest first)",
-        "tags": ["me"]
+        "tags": [
+          "me"
+        ]
       }
     },
     "/api/v1/me/listings/{id}": {
@@ -2395,7 +2526,9 @@
           }
         ],
         "summary": "Get one of my listings (by id)",
-        "tags": ["me"]
+        "tags": [
+          "me"
+        ]
       }
     },
     "/api/v1/admin/dashboard": {
@@ -2420,7 +2553,9 @@
           }
         ],
         "summary": "Dashboard counters: users, listings by status, reports",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/analytics/summary": {
@@ -2464,7 +2599,9 @@
           }
         ],
         "summary": "Marketplace summary for a range (daily series + engagement totals)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/me/analytics/summary": {
@@ -2508,7 +2645,9 @@
           }
         ],
         "summary": "My listing analytics summary for a range (default 30 days)",
-        "tags": ["me"]
+        "tags": [
+          "me"
+        ]
       }
     },
     "/api/v1/listings/{id}/images": {
@@ -2547,7 +2686,9 @@
                     "format": "binary"
                   }
                 },
-                "required": ["file"]
+                "required": [
+                  "file"
+                ]
               }
             }
           }
@@ -2570,7 +2711,9 @@
           }
         ],
         "summary": "Upload one image for a listing (multipart, single file)",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/listings/{id}/images/{imageId}": {
@@ -2623,7 +2766,9 @@
           }
         ],
         "summary": "Delete one image from a listing gallery",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/listings/{id}/images/{imageId}/order": {
@@ -2686,7 +2831,9 @@
           }
         ],
         "summary": "Reorder an image and/or flag it as the primary image",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/listings/{id}/contact": {
@@ -2725,7 +2872,9 @@
           }
         },
         "summary": "Reveal an enabled contact method for an active listing (anonymous, per-IP rate limit)",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/favorites/{listingId}": {
@@ -2759,7 +2908,9 @@
           }
         ],
         "summary": "Add a listing to my favorites (409 when already saved)",
-        "tags": ["favorites"]
+        "tags": [
+          "favorites"
+        ]
       },
       "delete": {
         "operationId": "favorites_remove",
@@ -2784,7 +2935,9 @@
           }
         ],
         "summary": "Remove a listing from my favorites (404 when not saved)",
-        "tags": ["favorites"]
+        "tags": [
+          "favorites"
+        ]
       }
     },
     "/api/v1/me/favorites": {
@@ -2843,7 +2996,9 @@
           }
         ],
         "summary": "My favorites (cursor pagination, newest first)",
-        "tags": ["favorites"]
+        "tags": [
+          "favorites"
+        ]
       }
     },
     "/api/v1/listings/{id}/reports": {
@@ -2887,7 +3042,9 @@
           }
         ],
         "summary": "Report a listing (verified phone required, one open report per listing)",
-        "tags": ["listings"]
+        "tags": [
+          "listings"
+        ]
       }
     },
     "/api/v1/admin/users": {
@@ -2910,7 +3067,11 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["USER", "MODERATOR", "ADMIN"]
+              "enum": [
+                "USER",
+                "MODERATOR",
+                "ADMIN"
+              ]
             }
           },
           {
@@ -2919,7 +3080,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["ACTIVE", "SUSPENDED", "BANNED", "DEACTIVATED"]
+              "enum": [
+                "ACTIVE",
+                "SUSPENDED",
+                "BANNED",
+                "DEACTIVATED"
+              ]
             }
           },
           {
@@ -2963,7 +3129,9 @@
           }
         ],
         "summary": "Search users (page/limit; phone, name, role, status filters)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/users/{id}": {
@@ -2997,7 +3165,9 @@
           }
         ],
         "summary": "User detail with listing and report counters",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/users/{id}/suspend": {
@@ -3041,7 +3211,9 @@
           }
         ],
         "summary": "Suspend an account, optionally until a date (revokes sessions)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/users/{id}/ban": {
@@ -3085,7 +3257,9 @@
           }
         ],
         "summary": "Ban an account indefinitely (revokes sessions)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/users/{id}/restore": {
@@ -3119,7 +3293,9 @@
           }
         ],
         "summary": "Restore a suspended or banned account",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/listings": {
@@ -3143,7 +3319,14 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["DRAFT", "PENDING_REVIEW", "ACTIVE", "REJECTED", "SOLD", "ARCHIVED"]
+              "enum": [
+                "DRAFT",
+                "PENDING_REVIEW",
+                "ACTIVE",
+                "REJECTED",
+                "SOLD",
+                "ARCHIVED"
+              ]
             }
           },
           {
@@ -3189,7 +3372,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["oldest", "newest"]
+              "enum": [
+                "oldest",
+                "newest"
+              ]
             }
           },
           {
@@ -3233,7 +3419,9 @@
           }
         ],
         "summary": "Moderation queue (default PENDING_REVIEW FIFO; reported=true for open reports)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/listings/{id}": {
@@ -3278,7 +3466,9 @@
           }
         ],
         "summary": "Listing detail any state, with moderation trail",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/listings/{id}/approve": {
@@ -3333,7 +3523,9 @@
           }
         ],
         "summary": "Approve a pending listing and publish it",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/listings/{id}/reject": {
@@ -3388,7 +3580,9 @@
           }
         ],
         "summary": "Reject a pending listing with a machine-readable reason",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/listings/{id}/archive": {
@@ -3443,7 +3637,9 @@
           }
         ],
         "summary": "Take down a live listing (admin archive)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/listings/{id}/restore": {
@@ -3498,7 +3694,9 @@
           }
         ],
         "summary": "Restore an archived listing with a fresh runway",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/reports": {
@@ -3511,7 +3709,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["OPEN", "UNDER_REVIEW", "RESOLVED", "DISMISSED"]
+              "enum": [
+                "OPEN",
+                "UNDER_REVIEW",
+                "RESOLVED",
+                "DISMISSED"
+              ]
             }
           },
           {
@@ -3592,7 +3795,9 @@
           }
         ],
         "summary": "Report queue (open reports FIFO; closed newest first)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/reports/{id}/resolve": {
@@ -3636,7 +3841,9 @@
           }
         ],
         "summary": "Resolve a report with the documented outcome",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     },
     "/api/v1/admin/reports/{id}/dismiss": {
@@ -3680,7 +3887,9 @@
           }
         ],
         "summary": "Dismiss a report (no action taken)",
-        "tags": ["admin"]
+        "tags": [
+          "admin"
+        ]
       }
     }
   },
@@ -3690,8 +3899,50 @@
     "version": "1.0",
     "contact": {}
   },
-  "tags": [],
-  "servers": [],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication, sessions and account verification."
+    },
+    {
+      "name": "me",
+      "description": "Current-user profile, seller account, listings and analytics."
+    },
+    {
+      "name": "sellers",
+      "description": "Public seller profiles."
+    },
+    {
+      "name": "categories",
+      "description": "Public category catalog, tree and filter schema."
+    },
+    {
+      "name": "locations",
+      "description": "Public provinces and cities."
+    },
+    {
+      "name": "listings",
+      "description": "Listing discovery, detail, lifecycle, media, contact and reports."
+    },
+    {
+      "name": "favorites",
+      "description": "User favorites."
+    },
+    {
+      "name": "admin",
+      "description": "Moderator/admin operations, taxonomy, locations and audit."
+    },
+    {
+      "name": "health",
+      "description": "Liveness and readiness probes."
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    }
+  ],
   "components": {
     "securitySchemes": {
       "access-token": {
@@ -3730,7 +3981,10 @@
             "example": "Ahmad"
           }
         },
-        "required": ["phone", "password"]
+        "required": [
+          "phone",
+          "password"
+        ]
       },
       "UserSummaryDto": {
         "type": "object",
@@ -3749,11 +4003,20 @@
           },
           "role": {
             "type": "string",
-            "enum": ["USER", "MODERATOR", "ADMIN"]
+            "enum": [
+              "USER",
+              "MODERATOR",
+              "ADMIN"
+            ]
           },
           "status": {
             "type": "string",
-            "enum": ["ACTIVE", "SUSPENDED", "BANNED", "DEACTIVATED"]
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED",
+              "BANNED",
+              "DEACTIVATED"
+            ]
           },
           "phoneVerified": {
             "type": "boolean"
@@ -3817,7 +4080,10 @@
             "format": "date-time"
           }
         },
-        "required": ["id", "expiresAt"]
+        "required": [
+          "id",
+          "expiresAt"
+        ]
       },
       "AuthResponseDto": {
         "type": "object",
@@ -3832,7 +4098,11 @@
             "$ref": "#/components/schemas/AuthSessionRefDto"
           }
         },
-        "required": ["user", "tokens", "session"]
+        "required": [
+          "user",
+          "tokens",
+          "session"
+        ]
       },
       "LoginDto": {
         "type": "object",
@@ -3848,7 +4118,10 @@
             "example": "S3cure!Pass"
           }
         },
-        "required": ["phone", "password"]
+        "required": [
+          "phone",
+          "password"
+        ]
       },
       "RefreshDto": {
         "type": "object",
@@ -3868,7 +4141,9 @@
             "example": 3
           }
         },
-        "required": ["revokedCount"]
+        "required": [
+          "revokedCount"
+        ]
       },
       "SessionSummaryDto": {
         "type": "object",
@@ -3934,7 +4209,10 @@
             ]
           }
         },
-        "required": ["user", "session"]
+        "required": [
+          "user",
+          "session"
+        ]
       },
       "VerifyCodeDto": {
         "type": "object",
@@ -3946,7 +4224,9 @@
             "description": "Numeric one-time code."
           }
         },
-        "required": ["code"]
+        "required": [
+          "code"
+        ]
       },
       "ResendVerificationResponseDto": {
         "type": "object",
@@ -3963,7 +4243,10 @@
             "format": "date-time"
           }
         },
-        "required": ["sent", "phoneVerified"]
+        "required": [
+          "sent",
+          "phoneVerified"
+        ]
       },
       "ChangePasswordDto": {
         "type": "object",
@@ -3979,7 +4262,10 @@
             "example": "N3w!Passw0rd"
           }
         },
-        "required": ["currentPassword", "newPassword"]
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ]
       },
       "ForgotPasswordDto": {
         "type": "object",
@@ -3990,7 +4276,9 @@
             "example": "0701234567"
           }
         },
-        "required": ["phone"]
+        "required": [
+          "phone"
+        ]
       },
       "GenericMessageDto": {
         "type": "object",
@@ -3999,7 +4287,9 @@
             "type": "string"
           }
         },
-        "required": ["message"]
+        "required": [
+          "message"
+        ]
       },
       "ResetPasswordDto": {
         "type": "object",
@@ -4021,7 +4311,11 @@
             "example": "N3w!Passw0rd"
           }
         },
-        "required": ["phone", "code", "newPassword"]
+        "required": [
+          "phone",
+          "code",
+          "newPassword"
+        ]
       },
       "ChangePhoneDto": {
         "type": "object",
@@ -4039,7 +4333,10 @@
             "description": "New phone number to verify."
           }
         },
-        "required": ["password", "newPhone"]
+        "required": [
+          "password",
+          "newPhone"
+        ]
       },
       "ChangePhoneResponseDto": {
         "type": "object",
@@ -4056,7 +4353,11 @@
             "format": "date-time"
           }
         },
-        "required": ["sent", "newPhone", "resendAvailableAt"]
+        "required": [
+          "sent",
+          "newPhone",
+          "resendAvailableAt"
+        ]
       },
       "PublicSellerProfileDto": {
         "type": "object",
@@ -4137,7 +4438,13 @@
             "format": "date-time"
           }
         },
-        "required": ["id", "action", "entityType", "metadata", "createdAt"]
+        "required": [
+          "id",
+          "action",
+          "entityType",
+          "metadata",
+          "createdAt"
+        ]
       },
       "MySellerAccountDto": {
         "type": "object",
@@ -4147,7 +4454,9 @@
             "format": "uuid"
           },
           "type": {
-            "enum": ["INDIVIDUAL"],
+            "enum": [
+              "INDIVIDUAL"
+            ],
             "type": "string",
             "example": "INDIVIDUAL"
           },
@@ -4164,7 +4473,11 @@
             "nullable": true
           },
           "status": {
-            "enum": ["ACTIVE", "SUSPENDED", "BANNED"],
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED",
+              "BANNED"
+            ],
             "type": "string"
           },
           "createdAt": {
@@ -4176,7 +4489,15 @@
             "format": "date-time"
           }
         },
-        "required": ["id", "type", "displayName", "slug", "status", "createdAt", "updatedAt"]
+        "required": [
+          "id",
+          "type",
+          "displayName",
+          "slug",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
       },
       "MyProfileDto": {
         "type": "object",
@@ -4194,11 +4515,20 @@
             "example": "Ahmad Wesh"
           },
           "role": {
-            "enum": ["USER", "MODERATOR", "ADMIN"],
+            "enum": [
+              "USER",
+              "MODERATOR",
+              "ADMIN"
+            ],
             "type": "string"
           },
           "status": {
-            "enum": ["ACTIVE", "SUSPENDED", "BANNED", "DEACTIVATED"],
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED",
+              "BANNED",
+              "DEACTIVATED"
+            ],
             "type": "string"
           },
           "phoneVerified": {
@@ -4296,7 +4626,13 @@
             "type": "boolean"
           }
         },
-        "required": ["id", "slug", "name", "sortOrder", "hasChildren"]
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "sortOrder",
+          "hasChildren"
+        ]
       },
       "PublicCategoryNodeDto": {
         "type": "object",
@@ -4335,7 +4671,14 @@
             }
           }
         },
-        "required": ["id", "slug", "name", "sortOrder", "hasChildren", "children"]
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "sortOrder",
+          "hasChildren",
+          "children"
+        ]
       },
       "CategoryNameRefDto": {
         "type": "object",
@@ -4351,7 +4694,11 @@
             "type": "string"
           }
         },
-        "required": ["id", "slug", "name"]
+        "required": [
+          "id",
+          "slug",
+          "name"
+        ]
       },
       "PublicCategoryDetailDto": {
         "type": "object",
@@ -4396,7 +4743,13 @@
             }
           }
         },
-        "required": ["id", "slug", "name", "ancestors", "children"]
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "ancestors",
+          "children"
+        ]
       },
       "FilterSchemaOptionDto": {
         "type": "object",
@@ -4408,7 +4761,10 @@
             "type": "string"
           }
         },
-        "required": ["value", "label"]
+        "required": [
+          "value",
+          "label"
+        ]
       },
       "FilterSchemaFieldDto": {
         "type": "object",
@@ -4465,7 +4821,10 @@
             "nullable": true
           },
           "operators": {
-            "example": ["eq", "contains"],
+            "example": [
+              "eq",
+              "contains"
+            ],
             "description": "Filter operations supported for this field (empty when not filterable).",
             "type": "array",
             "items": {
@@ -4473,7 +4832,15 @@
             }
           }
         },
-        "required": ["field", "label", "type", "required", "filterable", "options", "operators"]
+        "required": [
+          "field",
+          "label",
+          "type",
+          "required",
+          "filterable",
+          "options",
+          "operators"
+        ]
       },
       "AdminCategoryTranslationDto": {
         "type": "object",
@@ -4490,7 +4857,10 @@
             "nullable": true
           }
         },
-        "required": ["locale", "name"]
+        "required": [
+          "locale",
+          "name"
+        ]
       },
       "AdminCategoryDto": {
         "type": "object",
@@ -4508,7 +4878,11 @@
             "format": "uuid"
           },
           "status": {
-            "enum": ["ACTIVE", "INACTIVE", "ARCHIVED"],
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "ARCHIVED"
+            ],
             "type": "string"
           },
           "sortOrder": {
@@ -4519,7 +4893,10 @@
             "nullable": true
           },
           "moderationMode": {
-            "enum": ["REVIEW_REQUIRED", "AUTO_APPROVE"],
+            "enum": [
+              "REVIEW_REQUIRED",
+              "AUTO_APPROVE"
+            ],
             "type": "string"
           },
           "name": {
@@ -4584,7 +4961,10 @@
             "example": "گوشی، تبلت و لوازم جانبی"
           }
         },
-        "required": ["locale", "name"]
+        "required": [
+          "locale",
+          "name"
+        ]
       },
       "CreateCategoryDto": {
         "type": "object",
@@ -4602,7 +4982,11 @@
             "example": "mobile-phones"
           },
           "status": {
-            "enum": ["ACTIVE", "INACTIVE", "ARCHIVED"],
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "ARCHIVED"
+            ],
             "type": "string",
             "default": "ACTIVE"
           },
@@ -4618,7 +5002,10 @@
             "example": "mobile"
           },
           "moderationMode": {
-            "enum": ["REVIEW_REQUIRED", "AUTO_APPROVE"],
+            "enum": [
+              "REVIEW_REQUIRED",
+              "AUTO_APPROVE"
+            ],
             "type": "string",
             "default": "REVIEW_REQUIRED"
           },
@@ -4631,7 +5018,9 @@
             }
           }
         },
-        "required": ["translations"]
+        "required": [
+          "translations"
+        ]
       },
       "UpdateCategoryDto": {
         "type": "object",
@@ -4648,7 +5037,11 @@
             "example": "mobile-phones"
           },
           "status": {
-            "enum": ["ACTIVE", "INACTIVE", "ARCHIVED"],
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "ARCHIVED"
+            ],
             "type": "string"
           },
           "sortOrder": {
@@ -4661,7 +5054,10 @@
             "maxLength": 80
           },
           "moderationMode": {
-            "enum": ["REVIEW_REQUIRED", "AUTO_APPROVE"],
+            "enum": [
+              "REVIEW_REQUIRED",
+              "AUTO_APPROVE"
+            ],
             "type": "string"
           },
           "translations": {
@@ -4697,7 +5093,14 @@
             "type": "boolean"
           }
         },
-        "required": ["id", "attributeId", "value", "label", "sortOrder", "isActive"]
+        "required": [
+          "id",
+          "attributeId",
+          "value",
+          "label",
+          "sortOrder",
+          "isActive"
+        ]
       },
       "AdminAttributeDto": {
         "type": "object",
@@ -4896,7 +5299,11 @@
             "default": true
           }
         },
-        "required": ["key", "label", "type"]
+        "required": [
+          "key",
+          "label",
+          "type"
+        ]
       },
       "UpdateAttributeDto": {
         "type": "object",
@@ -5001,7 +5408,10 @@
             "default": true
           }
         },
-        "required": ["value", "label"]
+        "required": [
+          "value",
+          "label"
+        ]
       },
       "UpdateOptionDto": {
         "type": "object",
@@ -5049,7 +5459,13 @@
             "type": "number"
           }
         },
-        "required": ["id", "code", "slug", "name", "sortOrder"]
+        "required": [
+          "id",
+          "code",
+          "slug",
+          "name",
+          "sortOrder"
+        ]
       },
       "PublicCitySummaryDto": {
         "type": "object",
@@ -5070,7 +5486,12 @@
             "type": "number"
           }
         },
-        "required": ["id", "slug", "name", "sortOrder"]
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "sortOrder"
+        ]
       },
       "LocationTranslationRowDto": {
         "type": "object",
@@ -5084,7 +5505,10 @@
             "example": "کابل"
           }
         },
-        "required": ["locale", "name"]
+        "required": [
+          "locale",
+          "name"
+        ]
       },
       "AdminProvinceDto": {
         "type": "object",
@@ -5101,7 +5525,10 @@
             "type": "string"
           },
           "status": {
-            "enum": ["ACTIVE", "INACTIVE"],
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
             "type": "string"
           },
           "sortOrder": {
@@ -5159,7 +5586,10 @@
             "example": "کابل"
           }
         },
-        "required": ["locale", "name"]
+        "required": [
+          "locale",
+          "name"
+        ]
       },
       "CreateProvinceDto": {
         "type": "object",
@@ -5175,7 +5605,10 @@
             "description": "Custom slug; generated from the English name when omitted."
           },
           "status": {
-            "enum": ["ACTIVE", "INACTIVE"],
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
             "type": "string",
             "default": "ACTIVE"
           },
@@ -5193,7 +5626,10 @@
             }
           }
         },
-        "required": ["code", "translations"]
+        "required": [
+          "code",
+          "translations"
+        ]
       },
       "UpdateProvinceDto": {
         "type": "object",
@@ -5207,7 +5643,10 @@
             "maxLength": 140
           },
           "status": {
-            "enum": ["ACTIVE", "INACTIVE"],
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
             "type": "string"
           },
           "sortOrder": {
@@ -5238,7 +5677,10 @@
             "type": "string"
           },
           "status": {
-            "enum": ["ACTIVE", "INACTIVE"],
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
             "type": "string"
           },
           "sortOrder": {
@@ -5284,7 +5726,10 @@
             "description": "Custom slug; generated from the English name when omitted."
           },
           "status": {
-            "enum": ["ACTIVE", "INACTIVE"],
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
             "type": "string",
             "default": "ACTIVE"
           },
@@ -5302,7 +5747,9 @@
             }
           }
         },
-        "required": ["translations"]
+        "required": [
+          "translations"
+        ]
       },
       "UpdateCityDto": {
         "type": "object",
@@ -5312,7 +5759,10 @@
             "maxLength": 140
           },
           "status": {
-            "enum": ["ACTIVE", "INACTIVE"],
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
             "type": "string"
           },
           "sortOrder": {
@@ -5344,7 +5794,11 @@
             "example": "Mobile Phones"
           }
         },
-        "required": ["id", "slug", "name"]
+        "required": [
+          "id",
+          "slug",
+          "name"
+        ]
       },
       "ListingImageDto": {
         "type": "object",
@@ -5377,7 +5831,15 @@
             "type": "number"
           }
         },
-        "required": ["id", "url", "variants", "width", "height", "isPrimary", "sortOrder"]
+        "required": [
+          "id",
+          "url",
+          "variants",
+          "width",
+          "height",
+          "isPrimary",
+          "sortOrder"
+        ]
       },
       "PublicListingSummaryDto": {
         "type": "object",
@@ -5488,7 +5950,11 @@
             ]
           }
         },
-        "required": ["key", "label", "value"]
+        "required": [
+          "key",
+          "label",
+          "value"
+        ]
       },
       "PublicSellerRefDto": {
         "type": "object",
@@ -5508,7 +5974,12 @@
             "type": "boolean"
           }
         },
-        "required": ["slug", "displayName", "memberSince", "phoneVerified"]
+        "required": [
+          "slug",
+          "displayName",
+          "memberSince",
+          "phoneVerified"
+        ]
       },
       "PublicContactDto": {
         "type": "object",
@@ -5518,14 +5989,20 @@
             "description": "Whether contact values can be revealed (Phase 10 endpoint); values are never embedded."
           },
           "methods": {
-            "example": ["PHONE", "WHATSAPP"],
+            "example": [
+              "PHONE",
+              "WHATSAPP"
+            ],
             "type": "array",
             "items": {
               "type": "string"
             }
           }
         },
-        "required": ["available", "methods"]
+        "required": [
+          "available",
+          "methods"
+        ]
       },
       "PublicListingDetailDto": {
         "type": "object",
@@ -5649,7 +6126,11 @@
         "type": "object",
         "properties": {
           "type": {
-            "enum": ["PHONE", "WHATSAPP", "TELEGRAM"],
+            "enum": [
+              "PHONE",
+              "WHATSAPP",
+              "TELEGRAM"
+            ],
             "type": "string"
           },
           "enabled": {
@@ -5661,7 +6142,9 @@
             "maxLength": 160
           }
         },
-        "required": ["type"]
+        "required": [
+          "type"
+        ]
       },
       "CreateListingDto": {
         "type": "object",
@@ -5689,11 +6172,20 @@
             "format": "uuid"
           },
           "condition": {
-            "enum": ["NEW", "LIKE_NEW", "GOOD", "FAIR"],
+            "enum": [
+              "NEW",
+              "LIKE_NEW",
+              "GOOD",
+              "FAIR"
+            ],
             "type": "string"
           },
           "pricingType": {
-            "enum": ["PAID", "FREE", "CONTACT"],
+            "enum": [
+              "PAID",
+              "FREE",
+              "CONTACT"
+            ],
             "type": "string"
           },
           "price": {
@@ -5721,7 +6213,14 @@
             }
           }
         },
-        "required": ["title", "description", "categoryId", "provinceId", "cityId", "condition"]
+        "required": [
+          "title",
+          "description",
+          "categoryId",
+          "provinceId",
+          "cityId",
+          "condition"
+        ]
       },
       "OwnerListingDto": {
         "type": "object",
@@ -5878,11 +6377,20 @@
             "format": "uuid"
           },
           "condition": {
-            "enum": ["NEW", "LIKE_NEW", "GOOD", "FAIR"],
+            "enum": [
+              "NEW",
+              "LIKE_NEW",
+              "GOOD",
+              "FAIR"
+            ],
             "type": "string"
           },
           "pricingType": {
-            "enum": ["PAID", "FREE", "CONTACT"],
+            "enum": [
+              "PAID",
+              "FREE",
+              "CONTACT"
+            ],
             "type": "string"
           },
           "price": {
@@ -5961,7 +6469,13 @@
             "format": "date-time"
           }
         },
-        "required": ["id", "version", "changeType", "snapshot", "createdAt"]
+        "required": [
+          "id",
+          "version",
+          "changeType",
+          "snapshot",
+          "createdAt"
+        ]
       },
       "OwnerListingSummaryDto": {
         "type": "object",
@@ -6064,7 +6578,13 @@
             "type": "number"
           }
         },
-        "required": ["total", "active", "suspended", "banned", "newLast7Days"]
+        "required": [
+          "total",
+          "active",
+          "suspended",
+          "banned",
+          "newLast7Days"
+        ]
       },
       "AdminDashboardListingsDto": {
         "type": "object",
@@ -6093,7 +6613,12 @@
             "type": "number"
           }
         },
-        "required": ["byStatus", "newLast7Days", "publishedLast7Days", "soldLast7Days"]
+        "required": [
+          "byStatus",
+          "newLast7Days",
+          "publishedLast7Days",
+          "soldLast7Days"
+        ]
       },
       "AdminDashboardReportsDto": {
         "type": "object",
@@ -6108,7 +6633,11 @@
             "type": "number"
           }
         },
-        "required": ["open", "underReview", "createdLast7Days"]
+        "required": [
+          "open",
+          "underReview",
+          "createdLast7Days"
+        ]
       },
       "AdminDashboardDto": {
         "type": "object",
@@ -6127,7 +6656,12 @@
             "$ref": "#/components/schemas/AdminDashboardReportsDto"
           }
         },
-        "required": ["generatedAt", "users", "listings", "reports"]
+        "required": [
+          "generatedAt",
+          "users",
+          "listings",
+          "reports"
+        ]
       },
       "DailyCountDto": {
         "type": "object",
@@ -6141,7 +6675,10 @@
             "example": 12
           }
         },
-        "required": ["date", "count"]
+        "required": [
+          "date",
+          "count"
+        ]
       },
       "MarketplaceSummaryListingsDto": {
         "type": "object",
@@ -6165,7 +6702,12 @@
             "type": "number"
           }
         },
-        "required": ["created", "published", "totalCreated", "totalPublished"]
+        "required": [
+          "created",
+          "published",
+          "totalCreated",
+          "totalPublished"
+        ]
       },
       "MarketplaceSummaryUsersDto": {
         "type": "object",
@@ -6180,7 +6722,10 @@
             "type": "number"
           }
         },
-        "required": ["registered", "totalRegistered"]
+        "required": [
+          "registered",
+          "totalRegistered"
+        ]
       },
       "DailyStatPointDto": {
         "type": "object",
@@ -6268,7 +6813,10 @@
             "$ref": "#/components/schemas/EngagementTotalsDto"
           }
         },
-        "required": ["daily", "totals"]
+        "required": [
+          "daily",
+          "totals"
+        ]
       },
       "MarketplaceSummaryDto": {
         "type": "object",
@@ -6291,7 +6839,13 @@
             "$ref": "#/components/schemas/MarketplaceEngagementDto"
           }
         },
-        "required": ["from", "to", "listings", "users", "engagement"]
+        "required": [
+          "from",
+          "to",
+          "listings",
+          "users",
+          "engagement"
+        ]
       },
       "SellerSummaryListingsDto": {
         "type": "object",
@@ -6314,7 +6868,10 @@
             "type": "number"
           }
         },
-        "required": ["byStatus", "total"]
+        "required": [
+          "byStatus",
+          "total"
+        ]
       },
       "SellerSummaryLifetimeDto": {
         "type": "object",
@@ -6326,7 +6883,10 @@
             "type": "number"
           }
         },
-        "required": ["views", "favoriteCount"]
+        "required": [
+          "views",
+          "favoriteCount"
+        ]
       },
       "SellerTopListingDto": {
         "type": "object",
@@ -6340,7 +6900,14 @@
           },
           "status": {
             "type": "string",
-            "enum": ["DRAFT", "PENDING_REVIEW", "ACTIVE", "REJECTED", "SOLD", "ARCHIVED"]
+            "enum": [
+              "DRAFT",
+              "PENDING_REVIEW",
+              "ACTIVE",
+              "REJECTED",
+              "SOLD",
+              "ARCHIVED"
+            ]
           },
           "lifetimeViews": {
             "type": "number"
@@ -6349,7 +6916,13 @@
             "type": "number"
           }
         },
-        "required": ["id", "title", "status", "lifetimeViews", "rangeViews"]
+        "required": [
+          "id",
+          "title",
+          "status",
+          "lifetimeViews",
+          "rangeViews"
+        ]
       },
       "SellerSummaryDto": {
         "type": "object",
@@ -6378,7 +6951,14 @@
             }
           }
         },
-        "required": ["from", "to", "listings", "lifetime", "rangeEngagement", "topListings"]
+        "required": [
+          "from",
+          "to",
+          "listings",
+          "lifetime",
+          "rangeEngagement",
+          "topListings"
+        ]
       },
       "ReorderImageDto": {
         "type": "object",
@@ -6400,11 +6980,17 @@
         "properties": {
           "method": {
             "description": "Which enabled method to reveal (PHONE / WHATSAPP / TELEGRAM).",
-            "enum": ["PHONE", "WHATSAPP", "TELEGRAM"],
+            "enum": [
+              "PHONE",
+              "WHATSAPP",
+              "TELEGRAM"
+            ],
             "type": "string"
           }
         },
-        "required": ["method"]
+        "required": [
+          "method"
+        ]
       },
       "ContactTargetDto": {
         "type": "object",
@@ -6419,7 +7005,10 @@
             "description": "Sanitized contact target; a canonical @handle for TELEGRAM."
           }
         },
-        "required": ["method", "value"]
+        "required": [
+          "method",
+          "value"
+        ]
       },
       "FavoriteViewDto": {
         "type": "object",
@@ -6433,7 +7022,10 @@
             "format": "date-time"
           }
         },
-        "required": ["listingId", "favoritedAt"]
+        "required": [
+          "listingId",
+          "favoritedAt"
+        ]
       },
       "FavoriteListingSummaryDto": {
         "type": "object",
@@ -6523,7 +7115,10 @@
             "$ref": "#/components/schemas/FavoriteListingSummaryDto"
           }
         },
-        "required": ["favoritedAt", "listing"]
+        "required": [
+          "favoritedAt",
+          "listing"
+        ]
       },
       "SubmitReportDto": {
         "type": "object",
@@ -6547,7 +7142,9 @@
             "maxLength": 1000
           }
         },
-        "required": ["reason"]
+        "required": [
+          "reason"
+        ]
       },
       "ReportDto": {
         "type": "object",
@@ -6592,7 +7189,13 @@
             "format": "date-time"
           }
         },
-        "required": ["id", "reason", "status", "createdAt", "updatedAt"]
+        "required": [
+          "id",
+          "reason",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ]
       },
       "AdminSellerRefDto": {
         "type": "object",
@@ -6611,14 +7214,24 @@
           },
           "status": {
             "type": "string",
-            "enum": ["ACTIVE", "SUSPENDED", "BANNED"]
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED",
+              "BANNED"
+            ]
           },
           "activeListings": {
             "type": "number",
             "example": 12
           }
         },
-        "required": ["id", "slug", "displayName", "status", "activeListings"]
+        "required": [
+          "id",
+          "slug",
+          "displayName",
+          "status",
+          "activeListings"
+        ]
       },
       "AdminUserDto": {
         "type": "object",
@@ -6640,11 +7253,20 @@
           },
           "role": {
             "type": "string",
-            "enum": ["USER", "MODERATOR", "ADMIN"]
+            "enum": [
+              "USER",
+              "MODERATOR",
+              "ADMIN"
+            ]
           },
           "status": {
             "type": "string",
-            "enum": ["ACTIVE", "SUSPENDED", "BANNED", "DEACTIVATED"]
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED",
+              "BANNED",
+              "DEACTIVATED"
+            ]
           },
           "phoneVerifiedAt": {
             "format": "date-time",
@@ -6674,7 +7296,15 @@
             ]
           }
         },
-        "required": ["id", "phone", "phoneNormalized", "displayName", "role", "status", "createdAt"]
+        "required": [
+          "id",
+          "phone",
+          "phoneNormalized",
+          "displayName",
+          "role",
+          "status",
+          "createdAt"
+        ]
       },
       "AdminUserDetailDto": {
         "type": "object",
@@ -6696,11 +7326,20 @@
           },
           "role": {
             "type": "string",
-            "enum": ["USER", "MODERATOR", "ADMIN"]
+            "enum": [
+              "USER",
+              "MODERATOR",
+              "ADMIN"
+            ]
           },
           "status": {
             "type": "string",
-            "enum": ["ACTIVE", "SUSPENDED", "BANNED", "DEACTIVATED"]
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED",
+              "BANNED",
+              "DEACTIVATED"
+            ]
           },
           "phoneVerifiedAt": {
             "format": "date-time",
@@ -6779,7 +7418,9 @@
             "description": "Optional temporary suspension end; omit for an indefinite suspension."
           }
         },
-        "required": ["reason"]
+        "required": [
+          "reason"
+        ]
       },
       "BanUserDto": {
         "type": "object",
@@ -6791,7 +7432,9 @@
             "maxLength": 500
           }
         },
-        "required": ["reason"]
+        "required": [
+          "reason"
+        ]
       },
       "AdminListingSellerDto": {
         "type": "object",
@@ -6812,10 +7455,20 @@
           },
           "status": {
             "type": "string",
-            "enum": ["ACTIVE", "SUSPENDED", "BANNED"]
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED",
+              "BANNED"
+            ]
           }
         },
-        "required": ["sellerAccountId", "ownerUserId", "displayName", "slug", "status"]
+        "required": [
+          "sellerAccountId",
+          "ownerUserId",
+          "displayName",
+          "slug",
+          "status"
+        ]
       },
       "AdminListingItemDto": {
         "type": "object",
@@ -6832,7 +7485,14 @@
           },
           "status": {
             "type": "string",
-            "enum": ["DRAFT", "PENDING_REVIEW", "ACTIVE", "REJECTED", "SOLD", "ARCHIVED"]
+            "enum": [
+              "DRAFT",
+              "PENDING_REVIEW",
+              "ACTIVE",
+              "REJECTED",
+              "SOLD",
+              "ARCHIVED"
+            ]
           },
           "price": {
             "type": "number",
@@ -6901,7 +7561,12 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["APPROVE", "REJECT", "ARCHIVE", "RESTORE"]
+              "enum": [
+                "APPROVE",
+                "REJECT",
+                "ARCHIVE",
+                "RESTORE"
+              ]
             }
           }
         },
@@ -6933,7 +7598,12 @@
           },
           "action": {
             "type": "string",
-            "enum": ["APPROVE", "REJECT", "ARCHIVE", "RESTORE"]
+            "enum": [
+              "APPROVE",
+              "REJECT",
+              "ARCHIVE",
+              "RESTORE"
+            ]
           },
           "adminUserId": {
             "type": "string",
@@ -6956,7 +7626,12 @@
             "type": "string"
           }
         },
-        "required": ["id", "action", "adminUserId", "createdAt"]
+        "required": [
+          "id",
+          "action",
+          "adminUserId",
+          "createdAt"
+        ]
       },
       "AdminListingDetailDto": {
         "type": "object",
@@ -6973,7 +7648,14 @@
           },
           "status": {
             "type": "string",
-            "enum": ["DRAFT", "PENDING_REVIEW", "ACTIVE", "REJECTED", "SOLD", "ARCHIVED"]
+            "enum": [
+              "DRAFT",
+              "PENDING_REVIEW",
+              "ACTIVE",
+              "REJECTED",
+              "SOLD",
+              "ARCHIVED"
+            ]
           },
           "price": {
             "type": "number",
@@ -7042,7 +7724,12 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["APPROVE", "REJECT", "ARCHIVE", "RESTORE"]
+              "enum": [
+                "APPROVE",
+                "REJECT",
+                "ARCHIVE",
+                "RESTORE"
+              ]
             }
           },
           "description": {
@@ -7156,7 +7843,9 @@
             "maxLength": 500
           }
         },
-        "required": ["reason"]
+        "required": [
+          "reason"
+        ]
       },
       "AdminListingRefDto": {
         "type": "object",
@@ -7173,10 +7862,22 @@
           },
           "status": {
             "type": "string",
-            "enum": ["DRAFT", "PENDING_REVIEW", "ACTIVE", "REJECTED", "SOLD", "ARCHIVED"]
+            "enum": [
+              "DRAFT",
+              "PENDING_REVIEW",
+              "ACTIVE",
+              "REJECTED",
+              "SOLD",
+              "ARCHIVED"
+            ]
           }
         },
-        "required": ["id", "slug", "title", "status"]
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "status"
+        ]
       },
       "AdminReportUserRefDto": {
         "type": "object",
@@ -7190,10 +7891,19 @@
           },
           "status": {
             "type": "string",
-            "enum": ["ACTIVE", "SUSPENDED", "BANNED", "DEACTIVATED"]
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED",
+              "BANNED",
+              "DEACTIVATED"
+            ]
           }
         },
-        "required": ["id", "displayName", "status"]
+        "required": [
+          "id",
+          "displayName",
+          "status"
+        ]
       },
       "AdminReportDto": {
         "type": "object",
@@ -7221,7 +7931,12 @@
           },
           "status": {
             "type": "string",
-            "enum": ["OPEN", "UNDER_REVIEW", "RESOLVED", "DISMISSED"]
+            "enum": [
+              "OPEN",
+              "UNDER_REVIEW",
+              "RESOLVED",
+              "DISMISSED"
+            ]
           },
           "listing": {
             "nullable": true,
@@ -7275,7 +7990,14 @@
             "type": "string"
           }
         },
-        "required": ["id", "reason", "status", "reporter", "createdAt", "updatedAt"]
+        "required": [
+          "id",
+          "reason",
+          "status",
+          "reporter",
+          "createdAt",
+          "updatedAt"
+        ]
       },
       "ResolveReportDto": {
         "type": "object",

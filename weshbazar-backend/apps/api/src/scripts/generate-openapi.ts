@@ -17,11 +17,12 @@ import { existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { NestFactory } from '@nestjs/core';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 import { config as loadDotenv } from 'dotenv';
 import { AppModule } from '../app.module.js';
 import { configureApp, createFastifyAdapter } from '../bootstrap.js';
 import { validateEnv, type Env } from '../config/env.schema.js';
+import { buildSwaggerConfig } from '../common/http/openapi-document.js';
 
 const ENV_FILES = ['.env', '../../.env'];
 
@@ -51,29 +52,7 @@ export async function generateOpenapiDocument() {
   await configureApp(app, env);
   await app.init();
 
-  const document = SwaggerModule.createDocument(
-    app,
-    new DocumentBuilder()
-      .setTitle('WeshBazar API')
-      .setDescription(
-        'Afghanistan C2C marketplace API (v1). All endpoints return the standard ' +
-          'success/error envelope: { success, data|error, meta?, requestId }.',
-      )
-      .setVersion('1.0')
-      .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'access-token')
-      .addCookieAuth(
-        env.REFRESH_COOKIE_NAME,
-        {
-          type: 'apiKey',
-          in: 'cookie',
-          name: env.REFRESH_COOKIE_NAME,
-          description:
-            'HttpOnly refresh cookie (sent automatically by the browser to /api/v1/auth only).',
-        },
-        'refresh-cookie',
-      )
-      .build(),
-  );
+  const document = SwaggerModule.createDocument(app, buildSwaggerConfig(env));
 
   await app.close();
 
