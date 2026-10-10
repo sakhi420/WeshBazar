@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * WeshBazar semantic color tokens (master prompt §10).
+ * Stored as HSL channel triplets so Tailwind opacity modifiers work.
+ * Reference via the Tailwind theme (bg-primary, text-foreground, ...),
+ * never as raw hex in components.
+ */
+@layer base {
+  :root {
+    /* Brand */
+    --primary: 175 77% 26%; /* #0F766E Primary Teal */
+    --primary-dark: 173 62% 11%; /* #0B2F2B Primary Dark */
+    --primary-soft: 172 43% 93%; /* #E6F5F3 Primary Soft */
+    --primary-foreground: 0 0% 100%;
+    --accent: 38 92% 50%; /* #F59E0B Brand Orange */
+    --accent-dark: 32 95% 44%; /* #D97706 Orange Dark */
+    --accent-foreground: 173 62% 11%;
+
+    /* Neutrals */
+    --foreground: 173 62% 11%; /* #0B2F2B Text */
+    --secondary: 215 16% 47%; /* #64748B Secondary */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 215 20% 65%; /* #94A3B8 Muted */
+    --muted-foreground: 215 16% 47%;
+    --border: 214 32% 91%; /* #E2E8F0 Border */
+    --input: 214 32% 91%;
+    --background: 210 40% 98%; /* #F8FAFC Background */
+    --surface: 0 0% 100%; /* #FFFFFF Surface */
+    --ring: 175 77% 26%;
+
+    /* Status */
+    --success: 142 72% 29%; /* #15803D */
+    --danger: 0 72% 51%; /* #DC2626 */
+    --warning: 26 90% 37%; /* #B45309 */
+    --info: 201 96% 32%; /* #0369A1 */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    /* fa-AF + RTL is set on <html> in the root layout; enforce sensible text. */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* §15 Motion — respect reduced-motion globally. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /*
+   * §8 Bidi isolation for phone numbers, URLs, emails, model names, handles,
+   * codes, and mixed English/Persian strings embedded in RTL text.
+   */
+  .bidi-isolate {
+    unicode-bidi: isolate;
+  }
+  .bidi-ltr {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
+  /* Logical-property helpers to keep components direction-aware (§8). */
+  .flip-rtl:where([dir='rtl'] *) {
+    transform: scaleX(-1);
+  }
+}
