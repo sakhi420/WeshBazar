@@ -200,3 +200,18 @@ export function parseDiscoverySearchParams(
     filter: list(raw.filter, FILTER_SEPARATOR),
   };
 }
+/**
+ * Stable deterministic key for a discovery query.
+ * Used as React key so DiscoveryResults remounts cleanly when filters change.
+ * Avoids JSON.stringify which has non-deterministic object key ordering.
+ */
+export function discoveryKey(query: DiscoveryQuery): string {
+  const entries = Object.entries(query)
+    .filter(([, v]) => v !== undefined && v !== null)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => {
+      if (Array.isArray(v)) return `${k}:${v.slice().sort().join(',')}`;
+      return `${k}:${String(v)}`;
+    });
+  return entries.join('|');
+}

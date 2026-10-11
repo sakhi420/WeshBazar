@@ -7,7 +7,7 @@ import { fetchCategoriesServer } from '@/features/categories';
 import { fetchListingsServer } from '@/features/listings';
 import type { PublicListingSummary } from '@/features/listings';
 import { fetchProvincesServer } from '@/features/locations';
-import { parseDiscoverySearchParams, toDiscoveryQuery } from '@/features/search';
+import { parseDiscoverySearchParams, toDiscoveryQuery, discoveryKey } from '@/features/search';
 import { ActiveFilterChips } from '@/features/search/components/active-filter-chips';
 import { DiscoveryResults } from '@/features/search/components/discovery-results';
 import {
@@ -89,10 +89,16 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             className="mt-3"
           />
 
+          {listings.page && listings.page.items.length > 0 ? (
+            <p className="mt-4 text-ui text-muted-foreground">
+              {listings.page.items.length} آگهی پیدا شد
+            </p>
+          ) : null}
+
           <div className="mt-4">
             {listings.page !== null ? (
               <DiscoveryResults
-                key={JSON.stringify(query)}
+                key={discoveryKey(query)}
                 query={query}
                 initialPage={listings.page}
                 emptyAction={

@@ -274,7 +274,7 @@ export function MobileFilterSheet({ provinces, categories, filterSchema, classNa
         }}
       >
         <div className="flex h-full w-full flex-col">
-          <header className="flex items-center justify-between border-b border-border px-4 py-2.5">
+          <header className="flex items-center justify-between border-b border-border px-4 py-3">
             <h2 className="text-section font-semibold text-foreground">فیلترها</h2>
             <Button type="button" variant="ghost" size="icon" aria-label="بستن فیلترها" onClick={close}>
               <X aria-hidden />
@@ -288,7 +288,7 @@ export function MobileFilterSheet({ provinces, categories, filterSchema, classNa
               idPrefix="filters-mobile"
             />
           </div>
-          <footer className="flex items-center gap-2 border-t border-border px-4 py-3">
+          <footer className="flex items-center gap-2 border-t border-border px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]">
             <ClearFiltersButton />
             <Button type="button" className="flex-1" onClick={close}>
               نمایش نتایج
