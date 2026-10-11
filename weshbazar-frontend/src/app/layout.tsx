@@ -1,23 +1,29 @@
 import type { Metadata, Viewport } from 'next';
-import { Vazirmatn } from 'next/font/google';
+import localFont from 'next/font/local';
 import { siteConfig } from '@/config/site';
 import { brandAssets } from '@/config/brand';
 import { DEFAULT_DIR, DEFAULT_LOCALE } from '@/lib/i18n/config';
 import { Providers } from './providers';
-import { SiteHeader } from '@/components/layout/site-header';
+import { MobileHeader } from '@/components/layout/mobile-header';
+import { DesktopHeader } from '@/components/layout/desktop-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { MobileBottomNav } from '@/components/layout/mobile-bottom-nav';
 import './globals.css';
 
 /**
- * Primary Persian font (master prompt §12). Self-hosting via next/font/local is
- * the eventual target; next/font/google is used until the Vazirmatn files are
- * vendored into the repo (see README decisions).
+ * Primary Persian font (master prompt §12). Self-hosted Vazir via next/font/local.
+ * Weights: 300 (Light), 400 (Regular), 500 (Medium), 700 (Bold).
  */
-const vazirmatn = Vazirmatn({
-  subsets: ['arabic', 'latin'],
+const vazir = localFont({
+  src: [
+    { path: './fonts/Vazir-Light.woff2', weight: '300', style: 'normal' },
+    { path: './fonts/Vazir.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/Vazir-Medium.woff2', weight: '500', style: 'normal' },
+    { path: './fonts/Vazir-Bold.woff2', weight: '700', style: 'normal' },
+  ],
   variable: '--font-vazirmatn',
   display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -46,8 +52,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    // fa-AF + RTL is the document default (§8). Components stay direction-aware.
-    <html lang={DEFAULT_LOCALE} dir={DEFAULT_DIR} className={vazirmatn.variable} suppressHydrationWarning>
+    <html lang={DEFAULT_LOCALE} dir={DEFAULT_DIR} className={vazir.variable} suppressHydrationWarning>
       <body className="min-h-dvh bg-background font-sans text-foreground antialiased">
         <Providers>
           <a
@@ -57,7 +62,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             رفتن به محتوای اصلی
           </a>
           <div className="flex min-h-dvh flex-col">
-            <SiteHeader />
+            <MobileHeader />
+            <DesktopHeader />
             <main id="main" className="flex-1 pb-bottom-nav lg:pb-0">
               {children}
             </main>

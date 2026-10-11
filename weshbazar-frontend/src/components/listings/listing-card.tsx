@@ -31,7 +31,7 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
         href={`/listing/${listing.slug}`}
         className="flex h-full flex-col overflow-hidden rounded-card border border-border bg-surface transition-shadow duration-small hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        <div className="relative h-28 w-full shrink-0 overflow-hidden bg-muted/20">
+        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-muted/20">
           {image ? (
             // eslint-disable-next-line @next/next/no-img-element -- API origin is deploy-time configurable; next/image remotePatterns cannot know it
             <img

@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Search, LayoutGrid, ArrowLeft, Plus, ShieldAlert } from 'lucide-react';
+import { LayoutGrid, ArrowLeft, Plus, ShieldAlert } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { ErrorState } from '@/components/feedback/error-state';
 import { ListingGrid } from '@/components/listings/listing-grid';
+import { CategoryShortcutGrid } from '@/components/discovery/category-shortcut-grid';
+import { LocationPicker } from '@/components/location/location-picker';
+import { SearchField } from '@/features/search/components/search-field';
 import { Button } from '@/components/ui/button';
 import { SectionHeader } from '@/components/layout/section-header';
 import { ApiError } from '@/lib/api';
@@ -64,7 +67,7 @@ export default async function HomePage() {
 
   return (
     <PageContainer className="space-y-8">
-      {/* Compact, search-first opening viewport (§16). No giant hero banner. */}
+      {/* Search-first opening viewport (§16, §55). No giant hero banner. */}
       <section className="rounded-surface border border-border bg-surface p-4 sm:p-6">
         <h1 className="text-display-mobile font-bold text-foreground sm:text-heading">
           بازار خرید و فروش در افغانستان
@@ -74,62 +77,34 @@ export default async function HomePage() {
           فروشنده در تماس باشید.
         </p>
 
-        <Link
-          href="/search"
-          className="mt-4 flex h-control-lg w-full items-center gap-2 rounded-control border border-input bg-background px-4 text-muted-foreground transition-colors duration-small hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-        >
-          <Search className="size-5 shrink-0" aria-hidden />
-          <span className="text-body">جست‌وجوی آگهی‌ها…</span>
-        </Link>
+        <SearchField className="mt-4 w-full" />
+        <LocationPicker className="mt-3" />
       </section>
 
-      {/* Category discovery */}
-      <section aria-labelledby="categories-heading" className="space-y-3">
-        <div className="flex items-center justify-between gap-3">
+      {/* Category discovery — compact one-row pills (§108) */}
+      {catResult.status === 'ok' ? (
+        <section aria-labelledby="categories-heading" className="space-y-2">
           <h2 id="categories-heading" className="flex items-center gap-2 text-section font-semibold">
             <LayoutGrid className="size-5 text-primary" aria-hidden />
             دسته‌بندی‌ها
           </h2>
-          <Link
-            href="/search"
-            className="inline-flex items-center gap-1 rounded-control text-ui text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-          >
-            مشاهده همه
-            <ArrowLeft className="size-4" aria-hidden />
-          </Link>
-        </div>
-
-        {catResult.status === 'ok' ? (
-          <div className="flex flex-wrap gap-2">
-            {topCategories.map((cat) => (
-              <li key={cat.id}>
-                <Link
-                  href={`/category/${cat.slug}`}
-                  className="flex h-control items-center justify-center rounded-card border border-border bg-surface px-3 text-center text-ui font-medium text-foreground transition-colors duration-small hover:border-primary hover:bg-primary-soft hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-                >
-                  <span className="truncate">{cat.name}</span>
-                </Link>
-              </li>
-            ))}
-          </div>
-        ) : null}
-
-        {catResult.status === 'empty' ? (
-          <EmptyState
-            icon={LayoutGrid}
-            title="هنوز دسته‌بندی‌ای وجود ندارد"
-            description="به‌محض فعال شدن دسته‌بندی‌ها از سوی مدیران، اینجا نمایش داده می‌شوند."
-          />
-        ) : null}
-
-        {catResult.status === 'error' ? (
-          <ErrorState
-            title="دسته‌بندی‌ها بارگذاری نشد"
-            description="در حال حاضر امکان دریافت دسته‌بندی‌ها از سرور وجود ندارد. کمی بعد دوباره تلاش کنید."
-            requestId={catResult.requestId}
-          />
-        ) : null}
-      </section>
+          <CategoryShortcutGrid categories={topCategories} />
+        </section>
+      ) : null}
+      {catResult.status === 'empty' ? (
+        <EmptyState
+          icon={LayoutGrid}
+          title="هنوز دسته‌بندی‌ای وجود ندارد"
+          description="به‌محض فعال شدن دسته‌بندی‌ها از سوی مدیران، اینجا نمایش داده می‌شوند."
+        />
+      ) : null}
+      {catResult.status === 'error' ? (
+        <ErrorState
+          title="دسته‌بندی‌ها بارگذاری نشد"
+          description="در حال حاضر امکان دریافت دسته‌بندی‌ها از سرور وجود ندارد. کمی بعد دوباره تلاش کنید."
+          requestId={catResult.requestId}
+        />
+      ) : null}
 
       {/* Latest listings */}
       <section aria-labelledby="latest-heading" className="space-y-3">

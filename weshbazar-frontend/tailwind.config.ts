@@ -91,7 +91,7 @@ const config: Config = {
         control: '2.75rem', // 44px
         'control-lg': '3rem', // 48px major mobile control
         header: '3.5rem', // 56px app header
-        'bottom-nav': '3.75rem', // 60px mobile bottom navigation
+        'bottom-nav': '4rem', // 64px mobile bottom navigation (§103)
       },
       zIndex: {
         header: '40',
