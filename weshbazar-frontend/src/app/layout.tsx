@@ -6,6 +6,7 @@ import { DEFAULT_DIR, DEFAULT_LOCALE } from '@/lib/i18n/config';
 import { Providers } from './providers';
 import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
+import { MobileBottomNav } from '@/components/layout/mobile-bottom-nav';
 import './globals.css';
 
 /**
@@ -57,9 +58,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
           <div className="flex min-h-dvh flex-col">
             <SiteHeader />
-            <main id="main" className="flex-1">
+            <main id="main" className="flex-1 pb-bottom-nav lg:pb-0">
               {children}
             </main>
+            <MobileBottomNav />
             <SiteFooter />
           </div>
         </Providers>

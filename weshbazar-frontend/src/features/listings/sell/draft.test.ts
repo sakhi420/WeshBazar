@@ -7,6 +7,8 @@ import type { FilterSchemaField } from '@/features/categories';
 import type { OwnerListing } from '../types';
 import {
   SELL_DRAFT_STORAGE_KEY,
+  scopedDraftStorageKey,
+  clearSellDraftForUser,
   buildListingCreatePayload,
   buildListingUpdatePayload,
   contactMethodsFromDraft,
@@ -269,5 +271,33 @@ describe('step prerequisites (§34–§41)', () => {
     expect(hasBasicInfo(completeDraft())).toBe(true);
     expect(hasBasicInfo({ ...completeDraft(), price: '' })).toBe(false);
     expect(hasBasicInfo({ ...completeDraft(), pricingType: 'FREE' })).toBe(true);
+  });
+});
+
+describe('owner-scoped isolation (§437)', () => {
+  const USER_A = 'user-a-123';
+  const USER_B = 'user-b-456';
+
+  it('scopes the storage key to the owner', () => {
+    expect(scopedDraftStorageKey(USER_A)).toBe('weshbazar.sell-draft.v1.user-a-123');
+    expect(scopedDraftStorageKey(USER_B)).not.toBe(scopedDraftStorageKey(USER_A));
+  });
+
+  it('clearSellDraftForUser removes only the targeted account draft', () => {
+    const draftA = completeDraft();
+    const draftB = { ...completeDraft(), title: 'B user ad' };
+
+    window.localStorage.setItem(scopedDraftStorageKey(USER_A), serializeDraft(draftA));
+    window.localStorage.setItem(scopedDraftStorageKey(USER_B), serializeDraft(draftB));
+
+    clearSellDraftForUser(USER_A);
+
+    expect(window.localStorage.getItem(scopedDraftStorageKey(USER_A))).toBeNull();
+    expect(window.localStorage.getItem(scopedDraftStorageKey(USER_B))).not.toBeNull();
+  });
+
+  afterEach(() => {
+    window.localStorage.removeItem(scopedDraftStorageKey(USER_A));
+    window.localStorage.removeItem(scopedDraftStorageKey(USER_B));
   });
 });

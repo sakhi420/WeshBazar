@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { useState, type ReactNode } from 'react';
 import { ApiError } from '@/lib/api';
+import { AuthProvider } from '@/components/auth/auth-provider';
 
 function makeQueryClient(): QueryClient {
   return new QueryClient({
@@ -21,14 +22,11 @@ function makeQueryClient(): QueryClient {
         gcTime: 5 * 60_000,
         refetchOnWindowFocus: false,
         retry: (failureCount, error) => {
-          // Only auto-retry idempotent GETs on 5xx / transport failures,
-          // once, per frontend-error-map.md §5. Never retry 4xx.
           if (error instanceof ApiError && error.isRetriableGet && failureCount < 1) return true;
           return false;
         },
       },
       mutations: {
-        // Non-idempotent writes are never auto-retried (frontend-error-map.md §5).
         retry: false,
       },
     },
@@ -40,7 +38,9 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NuqsAdapter>{children}</NuqsAdapter>
+      <NuqsAdapter>
+        <AuthProvider>{children}</AuthProvider>
+      </NuqsAdapter>
     </QueryClientProvider>
   );
 }

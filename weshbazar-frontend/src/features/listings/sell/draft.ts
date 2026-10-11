@@ -35,6 +35,32 @@ import { isSellStepKey, type SellStepKey } from './sell-steps';
 /** localStorage key; the version suffix allows future migrations. */
 export const SELL_DRAFT_STORAGE_KEY = 'weshbazar.sell-draft.v1';
 
+/**
+ * Owner-scoped draft key (§437). When the caller knows the authenticated user,
+ * use this instead of the unscoped key so user A's draft never leaks to user B
+ * on a shared device after logout/login.
+ *
+ * Migration: if the unscoped key holds a draft and the scoped key does not,
+ * the provider quarantines the unscoped draft and only resumes it after the
+ * user explicitly confirms ownership (see sell-provider.tsx).
+ */
+export function scopedDraftStorageKey(userId: string): `weshbazar.sell-draft.v1.${string}` {
+  return `${SELL_DRAFT_STORAGE_KEY}.${userId}`;
+}
+
+/**
+ * Clear the sell draft for a specific user from localStorage (§437).
+ * Called on logout / session expiry so the next user on the same device
+ * never sees the previous account's draft.
+ */
+export function clearSellDraftForUser(userId: string): void {
+  try {
+    window.localStorage.removeItem(scopedDraftStorageKey(userId));
+  } catch {
+    // Storage may be unavailable — silently ignore.
+  }
+}
+
 const CONDITIONS: readonly ListingCondition[] = ['NEW', 'LIKE_NEW', 'GOOD', 'FAIR'];
 const PRICING_TYPES: readonly PricingType[] = ['PAID', 'FREE', 'CONTACT'];
 

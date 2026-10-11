@@ -1,12 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Search, LayoutGrid, ArrowLeft } from 'lucide-react';
+import { Search, LayoutGrid, ArrowLeft, Plus, ShieldAlert } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { ErrorState } from '@/components/feedback/error-state';
+import { ListingGrid } from '@/components/listings/listing-grid';
+import { Button } from '@/components/ui/button';
+import { SectionHeader } from '@/components/layout/section-header';
 import { ApiError } from '@/lib/api';
 import { siteConfig } from '@/config/site';
 import { fetchCategoriesServer, type CategorySummary } from '@/features/categories';
+import { fetchListingsServer, type PublicListingSummary } from '@/features/listings';
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -22,13 +26,30 @@ type CategoriesResult =
   | { status: 'empty' }
   | { status: 'error'; requestId?: string };
 
+type ListingsResult =
+  | { status: 'ok'; listings: PublicListingSummary[] }
+  | { status: 'empty' }
+  | { status: 'error'; requestId?: string };
+
 async function loadCategories(): Promise<CategoriesResult> {
   try {
     const categories = await fetchCategoriesServer();
     if (!Array.isArray(categories) || categories.length === 0) return { status: 'empty' };
     return { status: 'ok', categories };
   } catch (error) {
-    // Never fabricate data on failure — surface an honest error state (§19).
+    return {
+      status: 'error',
+      requestId: error instanceof ApiError ? error.requestId : undefined,
+    };
+  }
+}
+
+async function loadLatestListings(): Promise<ListingsResult> {
+  try {
+    const page = await fetchListingsServer({ sort: 'newest', limit: 12 });
+    if (!page.items || page.items.length === 0) return { status: 'empty' };
+    return { status: 'ok', listings: page.items };
+  } catch (error) {
     return {
       status: 'error',
       requestId: error instanceof ApiError ? error.requestId : undefined,
@@ -37,7 +58,9 @@ async function loadCategories(): Promise<CategoriesResult> {
 }
 
 export default async function HomePage() {
-  const result = await loadCategories();
+  const [catResult, listResult] = await Promise.all([loadCategories(), loadLatestListings()]);
+  const topCategories = catResult.status === 'ok' ? catResult.categories.slice(0, 8) : [];
+  const hasMoreCategories = catResult.status === 'ok' && catResult.categories.length > 8;
 
   return (
     <PageContainer className="space-y-8">
@@ -76,22 +99,22 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        {result.status === 'ok' ? (
-          <ul className="grid grid-cols-2 gap-card-gap xs:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-            {result.categories.map((category) => (
-              <li key={category.id}>
+        {catResult.status === 'ok' ? (
+          <div className="flex flex-wrap gap-2">
+            {topCategories.map((cat) => (
+              <li key={cat.id}>
                 <Link
-                  href={`/category/${category.slug}`}
+                  href={`/category/${cat.slug}`}
                   className="flex h-control items-center justify-center rounded-card border border-border bg-surface px-3 text-center text-ui font-medium text-foreground transition-colors duration-small hover:border-primary hover:bg-primary-soft hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
-                  <span className="truncate">{category.name}</span>
+                  <span className="truncate">{cat.name}</span>
                 </Link>
               </li>
             ))}
-          </ul>
+          </div>
         ) : null}
 
-        {result.status === 'empty' ? (
+        {catResult.status === 'empty' ? (
           <EmptyState
             icon={LayoutGrid}
             title="هنوز دسته‌بندی‌ای وجود ندارد"
@@ -99,13 +122,63 @@ export default async function HomePage() {
           />
         ) : null}
 
-        {result.status === 'error' ? (
+        {catResult.status === 'error' ? (
           <ErrorState
             title="دسته‌بندی‌ها بارگذاری نشد"
             description="در حال حاضر امکان دریافت دسته‌بندی‌ها از سرور وجود ندارد. کمی بعد دوباره تلاش کنید."
-            requestId={result.requestId}
+            requestId={catResult.requestId}
           />
         ) : null}
+      </section>
+
+      {/* Latest listings */}
+      <section aria-labelledby="latest-heading" className="space-y-3">
+        <SectionHeader
+          id="latest-heading"
+          title="آخرین آگهی‌ها"
+          action={
+            <Link href="/search?sort=newest" className="inline-flex items-center gap-1 rounded-control text-ui text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+              مشاهده همه
+              <ArrowLeft className="size-4" aria-hidden />
+            </Link>
+          }
+        />
+        {listResult.status === 'ok' ? (
+          <ListingGrid listings={listResult.listings} />
+        ) : null}
+        {listResult.status === 'empty' ? (
+          <EmptyState title="هنوز آگهی‌ای ثبت نشده است" description="اولین آگهی را شما ثبت کنید!" />
+        ) : null}
+        {listResult.status === 'error' ? (
+          <ErrorState title="آگهی‌ها بارگذاری نشد" description="در حال حاضر امکان دریافت آگهی‌ها وجود ندارد." requestId={listResult.requestId} />
+        ) : null}
+      </section>
+
+      {/* Sell CTA */}
+      <section className="rounded-surface border border-border bg-surface p-4 text-center sm:p-6">
+        <h2 className="text-section font-semibold text-foreground">کالایی برای فروش دارید؟</h2>
+        <p className="mt-1 mx-auto max-w-prose text-body text-muted-foreground">
+          آگهی خود را رایگان ثبت کنید و مستقیماً با خریداران در تماس باشید.
+        </p>
+        <Button asChild variant="accent" size="lg" className="mt-4">
+          <Link href="/sell"><Plus aria-hidden /><span>ثبت آگهی رایگان</span></Link>
+        </Button>
+      </section>
+
+      {/* Safety */}
+      <section className="rounded-surface border border-border bg-surface p-4 sm:p-6">
+        <div className="flex items-start gap-3">
+          <ShieldAlert className="size-5 shrink-0 text-warning" aria-hidden />
+          <div>
+            <h2 className="text-ui font-semibold text-foreground">نکات ایمنی</h2>
+            <ul className="mt-2 space-y-1 text-ui text-muted-foreground">
+              <li>·  قبل از پرداخت، کالا را از نزدیک بررسی کنید.</li>
+              <li>·  در مکان عمومی و امن معامله کنید.</li>
+              <li>·  از واریز بیعانه خودداری کنید.</li>
+              <li>·  در صورت مشاهده تخلف، آگهی را گزارش دهید.</li>
+            </ul>
+          </div>
+        </div>
       </section>
     </PageContainer>
   );

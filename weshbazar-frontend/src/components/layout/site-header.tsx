@@ -1,12 +1,14 @@
 import Link from 'next/link';
-import { Search, Plus, User } from 'lucide-react';
+import { Search, Plus } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/brand-logo';
 import { Button } from '@/components/ui/button';
+import { HeaderAuthActions } from '@/components/layout/header-auth-actions';
 
 /**
- * Public app header (master prompt §37 AppShell/Header).
- * Server Component — no interactivity beyond navigation, so no client boundary.
- * RTL: the logo sits at the inline-start, actions at the inline-end.
+ * Public app header (master prompt §101, §102, §491).
+ * Logo + search entry + sell CTA + auth-aware user area.
+ * The auth section is a Client Component; the rest stays server-rendered.
+ * RTL: logo at inline-start, actions at inline-end.
  */
 export function SiteHeader() {
   return (
@@ -20,7 +22,7 @@ export function SiteHeader() {
           <BrandLogo height={30} priority />
         </Link>
 
-        {/* Search entry — the search page owns the full input + URL state (§25/§27). */}
+        {/* Search entry — the search page owns the full input + URL state. */}
         <Link
           href="/search"
           className="flex h-control min-w-0 flex-1 items-center gap-2 rounded-control border border-input bg-background px-3 text-muted-foreground transition-colors duration-small hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
@@ -36,11 +38,7 @@ export function SiteHeader() {
               <span>ثبت آگهی</span>
             </Link>
           </Button>
-          <Button asChild variant="ghost" size="icon" aria-label="حساب کاربری">
-            <Link href="/auth/login">
-              <User aria-hidden />
-            </Link>
-          </Button>
+          <HeaderAuthActions />
         </nav>
       </div>
     </header>

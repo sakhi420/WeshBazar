@@ -1,38 +1,31 @@
-# Frontend Execution Status
+# WeshBazar Frontend — Execution Status
 
-- Current phase: `Phase 00 - Baseline and repository preservation`
-- Phase status: `PASS`
-- Current slice: shared public shell hardening for V5 baseline
-- Last updated: `2026-10-10`
+**Last Updated:** 2026-10-11
+**Current Phase:** Phase 3 Complete ✅ (Plan Mode) → Awaiting Phase 4 approval
 
-## Completed gates
+## Phase Progress
+| Phase | Status | Date | Gates |
+|---|---|---|---|
+| 0 - Baseline | ✅ PASS | 2026-10-11 | Audit document created |
+| 1 - API Audit | ✅ PASS | 2026-10-11 | All 30+ endpoints verified, 178 tests |
+| 2 - Session/Draft Isolation | ✅ PASS | 2026-10-11 | AuthProvider, logout, draft scoping, 185 tests |
+| 3 - Visual Design System | ✅ PASS | 2026-10-11 | Plan Mode — tokens audited, research mapped, gates defined |
+| 4 - Shell + Homepage | ⏳ Pending | — | Awaiting approval |
+| 5 - Discovery | ⏳ Pending | — | — |
+| 6 - Listing Detail | ⏳ Pending | — | — |
+| 7 - Seller Flow | ⏳ Pending | — | — |
+| 8 - Auth + Account | ⏳ Pending | — | — |
+| 9 - Admin | ⏳ Pending | — | — |
+| 10 - Regression | ⏳ Pending | — | — |
 
-- Baseline sources confirmed: `../AGENTS.md`, `../weshbazar-backend/docs/openapi.json`, `docs/implementation-status.md`, `../WeshBazar_Frontend_Master_Prompt_V5_EN(1).md`
-- UI guidance fetched from Vercel Web Interface Guidelines
-- Added shared-shell fixes:
-  - root skip link
-  - shared site footer with valid routes only
-  - footer brand treatment using official white logo asset
-- Engineering checks passed:
-  - `npm run typecheck`
-  - `npm run lint`
-  - `npm test`
-  - `npm run build`
+## Phase 3 Results
+- **Token Audit:** 15/15 colors match frozen contract ✅
+- **Contrast Issues Found:** Orange text (1.8:1 ❌), Danger text (4.0:1 ❌), Bottom-nav height (60px vs 64px)
+- **Research:** 6 platforms mapped to WeshBazar patterns
+- **Afghanistan Constraints:** 6 device/localization rules documented
+- **Component Geometry:** 7 contracts defined with exact px values
+- **Release Gates:** 13 gates for Phase 4
+- **Report:** `docs/frontend-execution/phases/phase-03-design.md`
 
-## Active blockers
-
-- Real browser screenshots and visual evidence for V5 are not captured yet
-- UI/UX Pro Max skill referenced by V5 is not available in the current skill list
-- `vibe-prospecting` cannot be used meaningfully yet because no prospecting target was provided and no matching connector tools are exposed in this environment
-
-## Files touched in this slice
-
-- `src/app/layout.tsx`
-- `src/components/layout/site-footer.tsx`
-- `docs/frontend-execution/BASELINE.md`
-- `docs/frontend-execution/DESIGN-DECISIONS.md`
-- `docs/frontend-execution/phases/phase-00-baseline.md`
-
-## Next exact task
-
-Run the first visual V5 pass on the shared shell and homepage: inspect header, footer, search prominence, location control, listing-first above-the-fold behavior, and mobile/desktop density against the V5 contract before expanding the redesign.
+## Blockers
+- None. Phase 4 ready upon user approval.

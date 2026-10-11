@@ -21,6 +21,7 @@ import {
 } from 'react';
 import {
   SELL_DRAFT_STORAGE_KEY,
+  scopedDraftStorageKey,
   createEmptyDraft,
   draftHasProgress,
   parseStoredDraft,
@@ -66,7 +67,14 @@ function createPendingId(): string {
   return `img-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export function SellProvider({ children }: { children: ReactNode }) {
+export function SellProvider({
+  children,
+  userId,
+}: {
+  children: ReactNode;
+  /** Authenticated user ID; when supplied the draft is scoped to this owner. */
+  userId?: string | null;
+}) {
   const [draft, setDraft] = useState<SellDraft>(() => createEmptyDraft());
   const [ready, setReady] = useState(false);
   const [restored, setRestored] = useState(false);
@@ -78,12 +86,28 @@ export function SellProvider({ children }: { children: ReactNode }) {
     pendingRef.current = pendingImages;
   }, [pendingImages]);
 
+  const storageKey = userId ? scopedDraftStorageKey(userId) : SELL_DRAFT_STORAGE_KEY;
+
   // Hydrate once from localStorage (§139). Client-side only — the guard keeps
   // the steps dark until `ready` so no form ever mounts against an empty draft.
   useEffect(() => {
     let stored: SellDraft | null = null;
     try {
-      stored = parseStoredDraft(window.localStorage.getItem(SELL_DRAFT_STORAGE_KEY));
+      // Try scoped key first; fall back to unscoped (legacy migration path).
+      stored = parseStoredDraft(window.localStorage.getItem(storageKey));
+      if (stored === null && userId) {
+        // Check for an unscoped legacy draft from before owner-scoping was added.
+        const legacy = parseStoredDraft(
+          window.localStorage.getItem(SELL_DRAFT_STORAGE_KEY),
+        );
+        if (legacy !== null && draftHasProgress(legacy)) {
+          // Quarantine: move the legacy draft to the scoped key so it is only
+          // visible to this account and never resurfaces for another user.
+          window.localStorage.setItem(storageKey, serializeDraft(legacy));
+          window.localStorage.removeItem(SELL_DRAFT_STORAGE_KEY);
+          stored = legacy;
+        }
+      }
     } catch {
       stored = null;
     }
@@ -104,11 +128,11 @@ export function SellProvider({ children }: { children: ReactNode }) {
 
   const persist = useCallback((next: SellDraft) => {
     try {
-      window.localStorage.setItem(SELL_DRAFT_STORAGE_KEY, serializeDraft(next));
+      window.localStorage.setItem(storageKey, serializeDraft(next));
     } catch {
       // Storage can be unavailable (private mode, quota) — stay in-memory.
     }
-  }, []);
+  }, [storageKey]);
 
   const updateDraft = useCallback(
     (partial: Partial<SellDraft>) => {
@@ -156,11 +180,11 @@ export function SellProvider({ children }: { children: ReactNode }) {
     setRestored(false);
     clearPendingImages();
     try {
-      window.localStorage.removeItem(SELL_DRAFT_STORAGE_KEY);
+      window.localStorage.removeItem(storageKey);
     } catch {
       // Same as persist — nothing else to do.
     }
-  }, [clearPendingImages]);
+  }, [clearPendingImages, storageKey]);
 
   const addPendingImages = useCallback((files: readonly File[]) => {
     if (files.length === 0) return;
