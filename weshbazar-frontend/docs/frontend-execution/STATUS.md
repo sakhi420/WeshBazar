@@ -1,31 +1,34 @@
 # WeshBazar Frontend — Execution Status
 
 **Last Updated:** 2026-10-11
-**Current Phase:** Phase 3 Complete ✅ (Plan Mode) → Awaiting Phase 4 approval
+**Current Phase:** Pre-Phase 7 — Reactive Audit Complete ✅
 
 ## Phase Progress
 | Phase | Status | Date | Gates |
 |---|---|---|---|
-| 0 - Baseline | ✅ PASS | 2026-10-11 | Audit document created |
-| 1 - API Audit | ✅ PASS | 2026-10-11 | All 30+ endpoints verified, 178 tests |
-| 2 - Session/Draft Isolation | ✅ PASS | 2026-10-11 | AuthProvider, logout, draft scoping, 185 tests |
-| 3 - Visual Design System | ✅ PASS | 2026-10-11 | Plan Mode — tokens audited, research mapped, gates defined |
-| 4 - Shell + Homepage | ⏳ Pending | — | Awaiting approval |
-| 5 - Discovery | ⏳ Pending | — | — |
-| 6 - Listing Detail | ⏳ Pending | — | — |
+| 0 - Baseline | ✅ PASS | 2026-10-11 | Audit document |
+| 1 - API Audit | ✅ PASS | 2026-10-11 | 30+ endpoints verified |
+| 2 - Session/Draft | ✅ PASS | 2026-10-11 | AuthProvider, 185 tests |
+| 3 - Design System | ✅ PASS | 2026-10-11 | 15/15 tokens |
+| 4 - Shell+Homepage | ✅ PASS | 2026-10-11 | Dual headers |
+| 5 - Discovery | ✅ PASS | 2026-10-11 | discoveryKey, result count |
+| 6 - Listing Detail | ✅ PASS | 2026-10-11 | Sold overlay, sticky contact |
+| **🔴 Remediation** | **⏳ Pending** | — | **4 P0 fixes before Phase 7** |
 | 7 - Seller Flow | ⏳ Pending | — | — |
-| 8 - Auth + Account | ⏳ Pending | — | — |
+| 8 - Auth+Account | ⏳ Pending | — | — |
 | 9 - Admin | ⏳ Pending | — | — |
 | 10 - Regression | ⏳ Pending | — | — |
 
-## Phase 3 Results
-- **Token Audit:** 15/15 colors match frozen contract ✅
-- **Contrast Issues Found:** Orange text (1.8:1 ❌), Danger text (4.0:1 ❌), Bottom-nav height (60px vs 64px)
-- **Research:** 6 platforms mapped to WeshBazar patterns
-- **Afghanistan Constraints:** 6 device/localization rules documented
-- **Component Geometry:** 7 contracts defined with exact px values
-- **Release Gates:** 13 gates for Phase 4
-- **Report:** `docs/frontend-execution/phases/phase-03-design.md`
+## Critical P0 Fixes Required (from audit)
+| # | Issue | File |
+|---|---|---|
+| A4 | Homepage SearchField doesn't filter | page.tsx |
+| C1 | Double SearchField on search page | search/page.tsx |
+| C2 | Missing LocationPicker in DesktopHeader | desktop-header.tsx |
+| B1 | LocationPicker silent failure | location-picker.tsx |
 
-## Blockers
-- None. Phase 4 ready upon user approval.
+## Audit Document
+`docs/frontend-execution/audit/04_reactive_remediation_spec.md`
+- 3 patterns analyzed
+- 17 findings (4 P0, 5 P1, 4 P2)
+- Explicit fix plans per finding

@@ -16,6 +16,8 @@ import { discoveryParamsParsers } from '@/features/search/parsers';
 interface SearchFieldProps {
   className?: string;
   placeholder?: string;
+  /** When true, submits navigate to /search?q=... instead of writing q to current URL. */
+  redirectToSearch?: boolean;
 }
 
 export function SearchField({
