@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MapPin } from 'lucide-react';
+import { ArrowLeft, MapPin } from 'lucide-react';
 import { Breadcrumbs } from '@/components/layout/breadcrumbs';
 import { PageContainer } from '@/components/layout/page-container';
 import { AttributeList } from '@/components/listings/attribute-list';
@@ -21,6 +22,7 @@ import {
   formatStatus,
 } from '@/features/listings';
 import type { PublicListingDetail, PublicListingSummary } from '@/features/listings';
+import { MobileContactBar } from '@/components/listings/mobile-contact-bar';
 import { ReportDialog } from '@/features/reports/components/report-dialog';
 import { ApiError } from '@/lib/api';
 
@@ -93,9 +95,17 @@ export default async function ListingPage({ params }: ListingPageProps) {
         ]}
       />
 
+      <Link
+        href={`/category/${detail.category.slug}`}
+        className="mt-2 inline-flex items-center gap-1 text-ui text-muted-foreground hover:text-primary transition-colors duration-small"
+      >
+        <ArrowLeft className="size-3.5" aria-hidden />
+        همهٔ آگهی‌های {detail.category.name}
+      </Link>
+
       <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-start">
         <div className="min-w-0 space-y-6">
-          <ListingGallery images={detail.images} title={detail.title} />
+          <ListingGallery images={detail.images} title={detail.title} sold={isSold} />
 
           <section
             aria-label="خلاصهٔ آگهی"
@@ -161,6 +171,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
           <SellerCard seller={detail.seller} />
 
           <section
+            id="listing-contact-section"
             aria-labelledby="listing-contact"
             className="rounded-card border border-border bg-surface p-4"
           >
@@ -184,6 +195,11 @@ export default async function ListingPage({ params }: ListingPageProps) {
           <SafetyNotice />
         </aside>
       </div>
+
+      <MobileContactBar
+        priceLabel={formatPrice(detail.price, detail.currency, detail.pricingType)}
+        isSold={isSold}
+      />
 
       {related.length > 0 ? (
         <section aria-labelledby="related-listings" className="mt-10">

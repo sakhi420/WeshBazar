@@ -8,8 +8,9 @@ import type { ListingImage } from '@/features/listings';
 
 interface ListingGalleryProps {
   images: ListingImage[];
-  /** Listing title — used as the main image alt text. */
   title: string;
+  /** Show "فروخته شد" overlay when true. */
+  sold?: boolean;
   className?: string;
 }
 
@@ -18,7 +19,7 @@ interface ListingGalleryProps {
  * image with prev/next and a thumbnail strip. RTL-aware arrows (previous sits
  * at the reading start). Media reserves geometry to avoid CLS (§48).
  */
-export function ListingGallery({ images, title, className }: ListingGalleryProps) {
+export function ListingGallery({ images, title, sold = false, className }: ListingGalleryProps) {
   const [index, setIndex] = useState(0);
   const count = images.length;
   const safeIndex = count > 0 ? Math.min(index, count - 1) : 0;
@@ -76,6 +77,14 @@ export function ListingGallery({ images, title, className }: ListingGalleryProps
               {formatNumber(safeIndex + 1)} / {formatNumber(count)}
             </p>
           </>
+        ) : null}
+
+        {sold ? (
+          <span className="absolute inset-0 flex items-center justify-center bg-foreground/30">
+            <span className="rounded-control bg-foreground/80 px-4 py-2 text-body font-bold text-surface">
+              فروخته شد
+            </span>
+          </span>
         ) : null}
       </div>
 
