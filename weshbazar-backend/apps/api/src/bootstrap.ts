@@ -107,6 +107,7 @@ export async function configureApp(app: NestFastifyApplication, env: Env): Promi
   app.enableCors({
     origin: env.CORS_ALLOWED_ORIGINS.length > 0 ? env.CORS_ALLOWED_ORIGINS : false,
     credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     exposedHeaders: ['x-request-id'],
     maxAge: 600,
   });
