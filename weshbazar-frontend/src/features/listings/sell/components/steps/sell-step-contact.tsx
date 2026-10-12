@@ -104,7 +104,19 @@ function ContactForm() {
     setAttempted(true);
     setApiFieldErrors({});
     setFormError(null);
+
     if (Object.keys(validateContactConfig(draft.contact)).length > 0) return;
+
+    // Block submission when phone contact is enabled but account phone is unverified.
+    // The backend rejects this with PHONE_NOT_VERIFIED — catching it client-side
+    // gives the user an immediate, precise Persian message instead of a round trip.
+    if (draft.contact.phoneEnabled && user !== null && !user.phoneVerified) {
+      setFormError(
+        'برای فعال‌سازی تماس تلفنی، ابتدا شمارهٔ تلفن حساب خود را تأیید کنید یا گزینهٔ «تماس تلفنی» را خاموش کنید.',
+      );
+      return;
+    }
+
     mutation.mutate();
   }
 
@@ -187,7 +199,7 @@ function ContactForm() {
                 mergedError('contactMethods.WHATSAPP'),
                 OVERRIDE_HINT,
               )}
-              className={cn(INPUT_CLASS, 'text-start')}
+              className={cn(INPUT_CLASS, 'text-left')}
             />
           </FormField>
         </MethodRow>
