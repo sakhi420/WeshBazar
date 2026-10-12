@@ -15,7 +15,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 const AUTH_PATHS = ['/auth/login', '/auth/register'];
 
 /** Path prefixes that require an active session. */
-const PROTECTED_PREFIXES = ['/favorites', '/account', '/my-listings', '/sell'];
+const PROTECTED_PREFIXES = ['/favorites', '/account', '/my-listings', '/sell', '/admin'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

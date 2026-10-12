@@ -1,4 +1,4 @@
-# Phase 08: Auth + Account — Deep Audit
+# Phase 08: Auth + Acmiddleware.tscount — Deep Audit
 **Status:** COMPLETE | **Files:** 25 read | **Date:** 2026-10-11
 
 ## Verdict: All Pages & Components Exist ✅ — Only middleware.ts Missing
@@ -29,7 +29,7 @@ After line-by-line reading of 25 auth/account files, the codebase is confirmed c
 | `/my-listings` | ✅ | MyListingsView + ListingManageCard + view-model | ✅ |
 | `/seller/[slug]` | ✅ | fetchSellerProfileServer + Server Component | ✅ |
 
-## 4. Missing: `middleware.ts` ❌
+## 4. Missing: `` ❌
 
 No route guarding exists. Needed:
 - Redirect authenticated users from `/auth/login`, `/auth/register` to `/`
