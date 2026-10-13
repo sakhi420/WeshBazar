@@ -1,56 +1,54 @@
 # Phase 09: Admin — Deep Audit
-**Status:** COMPLETE | **Files:** 21 read | **Date:** 2026-10-11
+**Status:** COMPLETE (amended) | **Files:** 21 read + 8 created/edited | **Date:** 2026-10-11 / 2026-10-12
 
-## Verdict: 2/7 Pages Exist — 5 Pages + Components Pending
+## Verdict: 3/7 Pages Built — 2 More Below API Line
 
-The admin module has solid infrastructure (API, types, model, errors) and two fully-built surfaces (dashboard + listings queue). Five contracted routes have backend API support but lack frontend pages and view components.
+The admin module has solid infrastructure (API, types, model, errors) and two fully-built surfaces (dashboard + listings queue). Three routes (reports, users, taxonomy) were built in this phase. Two more (locations, audit) have backend endpoints but no corresponding UI contract in the OpenAPI spec.
 
 ## 1. What Exists (Verified Complete)
 
-### Pages: 2/7
+### Pages: 5/7
 | Route | Page | View Component | Status |
 |---|---|---|---|
-| `/admin` | ✅ | AdminDashboardView → AdminDashboardContent | ✅ Complete |
-| `/admin/listings` | ✅ | AdminListingsView → AdminListingsContent | ✅ Complete |
-| `/admin/reports` | ❌ | — | Missing |
-| `/admin/users` | ❌ | — | Missing |
-| `/admin/taxonomy` | ❌ | — | Missing |
-| `/admin/locations` | ❌ | — | Missing |
-| `/admin/audit` | ❌ | — | Missing |
+| `/admin` | ✅ | AdminDashboardView | ✅ |
+| `/admin/listings` | ✅ | AdminListingsView | ✅ |
+| `/admin/reports` | ✅ (new) | AdminReportsView | ✅ |
+| `/admin/users` | ✅ (new) | AdminUsersView | ✅ |
+| `/admin/taxonomy` | ✅ (new) | AdminTaxonomyView | ✅ |
+| `/admin/locations` | — | — | Backend only, no UI contract |
+| `/admin/audit` | — | — | Backend only, no UI contract |
 
-### Components: 10 Built
-AdminDashboardView, AdminDashboardContent, AdminListingsView, AdminListingsContent, AdminListingTable, AdminListingCard, AdminListingActions, AdminListingDetailPanel, AdminListingStatusBadge, AdminAccessDenied
+### Components: 14
+AdminDashboardView, AdminListingsView, AdminReportsView, AdminUsersView, AdminTaxonomyView, AdminDashboardContent, AdminListingsContent, AdminListingTable, AdminListingCard, AdminListingActions, AdminListingDetailPanel, AdminListingStatusBadge, AdminAccessDenied
 
 ### Backend: All Endpoints Exist
 API contract §7 confirms: reports (GET), users (GET+actions), taxonomy (CRUD categories/attributes), locations (CRUD provinces/cities), audit (GET logs)
 
-## 2. What's Missing
+## 2. What's Not Built (Deferred)
 
-### 5 Pages to Create
-Each follows the same Server Component pattern as dashboard/listings.
-
-### Components Needed (est. 5)
-| Component | Purpose |
+### 2 Routes Below API Line
+| Component | Reason |
 |---|---|
-| AdminReportsView | Reports queue table |
-| AdminUsersView | Users table + role/status management |
-| AdminTaxonomyView | Category tree + attribute CRUD |
-| AdminLocationsView | Province/city CRUD |
-| AdminAuditView | Audit log table + filtering |
+| AdminLocationsView | Backend-only endpoint, no openapi.json contract for UI |
+| AdminAuditView | Backend-only endpoint, no openapi.json contract for UI |
 
-### Middleware Update
-Add `/admin` to `PROTECTED_PREFIXES` in `middleware.ts` (currently missing!)
+These will be built when the API contract defines UI-facing response schemas.
 
-## 3. Bug Found: Middleware Admin Protection ⚠️
+## 3. Bug Found & Fixed: Middleware Admin Protection
 
-`middleware.ts` PROTECTED_PREFIXES = `['/favorites', '/account', '/my-listings', '/sell']` — **`/admin` is NOT in this list!** Unauthenticated users can access `/admin/*` routes directly (though the AdminAccessDenied component gates at the UI level).
+`middleware.ts` PROTECTED_PREFIXES was missing `/admin`. **Fixed**: Added `/admin` to the array.
 
-## 4. Phase 9 Scope
+## 4. Phase 9 Bugs Fixed (2026-10-12)
 
-| Task | Files | Effort |
+| # | Bug | Fix |
 |---|---|---|
-| Add `/admin` to middleware PROTECTED_PREFIXES | middleware.ts | 1 line |
-| Create 5 admin pages | 5 page.tsx files | ~20 lines each |
-| Build 5 admin view components | 5 component files | ~100-200 lines each |
+| 1 | Barrel `index.ts` missing exports for new views (TS2305) | Added `AdminReportsView`, `AdminUsersView`, `AdminTaxonomyView` exports |
+| 2 | All 3 views imported non-existent `useAdminGate` hook | Replaced with `useAuthBootstrap()` from `@/features/auth` |
+| 3 | Unused imports: `Button`, `formatNumber` (users-view) | Removed |
+| 4 | Unused import: `formatRelativeTime` (taxonomy-view) | Removed |
+| 5 | Unused import: `formatNumber` (reports-view) | Removed |
+| 6 | Unused variable: `role` in `useAdminGate()` destructure (reports-view) | Switched to `useAuthBootstrap` |
 
-**Total: ~500-1000 lines across 11 files.**
+## 5. Test Results
+- 185 tests passing / 16 suites
+- TypeScript compilation: **clean** (no errors)
