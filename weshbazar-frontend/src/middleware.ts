@@ -6,9 +6,12 @@ import { NextResponse, type NextRequest } from 'next/server';
  * - Authenticated users are redirected away from auth pages (login/register).
  * - Guests are redirected to login with `next` preserved for private routes.
  *
- * The `weshbazar_refresh` HttpOnly cookie signals an active session; its
- * presence is a cheap server-side signal — the actual session validity is
- * checked by the page-level auth bootstrap. Absence means guest.
+ * The backend refresh cookie (`weshbazar_refresh`) is HttpOnly with
+ * path=/api/v1/auth — the browser NEVER sends it on page requests.
+ * Therefore we watch a lightweight non‑HttpOnly `weshbazar_session`
+ * cookie that the frontend AuthProvider sets (path=/) after a successful
+ * bootstrap. Its presence means "the browser has an active server session";
+ * absence means guest.
  */
 
 /** Paths that should redirect authenticated users to `/`. */
@@ -19,7 +22,7 @@ const PROTECTED_PREFIXES = ['/favorites', '/account', '/my-listings', '/sell', '
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const hasSession = request.cookies.has('weshbazar_refresh');
+  const hasSession = request.cookies.has('weshbazar_session');
 
   // Redirect signed-in users away from login/register.
   if (hasSession && AUTH_PATHS.includes(pathname)) {
