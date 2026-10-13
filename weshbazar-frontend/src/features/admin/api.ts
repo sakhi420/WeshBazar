@@ -100,6 +100,16 @@ export function fetchAdminReports(
   });
 }
 
+/** Resolve a report — the reported listing has been dealt with. */
+export function resolveReport(id: string, payload: { note: string }): Promise<AdminReportItem> {
+  return post<AdminReportItem>(`${ADMIN_BASE}/reports/${id}/resolve`, payload);
+}
+
+/** Dismiss a report — no action needed on the listing. */
+export function dismissReport(id: string, payload: { note: string }): Promise<AdminReportItem> {
+  return post<AdminReportItem>(`${ADMIN_BASE}/reports/${id}/dismiss`, payload);
+}
+
 // --- User management --------------------------------------------------------
 
 export function fetchAdminUsers(

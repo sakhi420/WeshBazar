@@ -8,11 +8,11 @@
  * surface. A stale-role 403 or dead session routes back to login (§42).
  */
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryState } from 'nuqs';
 import { parseAsInteger, parseAsStringLiteral } from 'nuqs';
-import { Loader2, ShieldAlert } from 'lucide-react';
+import { Check, Loader2, ShieldAlert, X } from 'lucide-react';
 import { ErrorState } from '@/components/feedback/error-state';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { Skeleton } from '@/components/feedback/skeleton';
@@ -22,7 +22,7 @@ import { formatRelativeTime } from '@/features/listings';
 import { useAuthBootstrap } from '@/features/auth';
 import { ApiError } from '@/lib/api';
 import { isForbiddenError, isSessionLostError } from '../errors';
-import { useAdminReports } from '../hooks';
+import { useAdminReports, useResolveReport, useDismissReport } from '../hooks';
 import { AdminAccessDenied } from './admin-access-denied';
 
 // --- URL state parsers (nuqs) -----------------------------------------------
@@ -77,9 +77,24 @@ export function AdminReportsView({ className }: { className?: string }) {
   const denied = isForbiddenError(reports.error);
   const sessionLost = isSessionLostError(reports.error);
 
+  const resolveM = useResolveReport();
+  const dismissM = useDismissReport();
+
+  // Action form state: which report + what verb is in-progress
+  const [actionTarget, setActionTarget] = useState<{ reportId: string; verb: 'resolve' | 'dismiss' } | null>(null);
+  const [note, setNote] = useState('');
+
   useEffect(() => {
     if (sessionLost) gotoLogin();
   }, [sessionLost, gotoLogin]);
+
+  // Reset action form on success
+  useEffect(() => {
+    if (resolveM.isSuccess || dismissM.isSuccess) {
+      setActionTarget(null);
+      setNote('');
+    }
+  }, [resolveM.isSuccess, dismissM.isSuccess]);
 
   // --- Gate states ---------------------------------------------------------
 
@@ -136,6 +151,37 @@ export function AdminReportsView({ className }: { className?: string }) {
                  </span>
                </div>
                <p className="mt-2 text-caption text-muted-foreground">{formatRelativeTime(r.createdAt)}</p>
+{(r.status === 'OPEN' || r.status === 'UNDER_REVIEW') && (
+                  <div className="mt-3 border-t border-border pt-3">
+                    {actionTarget?.reportId === r.id ? (
+                      <div className="space-y-2">
+                        <textarea value={note} onChange={(e) => setNote(e.target.value)}
+                          placeholder="یادداشت (دلیل اقدام)…" rows={2}
+                          className="w-full rounded-input border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" disabled={resolveM.isPending || dismissM.isPending}
+                            onClick={() => { if (actionTarget!.verb === 'resolve') resolveM.mutate({ id: r.id, payload: { note: note.trim() } }); else dismissM.mutate({ id: r.id, payload: { note: note.trim() } }); }}>
+                            {(resolveM.isPending || dismissM.isPending) ? <Loader2 className="animate-spin" aria-hidden /> : actionTarget!.verb === 'resolve' ? <Check aria-hidden /> : <X aria-hidden />}
+                            {actionTarget!.verb === 'resolve' ? 'ثبت حل' : 'ثبت رد'}
+                          </Button>
+                          <Button size="sm" variant="ghost" disabled={resolveM.isPending || dismissM.isPending}
+                            onClick={() => { setActionTarget(null); setNote(''); }}>انصراف</Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" variant="outline"
+                          onClick={() => { setActionTarget({ reportId: r.id, verb: 'resolve' }); setNote(''); }}>
+                          <Check aria-hidden /> حل شد
+                        </Button>
+                        <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-foreground"
+                          onClick={() => { setActionTarget({ reportId: r.id, verb: 'dismiss' }); setNote(''); }}>
+                          <X aria-hidden /> رد گزارش
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
              </div>
            ))}
          </div>

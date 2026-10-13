@@ -21,6 +21,8 @@ import {
   fetchAdminCategories,
   fetchMarketplaceSummary,
   rejectAdminListing,
+  resolveReport,
+  dismissReport,
   restoreAdminListing,
   createCategory,
   updateCategory,
@@ -31,6 +33,7 @@ import {
 } from './api';
 import type {
   AdminListingsQuery,
+  AdminReportItem,
   AdminReportsQuery,
   AdminUsersQuery,
   ModerationAction,
@@ -121,6 +124,26 @@ export function useAdminReports(params: AdminReportsQuery, enabled: boolean) {
     staleTime: 15_000,
     retry: false,
     placeholderData: keepPreviousData,
+  });
+}
+
+export function useResolveReport() {
+  const qc = useQueryClient();
+  return useMutation<AdminReportItem, ApiError, { id: string; payload: { note: string } }>({
+    mutationFn: ({ id, payload }) => resolveReport(id, payload),
+    onSettled: () => {
+      void qc.invalidateQueries({ queryKey: ['admin', 'reports'] });
+    },
+  });
+}
+
+export function useDismissReport() {
+  const qc = useQueryClient();
+  return useMutation<AdminReportItem, ApiError, { id: string; payload: { note: string } }>({
+    mutationFn: ({ id, payload }) => dismissReport(id, payload),
+    onSettled: () => {
+      void qc.invalidateQueries({ queryKey: ['admin', 'reports'] });
+    },
   });
 }
 
