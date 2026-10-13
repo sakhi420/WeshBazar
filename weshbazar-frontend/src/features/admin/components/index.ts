@@ -11,3 +11,4 @@ export { AdminListingsView } from './admin-listings-view';
 export { AdminReportsView } from './admin-reports-view';
 export { AdminUsersView } from './admin-users-view';
 export { AdminTaxonomyView } from './admin-taxonomy-view';
+export { AdminNav } from './admin-nav';

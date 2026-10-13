@@ -179,3 +179,58 @@ export interface AdminListingsQuery {
   page?: number;
   limit?: number;
 }
+
+// --- Reports queue ---------------------------------------------------------
+
+export interface AdminReportItem {
+  id: string;
+  listing: { id: string; slug: string; title: string };
+  reporterUser: { id: string; phone: string; displayName: string };
+  reason: string;
+  description: string | null;
+  status: string;
+  createdAt: string;
+}
+
+export interface AdminReportsQuery {
+  /** ReportStatus filter: OPEN | UNDER_REVIEW | RESOLVED | DISMISSED. */
+  status?: string;
+  page?: number;
+  limit?: number;
+}
+
+// --- User management -------------------------------------------------------
+
+export interface AdminUserItem {
+  id: string;
+  phone: string;
+  displayName: string;
+  role: string;
+  status: string;
+  phoneVerified: boolean;
+  activeListings: number;
+  createdAt: string;
+}
+
+export interface AdminUsersQuery {
+  /** Title/substring search. */
+  q?: string;
+  /** UserRole filter: USER | MODERATOR | ADMIN. */
+  role?: string;
+  /** UserStatus filter: ACTIVE | SUSPENDED | BANNED | DEACTIVATED. */
+  status?: string;
+  page?: number;
+  limit?: number;
+}
+
+// --- Taxonomy --------------------------------------------------------------
+
+export interface AdminCategoryItem {
+  id: string;
+  name: string;
+  slug: string;
+  parentId: string | null;
+  status: string;
+  sortOrder: number;
+  children?: AdminCategoryItem[];
+}

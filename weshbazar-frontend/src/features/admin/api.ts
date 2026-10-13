@@ -12,6 +12,11 @@ import type {
   AdminListingDetail,
   AdminListingItem,
   AdminListingsQuery,
+  AdminReportItem,
+  AdminReportsQuery,
+  AdminUserItem,
+  AdminUsersQuery,
+  AdminCategoryItem,
   MarketplaceSummary,
 } from './types';
 
@@ -79,4 +84,30 @@ export function archiveAdminListing(id: string, note?: string): Promise<unknown>
 
 export function restoreAdminListing(id: string, note?: string): Promise<unknown> {
   return post<unknown>(`${ADMIN_BASE}/listings/${id}/restore`, { note });
+}
+
+// --- Reports queue ----------------------------------------------------------
+
+export function fetchAdminReports(
+  params: AdminReportsQuery = {},
+): Promise<PageResult<AdminReportItem>> {
+  return getPage<AdminReportItem>(`${ADMIN_BASE}/reports`, {
+    query: params as Record<string, unknown>,
+  });
+}
+
+// --- User management --------------------------------------------------------
+
+export function fetchAdminUsers(
+  params: AdminUsersQuery = {},
+): Promise<PageResult<AdminUserItem>> {
+  return getPage<AdminUserItem>(`${ADMIN_BASE}/users`, {
+    query: params as Record<string, unknown>,
+  });
+}
+
+// --- Taxonomy ---------------------------------------------------------------
+
+export function fetchAdminCategories(): Promise<AdminCategoryItem[]> {
+  return get<AdminCategoryItem[]>(`${ADMIN_BASE}/categories`);
 }

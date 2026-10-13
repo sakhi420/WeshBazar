@@ -16,11 +16,19 @@ import {
   fetchAdminDashboard,
   fetchAdminListing,
   fetchAdminListings,
+  fetchAdminReports,
+  fetchAdminUsers,
+  fetchAdminCategories,
   fetchMarketplaceSummary,
   rejectAdminListing,
   restoreAdminListing,
 } from './api';
-import type { AdminListingsQuery, ModerationAction } from './types';
+import type {
+  AdminListingsQuery,
+  AdminReportsQuery,
+  AdminUsersQuery,
+  ModerationAction,
+} from './types';
 
 /** Dashboard counters (users, listings, reports). */
 export function useAdminDashboard(enabled: boolean) {
@@ -94,5 +102,43 @@ export function useListingModeration() {
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.admin.all });
     },
+  });
+}
+
+// --- Reports queue ---------------------------------------------------------
+
+export function useAdminReports(params: AdminReportsQuery, enabled: boolean) {
+  return useQuery({
+    queryKey: queryKeys.admin.reports(params),
+    queryFn: () => fetchAdminReports(params),
+    enabled,
+    staleTime: 15_000,
+    retry: false,
+    placeholderData: keepPreviousData,
+  });
+}
+
+// --- User management -------------------------------------------------------
+
+export function useAdminUsers(params: AdminUsersQuery, enabled: boolean) {
+  return useQuery({
+    queryKey: queryKeys.admin.users(params),
+    queryFn: () => fetchAdminUsers(params),
+    enabled,
+    staleTime: 15_000,
+    retry: false,
+    placeholderData: keepPreviousData,
+  });
+}
+
+// --- Taxonomy --------------------------------------------------------------
+
+export function useAdminCategories(enabled: boolean) {
+  return useQuery({
+    queryKey: queryKeys.admin.categories,
+    queryFn: fetchAdminCategories,
+    enabled,
+    staleTime: 60_000,
+    retry: false,
   });
 }

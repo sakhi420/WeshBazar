@@ -5,6 +5,7 @@ import { AdminTaxonomyView } from '@/features/admin/components';
 export const metadata: Metadata = {
   title: 'دسته‌بندی‌ها و ویژگی‌ها',
   robots: { index: false, follow: false },
+  alternates: { canonical: '/admin/taxonomy' },
 };
 
 export default function AdminTaxonomyPage() {
