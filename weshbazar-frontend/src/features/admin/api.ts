@@ -6,7 +6,7 @@
  * its own permission — the backend stays authoritative (§42).
  */
 
-import { get, getPage, post, type PageResult } from '@/lib/api';
+import { get, getPage, patch, del, post, type PageResult } from '@/lib/api';
 import type {
   AdminDashboard,
   AdminListingDetail,
@@ -92,7 +92,11 @@ export function fetchAdminReports(
   params: AdminReportsQuery = {},
 ): Promise<PageResult<AdminReportItem>> {
   return getPage<AdminReportItem>(`${ADMIN_BASE}/reports`, {
-    query: params as Record<string, unknown>,
+    query: {
+      status: params.status,
+      page: params.page,
+      limit: params.limit,
+    },
   });
 }
 
@@ -102,12 +106,50 @@ export function fetchAdminUsers(
   params: AdminUsersQuery = {},
 ): Promise<PageResult<AdminUserItem>> {
   return getPage<AdminUserItem>(`${ADMIN_BASE}/users`, {
-    query: params as Record<string, unknown>,
+    query: {
+      q: params.q,
+      role: params.role,
+      status: params.status,
+      page: params.page,
+      limit: params.limit,
+    },
   });
+}
+
+/** Suspend: reason required, optional until date. */
+export function suspendUser(id: string, payload: { reason: string; until?: string }): Promise<AdminUserItem> {
+  return post<AdminUserItem>(`${ADMIN_BASE}/users/${id}/suspend`, payload);
+}
+
+/** Ban: reason required. */
+export function banUser(id: string, payload: { reason: string }): Promise<AdminUserItem> {
+  return post<AdminUserItem>(`${ADMIN_BASE}/users/${id}/ban`, payload);
+}
+
+/** Restore from suspended or banned. */
+export function restoreUser(id: string): Promise<AdminUserItem> {
+  return post<AdminUserItem>(`${ADMIN_BASE}/users/${id}/restore`);
 }
 
 // --- Taxonomy ---------------------------------------------------------------
 
 export function fetchAdminCategories(): Promise<AdminCategoryItem[]> {
   return get<AdminCategoryItem[]>(`${ADMIN_BASE}/categories`);
+}
+
+export function createCategory(
+  payload: { translations: Array<{ locale: string; name: string; description?: string }>; parentId?: string | null; slug?: string; sortOrder?: number },
+): Promise<AdminCategoryItem> {
+  return post<AdminCategoryItem>(`${ADMIN_BASE}/categories`, payload);
+}
+
+export function updateCategory(
+  id: string,
+  payload: { translations?: Array<{ locale: string; name: string; description?: string }>; parentId?: string | null; slug?: string; status?: string; sortOrder?: number },
+): Promise<AdminCategoryItem> {
+  return patch<AdminCategoryItem>(`${ADMIN_BASE}/categories/${id}`, payload);
+}
+
+export function deleteCategory(id: string): Promise<void> {
+  return del<void>(`${ADMIN_BASE}/categories/${id}`);
 }

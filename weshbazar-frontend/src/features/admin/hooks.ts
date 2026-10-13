@@ -22,6 +22,12 @@ import {
   fetchMarketplaceSummary,
   rejectAdminListing,
   restoreAdminListing,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  suspendUser,
+  banUser,
+  restoreUser,
 } from './api';
 import type {
   AdminListingsQuery,
@@ -140,5 +146,55 @@ export function useAdminCategories(enabled: boolean) {
     enabled,
     staleTime: 60_000,
     retry: false,
+  });
+}
+
+export function useCreateCategory() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: createCategory,
+    onSettled: () => { void qc.invalidateQueries({ queryKey: queryKeys.admin.categories }); },
+  });
+}
+
+export function useUpdateCategory() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Parameters<typeof updateCategory>[1] }) => updateCategory(id, payload),
+    onSettled: () => { void qc.invalidateQueries({ queryKey: queryKeys.admin.categories }); },
+  });
+}
+
+export function useDeleteCategory() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: deleteCategory,
+    onSettled: () => { void qc.invalidateQueries({ queryKey: queryKeys.admin.categories }); },
+  });
+}
+
+// --- User management mutations --------------------------------------------
+
+export function useSuspendUser() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Parameters<typeof suspendUser>[1] }) => suspendUser(id, payload),
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'users'] }); },
+  });
+}
+
+export function useBanUser() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Parameters<typeof banUser>[1] }) => banUser(id, payload),
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'users'] }); },
+  });
+}
+
+export function useRestoreUser() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: restoreUser,
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'users'] }); },
   });
 }

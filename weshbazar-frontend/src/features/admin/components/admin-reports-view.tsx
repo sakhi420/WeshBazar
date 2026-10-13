@@ -127,7 +127,7 @@ export function AdminReportsView({ className }: { className?: string }) {
                  <div className="min-w-0">
                    <p className="text-ui font-semibold text-foreground">{REASON_LABELS[r.reason] ?? r.reason}</p>
                    <p className="mt-1 text-meta text-muted-foreground">
-                     آگهی: {r.listing.title} · گزارش‌دهنده: {r.reporterUser.displayName}
+                     آگهی: {r.listing.title} · گزارش‌دهنده: {r.reporter.displayName}
                    </p>
                    {r.description ? <p className="mt-2 whitespace-pre-line text-meta text-muted-foreground">{r.description}</p> : null}
                  </div>

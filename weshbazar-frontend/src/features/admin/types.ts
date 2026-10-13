@@ -185,7 +185,7 @@ export interface AdminListingsQuery {
 export interface AdminReportItem {
   id: string;
   listing: { id: string; slug: string; title: string };
-  reporterUser: { id: string; phone: string; displayName: string };
+  reporter: { id: string; displayName: string };
   reason: string;
   description: string | null;
   status: string;
