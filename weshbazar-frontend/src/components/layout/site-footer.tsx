@@ -14,12 +14,19 @@ const accountLinks = [
   { href: '/account', label: 'حساب کاربری' },
 ] as const;
 
+const helpLinks = [
+  { href: '/about', label: 'درباره ما' },
+  { href: '/help/safety', label: 'نکات ایمنی' },
+  { href: '/help', label: 'مرکز راهنمایی' },
+  { href: '/contact', label: 'تماس با ما' },
+] as const;
+
 const persianYear = new Intl.NumberFormat('fa-AF').format(new Date().getFullYear());
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-primary-dark/30 bg-primary-dark text-white">
-      <div className="container grid gap-8 py-8 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)] md:py-10">
+      <div className="container grid gap-8 py-8 md:grid-cols-2 lg:grid-cols-[minmax(0,1.3fr)_repeat(3,minmax(0,1fr))] md:py-10">
         <div className="space-y-4">
           <Link
             href="/"
@@ -57,6 +64,22 @@ export function SiteFooter() {
           <h2 className="text-section font-semibold text-white">حساب</h2>
           <ul className="space-y-2 text-body">
             {accountLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="inline-flex rounded-control text-white/80 transition-colors duration-small hover:text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav aria-label="راهنما" className="space-y-3">
+          <h2 className="text-section font-semibold text-white">راهنما</h2>
+          <ul className="space-y-2 text-body">
+            {helpLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}

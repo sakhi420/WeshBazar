@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { LayoutGrid, ArrowLeft, Plus, ShieldAlert } from 'lucide-react';
@@ -63,7 +64,6 @@ async function loadLatestListings(): Promise<ListingsResult> {
 export default async function HomePage() {
   const [catResult, listResult] = await Promise.all([loadCategories(), loadLatestListings()]);
   const topCategories = catResult.status === 'ok' ? catResult.categories.slice(0, 8) : [];
-  const hasMoreCategories = catResult.status === 'ok' && catResult.categories.length > 8;
 
   return (
     <PageContainer className="space-y-8">
@@ -77,8 +77,10 @@ export default async function HomePage() {
           فروشنده در تماس باشید.
         </p>
 
-        <SearchField className="mt-4 w-full" />
-        <LocationPicker className="mt-3" />
+        <Suspense fallback={null}>
+          <SearchField className="mt-4 w-full" />
+          <LocationPicker className="mt-3" />
+        </Suspense>
       </section>
 
       {/* Category discovery — compact one-row pills (§108) */}

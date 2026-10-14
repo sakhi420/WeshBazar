@@ -8,6 +8,7 @@ import { MobileHeader } from '@/components/layout/mobile-header';
 import { DesktopHeader } from '@/components/layout/desktop-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { MobileBottomNav } from '@/components/layout/mobile-bottom-nav';
+import { BackToTop } from '@/components/layout/back-to-top';
 import './globals.css';
 
 /**
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </main>
             <MobileBottomNav />
             <SiteFooter />
+            <BackToTop />
           </div>
         </Providers>
       </body>

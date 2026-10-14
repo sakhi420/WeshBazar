@@ -67,15 +67,15 @@ return (
             <ul className="max-h-64 overflow-y-auto py-1">
               {provinces.map((p) => (
                 <li key={p.id}><button type="button" role="option" aria-selected={p.slug === provinceParam} onClick={() => selectProvince(p)}
-                  className={cn('w-full px-4 py-2.5 text-start text-ui', p.slug === provinceParam ? 'bg-primary-soft text-primary font-medium' : 'text-foreground hover:bg-primary-soft/50')}>{p.name}</button></li>
+                  className={cn('w-full px-4 py-2.5 text-start text-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', p.slug === provinceParam ? 'bg-primary-soft text-primary font-medium' : 'text-foreground hover:bg-primary-soft/50')}>{p.name}</button></li>
               ))}
             </ul>
             <ul className="max-h-64 overflow-y-auto py-1">
               <li><button type="button" role="option" aria-selected={!cityParam} onClick={() => selectCity(null)}
-                className={cn('w-full px-4 py-2.5 text-start text-ui', !cityParam ? 'bg-primary-soft text-primary font-medium' : 'text-foreground hover:bg-primary-soft/50')}>همه شهرها</button></li>
+                className={cn('w-full px-4 py-2.5 text-start text-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', !cityParam ? 'bg-primary-soft text-primary font-medium' : 'text-foreground hover:bg-primary-soft/50')}>همه شهرها</button></li>
               {selectedProvince ? cities.map((c) => (
                 <li key={c.id}><button type="button" role="option" aria-selected={c.slug === cityParam} onClick={() => selectCity(c)}
-                  className={cn('w-full px-4 py-2.5 text-start text-ui', c.slug === cityParam ? 'bg-primary-soft text-primary font-medium' : 'text-foreground hover:bg-primary-soft/50')}>{c.name}</button></li>
+                  className={cn('w-full px-4 py-2.5 text-start text-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', c.slug === cityParam ? 'bg-primary-soft text-primary font-medium' : 'text-foreground hover:bg-primary-soft/50')}>{c.name}</button></li>
               )) : provinces.length > 0 ? <li className="px-4 py-6 text-center text-caption text-muted-foreground">یک ولایت انتخاب کنید</li> : null}
             </ul>
           </div>

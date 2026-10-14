@@ -36,7 +36,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
       ))}
       {hasMore ? (
         <Link
-          href="/search"
+          href="/categories"
           className={cn(
             'inline-flex h-control shrink-0 items-center gap-1 rounded-card border border-border bg-surface px-4 text-ui font-medium text-primary transition-colors duration-small',
             'hover:border-primary hover:bg-primary-soft',

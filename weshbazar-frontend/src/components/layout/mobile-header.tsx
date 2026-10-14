@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/brand-logo';
 import { Button } from '@/components/ui/button';
 import { HeaderAuthActions } from '@/components/layout/header-auth-actions';
@@ -22,6 +22,11 @@ export function MobileHeader() {
         </Link>
 
         <nav className="flex items-center gap-1">
+          <Button asChild variant="ghost" size="icon" aria-label="جست‌وجو">
+            <Link href="/search">
+              <Search aria-hidden />
+            </Link>
+          </Button>
           <Button asChild variant="accent" size="icon" className="hidden xs:inline-flex">
             <Link href="/sell">
               <Plus aria-hidden />

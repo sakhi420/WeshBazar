@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { PageContainer } from '@/components/layout/page-container';
 import { MyListingsView } from '@/features/listings/my-listings/components';
@@ -21,7 +22,9 @@ export default function MyListingsPage() {
         آگهی‌های خود را مدیریت کنید: تمدید، فروخته‌شد و بایگانی.
       </p>
       <div className="mt-6">
-        <MyListingsView />
+        <Suspense fallback={null}>
+          <MyListingsView />
+        </Suspense>
       </div>
     </PageContainer>
   );

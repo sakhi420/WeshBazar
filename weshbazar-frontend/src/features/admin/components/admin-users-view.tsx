@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryState } from 'nuqs';
 import { parseAsInteger, parseAsString } from 'nuqs';
-import { Ban, ChevronDown, ChevronUp, Loader2, Search, UserCheck, UserX, X } from 'lucide-react';
+import { Ban, ChevronDown, ChevronUp, Loader2, Search, UserCheck, UserX } from 'lucide-react';
 import { ErrorState } from '@/components/feedback/error-state';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { Skeleton } from '@/components/feedback/skeleton';

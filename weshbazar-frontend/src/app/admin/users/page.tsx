@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { PageContainer } from '@/components/layout/page-container';
 import { AdminUsersView } from '@/features/admin/components';
@@ -16,7 +17,9 @@ export default function AdminUsersPage() {
         جست‌وجو، فیلتر و مدیریت حساب‌های کاربری.
       </p>
       <div className="mt-6">
-        <AdminUsersView />
+        <Suspense fallback={null}>
+          <AdminUsersView />
+        </Suspense>
       </div>
     </PageContainer>
   );

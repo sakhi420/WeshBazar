@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { PageContainer } from '@/components/layout/page-container';
 import { AdminReportsView } from '@/features/admin/components';
@@ -16,7 +17,9 @@ export default function AdminReportsPage() {
         صف بررسی گزارش‌های ثبت‌شده روی آگهی‌ها.
       </p>
       <div className="mt-6">
-        <AdminReportsView />
+        <Suspense fallback={null}>
+          <AdminReportsView />
+        </Suspense>
       </div>
     </PageContainer>
   );

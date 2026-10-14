@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { Plus, Grid3X3 } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/brand-logo';
@@ -22,10 +23,12 @@ export function DesktopHeader() {
           <BrandLogo height={34} priority />
         </Link>
 
-        <SearchField className="min-w-0 max-w-xl flex-1" />
+        <Suspense fallback={null}>
+          <SearchField className="min-w-0 max-w-xl flex-1" redirectToSearch />
+        </Suspense>
 
         <Button asChild variant="ghost" size="icon" aria-label="دسته‌بندی‌ها">
-          <Link href="/search">
+          <Link href="/categories">
             <Grid3X3 aria-hidden />
           </Link>
         </Button>

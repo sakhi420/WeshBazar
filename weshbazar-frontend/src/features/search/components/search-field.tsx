@@ -7,6 +7,7 @@
  */
 
 import { useEffect, useState, type FormEvent } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { Search, X } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import { Button } from '@/components/ui/button';
@@ -23,7 +24,10 @@ interface SearchFieldProps {
 export function SearchField({
   className,
   placeholder = 'جست‌وجو در وش‌بازار…',
+  redirectToSearch = false,
 }: SearchFieldProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [query, setQuery] = useQueryState(
     'q',
     discoveryParamsParsers.q.withOptions({ history: 'push' }),
@@ -37,7 +41,21 @@ export function SearchField({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    void setQuery(value.trim() ? value.trim() : null);
+    const next = value.trim();
+
+    // Header variant: open a fresh keyword search instead of writing `q` onto
+    // the current page (`account`, `admin`, `sell`, …). On /search we stay put
+    // and only change `q` so the other URL filters are preserved.
+    if (redirectToSearch) {
+      if (pathname === '/search') {
+        void setQuery(next ? next : null);
+      } else {
+        router.push(next ? `/search?q=${encodeURIComponent(next)}` : '/search');
+      }
+      return;
+    }
+
+    void setQuery(next ? next : null);
   }
 
   function handleClear() {

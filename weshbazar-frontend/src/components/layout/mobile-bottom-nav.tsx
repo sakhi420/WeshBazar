@@ -40,10 +40,10 @@ export function MobileBottomNav() {
               <Link
                 href={href}
                 className={cn(
-                  'flex flex-col items-center gap-0.5 rounded-control px-2 py-1 min-w-touch text-caption transition-colors duration-small focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                  'flex flex-col items-center gap-0.5 rounded-control px-2 py-1 min-w-touch text-caption transition-colors duration-small border-t-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
                   isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground',
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground',
                 )}
               >
                 <Icon className={cn('size-5', isActive && 'stroke-[1.5]')} aria-hidden />
@@ -59,10 +59,10 @@ export function MobileBottomNav() {
             <Link
               href="/admin"
               className={cn(
-                'flex flex-col items-center gap-0.5 rounded-control px-2 py-1 min-w-touch text-caption transition-colors duration-small focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                'flex flex-col items-center gap-0.5 rounded-control px-2 py-1 min-w-touch text-caption transition-colors duration-small border-t-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
                 pathname.startsWith('/admin')
-                  ? 'text-primary'
-                  : 'text-muted-foreground hover:text-foreground',
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground',
               )}
             >
               <Shield
@@ -79,10 +79,10 @@ export function MobileBottomNav() {
           <Link
             href={accountHref}
             className={cn(
-              'flex flex-col items-center gap-0.5 rounded-control px-2 py-1 min-w-touch text-caption transition-colors duration-small focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+              'flex flex-col items-center gap-0.5 rounded-control px-2 py-1 min-w-touch text-caption transition-colors duration-small border-t-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
               pathname.startsWith('/account') || pathname.startsWith('/auth/login')
-                ? 'text-primary'
-                : 'text-muted-foreground hover:text-foreground',
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground',
             )}
           >
             <User

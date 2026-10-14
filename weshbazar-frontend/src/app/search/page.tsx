@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ErrorState } from '@/components/feedback/error-state';
@@ -68,26 +69,34 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <PageContainer>
       <h1 className="text-heading font-bold text-foreground">جست‌وجو</h1>
-      <SearchField className="mt-4 max-w-2xl" />
+      <Suspense fallback={null}>
+        <SearchField className="mt-4 max-w-2xl" />
+      </Suspense>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,17.5rem)_minmax(0,1fr)]">
-        <FilterPanelDesktop provinces={provinces} categories={categories} />
+        <Suspense fallback={null}>
+          <FilterPanelDesktop provinces={provinces} categories={categories} />
+        </Suspense>
 
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <MobileFilterSheet
+          <Suspense fallback={null}>
+            <div className="flex items-center gap-2">
+              <MobileFilterSheet
+                provinces={provinces}
+                categories={categories}
+                className="shrink-0"
+              />
+              <SortControl className="min-w-0 flex-1 sm:max-w-48" />
+            </div>
+          </Suspense>
+
+          <Suspense fallback={null}>
+            <ActiveFilterChips
               provinces={provinces}
               categories={categories}
-              className="shrink-0"
+              className="mt-3"
             />
-            <SortControl className="min-w-0 flex-1 sm:max-w-48" />
-          </div>
-
-          <ActiveFilterChips
-            provinces={provinces}
-            categories={categories}
-            className="mt-3"
-          />
+          </Suspense>
 
           {listings.page && listings.page.items.length > 0 ? (
             <p className="mt-4 text-ui text-muted-foreground">

@@ -2,7 +2,7 @@
  * Authorization boundary tests (Task 3).
  * Verifies client-side permission gates: USER blocked, MODERATOR limited, 403/401 handling.
  */
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 const pendingQ = {
   isPending: true,

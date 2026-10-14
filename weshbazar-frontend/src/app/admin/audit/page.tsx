@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { PageContainer } from '@/components/layout/page-container';
 import { AdminAuditView } from '@/features/admin/components/admin-audit-view';
@@ -16,7 +17,9 @@ export default function AdminAuditPage() {
         تاریخچهٔ تمام اقدامات مدیریتی در سیستم.
       </p>
       <div className="mt-6">
-        <AdminAuditView />
+        <Suspense fallback={null}>
+          <AdminAuditView />
+        </Suspense>
       </div>
     </PageContainer>
   );
