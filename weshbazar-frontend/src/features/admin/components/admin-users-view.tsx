@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryState } from 'nuqs';
 import { parseAsInteger } from 'nuqs';
-import { Ban, Loader2, Search, UserCheck, UserX } from 'lucide-react';
+import { Ban, ChevronDown, ChevronUp, Loader2, Search, UserCheck, UserX } from 'lucide-react';
 import { ErrorState } from '@/components/feedback/error-state';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { Skeleton } from '@/components/feedback/skeleton';
@@ -23,7 +23,7 @@ import { formatRelativeTime } from '@/features/listings';
 import { useAuthBootstrap } from '@/features/auth';
 import { ApiError } from '@/lib/api';
 import { isForbiddenError, isSessionLostError } from '../errors';
-import { useAdminUsers, useSuspendUser, useBanUser, useRestoreUser } from '../hooks';
+import { useAdminUsers, useSuspendUser, useBanUser, useRestoreUser, useAdminUserDetail } from '../hooks';
 import { AdminAccessDenied } from './admin-access-denied';
 
 // --- URL state parsers (nuqs) -----------------------------------------------
@@ -34,6 +34,10 @@ const pageParser = parseAsInteger;
 
 const ROLE_LABELS: Record<string, string> = { USER: 'کاربر', MODERATOR: 'ناظر', ADMIN: 'مدیر' };
 const STATUS_LABELS: Record<string, string> = { ACTIVE: 'فعال', SUSPENDED: 'معلق', BANNED: 'مسدود', DEACTIVATED: 'غیرفعال' };
+const LISTING_STATUS_LABELS: Record<string, string> = {
+  DRAFT: 'پیش‌نویس', PENDING_REVIEW: 'در انتظار', ACTIVE: 'فعال',
+  REJECTED: 'رد شده', SOLD: 'فروخته شده', ARCHIVED: 'بایگانی',
+};
 
 const LOGIN_HREF = `/auth/login?next=${encodeURIComponent('/admin/users')}`;
 
@@ -53,6 +57,11 @@ export function AdminUsersView({ className }: { className?: string }) {
   const [reason, setReason] = useState('');
   // Confirmation dialog state — shown before action form appears
   const [confirmTarget, setConfirmTarget] = useState<{ userId: string; verb: 'suspend' | 'ban'; name: string } | null>(null);
+
+  // Expanded user detail
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
+  const userDetail = useAdminUserDetail(expandedUserId, enabled && expandedUserId !== null);
+  const listingStatuses = ['DRAFT', 'PENDING_REVIEW', 'ACTIVE', 'REJECTED', 'SOLD', 'ARCHIVED'];
 
   const params = useMemo(() => ({
     q: search.trim() || undefined, page, limit: 20,

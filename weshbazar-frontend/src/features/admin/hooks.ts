@@ -30,6 +30,7 @@ import {
   suspendUser,
   banUser,
   restoreUser,
+  fetchAdminUser,
   fetchAdminProvinces,
   createProvince,
   updateProvince,
@@ -52,6 +53,7 @@ import type {
   AdminReportItem,
   AdminReportsQuery,
   AdminUsersQuery,
+  AdminUserDetail,
   ModerationAction,
   AdminAuditQuery,
 } from './types';
@@ -236,6 +238,16 @@ export function useRestoreUser() {
   return useMutation({
     mutationFn: restoreUser,
     onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'users'] }); },
+  });
+}
+/** Single-user detail — listings by status + report counts. */
+export function useAdminUserDetail(id: string | null, enabled: boolean) {
+  return useQuery<AdminUserDetail, ApiError>({
+    queryKey: queryKeys.admin.user(id ?? ''),
+    queryFn: () => fetchAdminUser(id as string),
+    enabled: enabled && id !== null,
+    staleTime: 30_000,
+    retry: false,
   });
 }
 // --- Locations ---------------------------------------------------------------

@@ -23,6 +23,7 @@ import type {
   AdminAuditQuery,
   AdminAttributeItem,
   AdminAttributeOptionItem,
+  AdminUserDetail,
   MarketplaceSummary,
   CreateProvincePayload,
   UpdateProvincePayload,
@@ -153,6 +154,11 @@ export function banUser(id: string, payload: { reason: string }): Promise<AdminU
 /** Restore from suspended or banned. */
 export function restoreUser(id: string): Promise<AdminUserItem> {
   return post<AdminUserItem>(`${ADMIN_BASE}/users/${id}/restore`);
+}
+
+/** User detail — listings by status, report counts. */
+export function fetchAdminUser(id: string): Promise<AdminUserDetail> {
+  return get<AdminUserDetail>(`${ADMIN_BASE}/users/${id}`);
 }
 
 // --- Taxonomy ---------------------------------------------------------------

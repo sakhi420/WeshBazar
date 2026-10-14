@@ -212,6 +212,12 @@ export interface AdminUserItem {
   createdAt: string;
 }
 
+export interface AdminUserDetail extends AdminUserItem {
+  listingsByStatus: Record<string, number>;
+  openReportsAbout: number;
+  reportsSubmitted: number;
+}
+
 export interface AdminUsersQuery {
   /** Title/substring search. */
   q?: string;
