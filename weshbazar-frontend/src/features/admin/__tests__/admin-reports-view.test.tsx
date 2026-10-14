@@ -10,7 +10,8 @@ const retryFn = jest.fn();
 jest.mock('next/navigation', () => ({ useRouter: () => ({ replace: routerReplace }) }));
 jest.mock('nuqs', () => ({ useQueryState: jest.fn(() => [null, jest.fn()]), parseAsInteger: jest.fn(), parseAsStringLiteral: jest.fn() }));
 jest.mock('@/features/auth', () => { const a = jest.requireActual('@/features/auth'); return { ...a, useAuthBootstrap: jest.fn() }; });
-jest.mock('../hooks', () => ({ useAdminReports: jest.fn(), useResolveReport: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false })), useDismissReport: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false })) }));
+jest.mock('../hooks', () => ({ useAdminReports: jest.fn(), useResolveReport: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useDismissReport: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })) }));
+jest.mock('../components/ActiveFilterChips', () => ({ ActiveFilterChips: () => null }));
 
 import { AdminReportsView } from '../components/admin-reports-view';
 import { useAuthBootstrap } from '@/features/auth';

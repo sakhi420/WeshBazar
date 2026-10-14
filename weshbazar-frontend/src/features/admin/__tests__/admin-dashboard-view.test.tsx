@@ -9,7 +9,7 @@ const retryFn = jest.fn();
 
 jest.mock('next/navigation', () => ({ useRouter: () => ({ replace: routerReplace }) }));
 jest.mock('@/features/auth', () => { const a = jest.requireActual('@/features/auth'); return { ...a, useAuthBootstrap: jest.fn() }; });
-jest.mock('../hooks', () => ({ useAdminDashboard: jest.fn(), useMarketplaceSummary: jest.fn(() => ({})) }));
+jest.mock('../hooks', () => ({ useAdminDashboard: jest.fn(), useMarketplaceSummary: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, data: undefined, error: null, refetch: jest.fn() })) }));
 
 import { AdminDashboardView } from '../components/admin-dashboard-view';
 import { useAuthBootstrap } from '@/features/auth';
