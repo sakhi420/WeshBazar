@@ -35,12 +35,12 @@
 
 | ID | Severity | Summary | Evidence |
 |----|----------|---------|----------|
-| GAP-001 | 🔴 P1 | Reports: resolve/dismiss API exists, NO frontend UI | Backend `POST /admin/reports/:id/resolve`, `:id/dismiss` exist; `api.ts` has no wrappers |
-| GAP-002 | 🔴 P1 | /admin/locations: 9 backend endpoints, 0 frontend files | No route, no component, no API wrappers |
-| GAP-003 | 🔴 P1 | /admin/audit: 1 backend endpoint, 0 frontend files | No route, no component, no API wrappers |
-| GAP-004 | 🟡 P1 | Category attributes: 6 backend endpoints, no UI | `taxonomy` view handles categories only; attributes+options missing |
-| GAP-005 | 🟡 P2 | AdminNav has only 5 tabs; locations+audit unreachable | `admin-nav.tsx:13-19`: TABS has 5 entries |
-| GAP-006 | 🟡 P2 | Vazirmatn from Google Fonts; spec §12 requires self-hosting | `layout.tsx`: Google Fonts API import |
+| GAP-001 | ✅ RESOLVED | Reports: resolve/dismiss wired to frontend | `admin-reports-view.tsx` has Resolve/Dismiss buttons + note modal |
+| GAP-002 | ✅ RESOLVED | /admin/locations: full UI with province+city CRUD | Page + view + API wrappers + hooks implemented |
+| GAP-003 | ✅ RESOLVED | /admin/audit: full UI with filters + pagination | Page + view + API wrapper + hook implemented |
+| GAP-004 | ✅ RESOLVED | Taxonomy attributes/options: full UI | `admin-taxonomy-view.tsx` rebuilt with attribute CRUD + option management |
+| GAP-005 | ✅ RESOLVED | AdminNav has 7 tabs: dashboard, listings, reports, users, taxonomy, locations, audit | `admin-nav.tsx:13-21`: TABS has 7 entries |
+| GAP-006 | ✅ RESOLVED | Vazir self-hosted via next/font/local | `layout.tsx`: localFont with 4 weight files in `./fonts/` |
 | GAP-007 | 🟡 P2 | No admin panel entry point from public pages | No "Admin" link visible to MODERATOR/ADMIN users |
 
 ## UX (UX)

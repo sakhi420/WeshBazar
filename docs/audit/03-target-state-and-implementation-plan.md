@@ -9,16 +9,16 @@
 | Listing moderation queue | ✅ Implemented | — |
 | Listing detail + moderation trail | ✅ Implemented | — |
 | Report queue viewing | ✅ Implemented | — |
-| Report resolve/dismiss | ❌ Missing | P0 |
-| User search + suspend/ban/restore | ⚠️ Partial | P1 |
-| Category CRUD | ⚠️ Partial | P1 |
-| Category attribute/option CRUD | ❌ Missing | P1 |
-| Location management | ❌ Missing | P1 |
-| Audit log viewer | ❌ Missing | P1 |
+| Report resolve/dismiss | ✅ Implemented | P0 `c3a87fd` |
+| User search + suspend/ban/restore | ✅ Implemented | P1 |
+| Category CRUD | ✅ Implemented | P1 |
+| Category attribute/option CRUD | ✅ Implemented | P1 `9c73838` |
+| Location management | ✅ Implemented | P1 `9c73838` |
+| Audit log viewer | ✅ Implemented | P1 `9c73838` |
 | Admin entry from public UI | ❌ Missing | P2 |
 | Bulk moderation | ❌ Missing | P2 |
 | User detail drill-down | ❌ Missing | P2 |
-| Destructive action confirmations | ⚠️ Partial | P1 |
+| Destructive action confirmations | ✅ Implemented | P1 `9c73838` |
 | Responsive QA | ⚪ Not Verified | P1 |
 | Accessibility (WCAG 2.2 AA) | ⚪ Not Verified | P2 |
 
@@ -108,22 +108,22 @@
 
 ## 5. Implementation Roadmap
 
-### P0 — Critical (Week 1)
-| Task | Effort |
-|------|--------|
-| Wire report resolve/dismiss (api.ts + hooks + UI) | 6-8h |
-| Fix TS 5.7 Jest compatibility | 1-2h |
-| Run and verify existing test suite | 1h |
+### P0 — Critical (Week 1) ✅ DONE
+| Task | Effort | Status |
+|------|--------|--------|
+| Wire report resolve/dismiss (api.ts + hooks + UI) | 6-8h | ✅ `c3a87fd` |
+| Fix TS 5.7 Jest compatibility | 1-2h | ✅ `c3a87fd` |
+| Run and verify existing test suite | 1h | ✅ |
 
-### P1 — Important (Week 2)
-| Task | Effort |
-|------|--------|
-| Create /admin/locations (page + API + hooks + view) | 6-8h |
-| Create /admin/audit (page + API + hook + view) | 4-6h |
-| Add attribute/option management to taxonomy | 6-8h |
-| Add confirmation dialogs (ConfirmDialog + wire up) | 3-4h |
-| Browser-test all admin pages 390px + 1440px | 3-4h |
-| Self-host Vazirmatn | 2-3h |
+### P1 — Important (Week 2) ✅ DONE (except browser test + public link)
+| Task | Effort | Status |
+|------|--------|--------|
+| Create /admin/locations (page + API + hooks + view) | 6-8h | ✅ `9c73838` |
+| Create /admin/audit (page + API + hook + view) | 4-6h | ✅ `9c73838` |
+| Add attribute/option management to taxonomy | 6-8h | ✅ `9c73838` |
+| Add confirmation dialogs (ConfirmDialog + wire up) | 3-4h | ✅ `9c73838` |
+| Browser-test all admin pages 390px + 1440px | 3-4h | ⚪ Pending |
+| Self-host Vazirmatn → Vazir | 2-3h | ✅ `9c73838` |
 
 ### P2 — Quality (Week 3)
 | Task | Effort |
