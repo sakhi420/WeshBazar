@@ -13,4 +13,5 @@ export { AdminUsersView } from './admin-users-view';
 export { AdminTaxonomyView } from './admin-taxonomy-view';
 export { AdminLocationsView } from './admin-locations-view';
 export { AdminAuditView } from './admin-audit-view';
+export { ActiveFilterChips } from './ActiveFilterChips';
 export { AdminNav } from './admin-nav';

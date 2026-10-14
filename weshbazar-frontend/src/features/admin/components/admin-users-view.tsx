@@ -11,8 +11,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryState } from 'nuqs';
-import { parseAsInteger } from 'nuqs';
-import { Ban, ChevronDown, ChevronUp, Loader2, Search, UserCheck, UserX } from 'lucide-react';
+import { parseAsInteger, parseAsString } from 'nuqs';
+import { Ban, ChevronDown, ChevronUp, Loader2, Search, UserCheck, UserX, X } from 'lucide-react';
 import { ErrorState } from '@/components/feedback/error-state';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { Skeleton } from '@/components/feedback/skeleton';
@@ -30,11 +30,13 @@ import {
   useRestoreUser,
   useAdminUserDetail,
 } from '../hooks';
+import { ActiveFilterChips } from './ActiveFilterChips';
 import { AdminAccessDenied } from './admin-access-denied';
 
 // --- URL state parsers (nuqs) -----------------------------------------------
 
 const pageParser = parseAsInteger;
+const searchParser = parseAsString;
 
 // --- Labels -----------------------------------------------------------------
 
@@ -67,7 +69,7 @@ export function AdminUsersView({ className }: { className?: string }) {
 
   const [pageParam, setPageParam] = useQueryState('page', pageParser);
   const page = pageParam ?? 1;
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useQueryState('q', searchParser);
 
   // Action state: which user + what operation is in-progress
   const [actionTarget, setActionTarget] = useState<{
@@ -87,7 +89,7 @@ export function AdminUsersView({ className }: { className?: string }) {
 
   const params = useMemo(
     () => ({
-      q: search.trim() || undefined,
+      q: search?.trim() || undefined,
       page,
       limit: 20,
     }),
@@ -151,15 +153,21 @@ export function AdminUsersView({ className }: { className?: string }) {
         />
         <input
           type="search"
-          value={search}
+          value={search ?? ''}
           onChange={(e) => {
-            setSearch(e.target.value);
+            setSearch(e.target.value || null);
             void setPageParam(null);
           }}
           placeholder="جست‌وجوی کاربر…"
           className="h-control w-full rounded-control border border-input bg-background pe-3 ps-9 text-ui outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>
+<ActiveFilterChips
+        chips={[
+          ...(search ? [{ key: 'q', label: `جست‌وجو: ${search}`, onRemove: () => { void setSearch(null); void setPageParam(null); } }] : []),
+        ]}
+        onClearAll={() => { void setSearch(null); void setPageParam(null); }}
+      />
 
       {/* Mutation error banner */}
       {(suspendM.isError || banM.isError || restoreM.isError) && (

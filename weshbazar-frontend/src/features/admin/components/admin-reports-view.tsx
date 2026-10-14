@@ -23,6 +23,7 @@ import { useAuthBootstrap } from '@/features/auth';
 import { ApiError } from '@/lib/api';
 import { isForbiddenError, isSessionLostError } from '../errors';
 import { useAdminReports, useResolveReport, useDismissReport } from '../hooks';
+import { ActiveFilterChips } from './ActiveFilterChips';
 import { AdminAccessDenied } from './admin-access-denied';
 
 // --- URL state parsers (nuqs) -----------------------------------------------
@@ -130,6 +131,12 @@ export function AdminReportsView({ className }: { className?: string }) {
           </button>
         ))}
       </nav>
+<ActiveFilterChips
+        chips={[
+          ...(statusParam ? [{ key: 'status', label: STATUS_LABELS[statusParam] ?? statusParam, onRemove: () => { void setStatusParam(null); void setPageParam(null); } }] : []),
+        ]}
+        onClearAll={() => { void setStatusParam(null); void setPageParam(null); }}
+      />
 
       {reports.isPending ? <ReportsSkeleton /> :
        reports.isError ? <ErrorState requestId={reports.error instanceof ApiError ? reports.error.requestId : undefined} title="دریافت گزارش‌ها ناموفق بود" onRetry={() => void reports.refetch()} /> :

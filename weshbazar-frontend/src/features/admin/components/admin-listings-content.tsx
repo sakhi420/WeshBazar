@@ -35,6 +35,7 @@ import {
   queueViewParser,
 } from '../params';
 import type { AdminListingItem } from '../types';
+import { ActiveFilterChips } from './ActiveFilterChips';
 import { AdminAccessDenied } from './admin-access-denied';
 import { AdminListingCard } from './admin-listing-card';
 import { AdminListingTable } from './admin-listing-table';
@@ -216,6 +217,14 @@ export function AdminListingsContent({ onSessionLost }: { onSessionLost: () => v
           به‌روزرسانی
         </Button>
       </div>
+<ActiveFilterChips
+        chips={[
+          ...(searchParam ? [{ key: 'q', label: `جست‌وجو: ${searchParam}`, onRemove: () => { void setSearchParam(null); resetNavigation(); } }] : []),
+          ...(sortParam ? [{ key: 'sort', label: sortParam === 'newest' ? 'جدیدترین' : 'قدیمی‌ترین', onRemove: () => { void setSortParam(null); resetNavigation(); } }] : []),
+          ...(sellerParam ? [{ key: 'seller', label: 'فیلتر فروشنده', onRemove: clearSellerFilter }] : []),
+        ]}
+        onClearAll={() => { void setSearchParam(null); void setSortParam(null); clearSellerFilter(); }}
+      />
 
       {sellerParam ? (
         <div className="flex flex-wrap items-center gap-2 text-caption text-muted-foreground">

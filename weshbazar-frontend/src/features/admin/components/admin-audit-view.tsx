@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/features/listings';
 import { isForbiddenError, isSessionLostError } from '../errors';
 import { useAdminAuditLogs } from '../hooks';
+import { ActiveFilterChips } from './ActiveFilterChips';
 import { AdminAccessDenied } from './admin-access-denied';
 
 const LOGIN_HREF = `/auth/login?next=${encodeURIComponent('/admin/audit')}`;
@@ -65,6 +66,12 @@ export function AdminAuditView({ className }: { className?: string }) {
           ))}
         </select>
       </div>
+<ActiveFilterChips
+      chips={[
+        ...(actionParam ? [{ key: 'action', label: ACTION_LABELS[actionParam] ?? actionParam, onRemove: () => { void setActionParam(null); void setPageParam(null); } }] : []),
+      ]}
+      onClearAll={() => { void setActionParam(null); void setPageParam(null); }}
+    />
 
       {auditLogs.isPending ? <AuditSkeleton /> :
        auditLogs.isError ? <ErrorState title="دریافت رویدادها ناموفق بود" onRetry={() => void auditLogs.refetch()} /> :
