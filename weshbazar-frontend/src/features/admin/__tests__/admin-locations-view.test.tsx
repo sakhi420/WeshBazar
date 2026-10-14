@@ -26,7 +26,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   auth('checking');
   (useAdminProvinces as jest.Mock).mockReturnValue(pendingQ);
-  [useCreateProvince, useUpdateProvince, useDeleteProvince, useCreateCity, useUpdateCity, useDeleteCity].forEach(mutStub);
+  [useCreateProvince as jest.Mock, useUpdateProvince as jest.Mock, useDeleteProvince as jest.Mock, useCreateCity as jest.Mock, useUpdateCity as jest.Mock, useDeleteCity as jest.Mock].forEach(mutStub);
 });
 
 describe('AdminLocationsView', () => {

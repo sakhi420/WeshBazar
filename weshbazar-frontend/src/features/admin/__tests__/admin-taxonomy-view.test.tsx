@@ -28,7 +28,7 @@ beforeEach(() => {
   auth('checking');
   (useAdminCategories as jest.Mock).mockReturnValue(pendingQ);
   (useAdminAttributes as jest.Mock).mockReturnValue({ ...pendingQ, data: [] });
-  [useCreateCategory, useUpdateCategory, useDeleteCategory, useCreateAttribute, useUpdateAttribute, useDeleteAttribute, useCreateOption, useUpdateOption, useDeleteOption].forEach(mutStub);
+  [useCreateCategory as jest.Mock, useUpdateCategory as jest.Mock, useDeleteCategory as jest.Mock, useCreateAttribute as jest.Mock, useUpdateAttribute as jest.Mock, useDeleteAttribute as jest.Mock, useCreateOption as jest.Mock, useUpdateOption as jest.Mock, useDeleteOption as jest.Mock].forEach(mutStub);
 });
 
 describe('AdminTaxonomyView', () => {
