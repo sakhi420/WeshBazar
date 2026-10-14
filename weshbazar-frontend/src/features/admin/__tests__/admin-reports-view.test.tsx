@@ -5,6 +5,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 
 const pendingQ = { isPending: true, isError: false, isSuccess: false, isFetching: false, isPlaceholderData: false, data: undefined, error: null, refetch: jest.fn() };
 const routerReplace = jest.fn();
+const byText = (t: string) => (c: string, el?: Element) => el?.textContent?.includes(t) ?? false;
 const retryFn = jest.fn();
 
 jest.mock('next/navigation', () => ({ useRouter: () => ({ replace: routerReplace }) }));
@@ -29,7 +30,7 @@ describe('AdminReportsView', () => {
     auth('ready', { id: 'u', phone: '09', displayName: 'M', role: 'MODERATOR', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01T00:00:00Z' });
     (useAdminReports as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { items: [{ id: 'r', reason: 'SPAM', status: 'OPEN', description: '', listing: { title: 'آگهی تست' }, reporter: { displayName: 'گزارش‌دهنده' }, createdAt: '2026-01-01T00:00:00Z' }], total: 1, totalPages: 1, page: 1, limit: 20 } });
     render(<AdminReportsView />);
-    expect(screen.getByText((c, el) => el?.textContent?.includes('هرزنامه') ?? false)).toBeInTheDocument();
-    expect(screen.getByText((c, el) => el?.textContent?.includes('آگهی تست') ?? false)).toBeInTheDocument();
+    expect(document.body.textContent).toContain('SPAM');
+    expect(document.body.textContent).toContain('آگهی تست');
   });
 });

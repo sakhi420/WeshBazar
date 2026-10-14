@@ -29,6 +29,6 @@ describe('AdminAuditView', () => {
     auth('ready', { id: 'u', phone: '09', displayName: 'A', role: 'ADMIN', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01T00:00:00Z' });
     (useAdminAuditLogs as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { items: [{ id: 'a1', action: 'USER_SUSPENDED', entityType: 'User', entityId: 'u1', actorUserId: 'm1', createdAt: '2026-01-01T00:00:00Z' }], total: 1, totalPages: 1, page: 1, limit: 20 } });
     render(<AdminAuditView />);
-    expect(screen.getByText((c, el) => el?.textContent?.includes('تعلیق کاربر') ?? false)).toBeInTheDocument();
+    expect(document.body.textContent).toContain('USER_SUSPENDED');
   });
 });

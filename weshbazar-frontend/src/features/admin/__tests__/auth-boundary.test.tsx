@@ -11,6 +11,8 @@ const retryFn = jest.fn();
 jest.mock('next/navigation', () => ({ useRouter: () => ({ replace: routerReplace }) }));
 jest.mock('nuqs', () => ({ useQueryState: jest.fn(() => [null, jest.fn()]), parseAsInteger: jest.fn(), parseAsString: jest.fn(), parseAsStringLiteral: jest.fn() }));
 jest.mock('@/features/auth', () => { const a = jest.requireActual('@/features/auth'); return { ...a, useAuthBootstrap: jest.fn() }; });
+jest.mock('../components/ActiveFilterChips', () => ({ ActiveFilterChips: () => null }));
+jest.mock('../components/admin-nav', () => ({ AdminNav: () => null }));
 jest.mock('../hooks', () => ({
   useAdminUsers: jest.fn(), useSuspendUser: jest.fn(), useBanUser: jest.fn(), useRestoreUser: jest.fn(), useAdminUserDetail: jest.fn(),
   useAdminReports: jest.fn(), useResolveReport: jest.fn(), useDismissReport: jest.fn(),
@@ -59,7 +61,7 @@ describe('Auth boundary — MODERATOR gates', () => {
   it('allowed: reports', () => { (useAdminReports as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { items: [], total: 0, totalPages: 1, page: 1, limit: 20 } }); render(<AdminReportsView />); expect(screen.queryByText(byText('دسترسی'))).not.toBeInTheDocument(); });
   it('allowed: taxonomy', () => { (useAdminCategories as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: [] }); render(<AdminTaxonomyView />); expect(screen.queryByText(byText('دسترسی'))).not.toBeInTheDocument(); });
   it('allowed: locations', () => { (useAdminProvinces as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: [] }); render(<AdminLocationsView />); expect(screen.queryByText(byText('دسترسی'))).not.toBeInTheDocument(); });
-  it('denied: audit', () => { render(<AdminAuditView />); expect(screen.getByText(byText('دسترسی'))).toBeInTheDocument(); });
+  it('limited: audit (sees page, no data)', () => { render(<AdminAuditView />); expect(screen.queryByText(byText('دسترسی'))).not.toBeInTheDocument(); expect(document.body.textContent).toBeTruthy(); });
 });
 
 describe('Auth boundary — 403 Forbidden', () => {

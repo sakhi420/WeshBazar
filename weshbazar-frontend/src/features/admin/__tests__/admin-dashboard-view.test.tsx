@@ -9,7 +9,7 @@ const retryFn = jest.fn();
 
 jest.mock('next/navigation', () => ({ useRouter: () => ({ replace: routerReplace }) }));
 jest.mock('@/features/auth', () => { const a = jest.requireActual('@/features/auth'); return { ...a, useAuthBootstrap: jest.fn() }; });
-jest.mock('../hooks', () => ({ useAdminDashboard: jest.fn(), useMarketplaceSummary: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, data: undefined, error: null, refetch: jest.fn() })) }));
+jest.mock('../hooks', () => ({ useAdminDashboard: jest.fn(), useMarketplaceSummary: jest.fn(() => ({ isPending: true, isError: false, isSuccess: false, isFetching: false, isPlaceholderData: false, data: undefined, error: null, refetch: jest.fn() })) }));
 
 import { AdminDashboardView } from '../components/admin-dashboard-view';
 import { useAuthBootstrap } from '@/features/auth';
@@ -25,8 +25,8 @@ describe('AdminDashboardView', () => {
   it('4. USER → access denied', () => { auth('ready', { id: 'u', phone: '09', displayName: 'U', role: 'USER', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01' }); render(<AdminDashboardView />); expect(screen.getByText((c, el) => el?.textContent?.includes('دسترسی') ?? false)).toBeInTheDocument(); });
   it('5. ready + data → renders dashboard content', () => {
     auth('ready', { id: 'u', phone: '09', displayName: 'A', role: 'ADMIN', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01T00:00:00Z' });
-    (useAdminDashboard as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { totalUsers: 100, activeUsers: 80, totalListings: 500, pendingReview: 10, totalReports: 20, openReports: 5, listingsByStatus: { ACTIVE: 400 }, userRoles: { USER: 90, MODERATOR: 5, ADMIN: 5 }, userStatuses: { ACTIVE: 80 } } });
+    (useAdminDashboard as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { generatedAt: '2026-01-01T00:00:00Z', users: { total: 100, active: 80, suspended: 10, banned: 5, newLast7Days: 3 }, listings: { byStatus: { ACTIVE: 400, DRAFT: 20 }, newLast7Days: 15, publishedLast7Days: 10, soldLast7Days: 5 }, reports: { open: 5, underReview: 3, createdLast7Days: 7 } } });
     render(<AdminDashboardView />);
-    expect(screen.getByText((c, el) => el?.textContent?.includes('۱۰۰') ?? false)).toBeInTheDocument();
+    expect(document.body.textContent).toContain('100');
   });
 });
