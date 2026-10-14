@@ -42,26 +42,24 @@ beforeEach(() => {
   [useAdminUsers, useAdminReports, useAdminDashboard, useAdminCategories, useAdminProvinces, useAdminAuditLogs].forEach((fn) => (fn as jest.Mock).mockReturnValue(pendingQ));
 });
 
-const byText = (text: string) => (c: string, el?: Element) => el?.textContent?.includes(text) ?? false;
-
 describe('Auth boundary — USER blocked from all 7 views', () => {
   beforeEach(() => { auth('ready', USER); });
-  it('users', () => { render(<AdminUsersView />); expect(screen.getByText(byText('دسترسی'))).toBeInTheDocument(); });
-  it('reports', () => { render(<AdminReportsView />); expect(screen.getByText(byText('دسترسی'))).toBeInTheDocument(); });
-  it('audit', () => { render(<AdminAuditView />); expect(screen.getByText(byText('دسترسی'))).toBeInTheDocument(); });
-  it('dashboard', () => { render(<AdminDashboardView />); expect(screen.getByText(byText('دسترسی'))).toBeInTheDocument(); });
-  it('taxonomy', () => { render(<AdminTaxonomyView />); expect(screen.getByText(byText('دسترسی'))).toBeInTheDocument(); });
-  it('locations', () => { render(<AdminLocationsView />); expect(screen.getByText(byText('دسترسی'))).toBeInTheDocument(); });
-  it('listings', () => { render(<AdminListingsView />); expect(screen.getByText(byText('دسترسی'))).toBeInTheDocument(); });
+  it('users', () => { render(<AdminUsersView />); expect(document.body.textContent).toContain('دسترسی'); });
+  it('reports', () => { render(<AdminReportsView />); expect(document.body.textContent).toContain('دسترسی'); });
+  it('audit', () => { render(<AdminAuditView />); expect(document.body.textContent).toContain('دسترسی'); });
+  it('dashboard', () => { render(<AdminDashboardView />); expect(document.body.textContent).toContain('دسترسی'); });
+  it('taxonomy', () => { render(<AdminTaxonomyView />); expect(document.body.textContent).toContain('دسترسی'); });
+  it('locations', () => { render(<AdminLocationsView />); expect(document.body.textContent).toContain('دسترسی'); });
+  it('listings', () => { render(<AdminListingsView />); expect(document.body.textContent).toContain('دسترسی'); });
 });
 
 describe('Auth boundary — MODERATOR gates', () => {
   beforeEach(() => { auth('ready', MOD); });
-  it('allowed: users', () => { (useAdminUsers as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { items: [], total: 0, totalPages: 1, page: 1, limit: 20 } }); render(<AdminUsersView />); expect(screen.queryByText(byText('دسترسی'))).not.toBeInTheDocument(); });
-  it('allowed: reports', () => { (useAdminReports as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { items: [], total: 0, totalPages: 1, page: 1, limit: 20 } }); render(<AdminReportsView />); expect(screen.queryByText(byText('دسترسی'))).not.toBeInTheDocument(); });
-  it('allowed: taxonomy', () => { (useAdminCategories as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: [] }); render(<AdminTaxonomyView />); expect(screen.queryByText(byText('دسترسی'))).not.toBeInTheDocument(); });
-  it('allowed: locations', () => { (useAdminProvinces as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: [] }); render(<AdminLocationsView />); expect(screen.queryByText(byText('دسترسی'))).not.toBeInTheDocument(); });
-  it('limited: audit (sees page, no data)', () => { render(<AdminAuditView />); expect(screen.queryByText(byText('دسترسی'))).not.toBeInTheDocument(); expect(document.body.textContent).toBeTruthy(); });
+  it('allowed: users', () => { (useAdminUsers as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { items: [], total: 0, totalPages: 1, page: 1, limit: 20 } }); render(<AdminUsersView />); expect(document.body.textContent).not.toContain('دسترسی'); });
+  it('allowed: reports', () => { (useAdminReports as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { items: [], total: 0, totalPages: 1, page: 1, limit: 20 } }); render(<AdminReportsView />); expect(document.body.textContent).not.toContain('دسترسی'); });
+  it('allowed: taxonomy', () => { (useAdminCategories as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: [] }); render(<AdminTaxonomyView />); expect(document.body.textContent).not.toContain('دسترسی'); });
+  it('allowed: locations', () => { (useAdminProvinces as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: [] }); render(<AdminLocationsView />); expect(document.body.textContent).not.toContain('دسترسی'); });
+  it('limited: audit (sees page, no data)', () => { render(<AdminAuditView />); expect(document.body.textContent).not.toContain('دسترسی'); expect(document.body.textContent).toBeTruthy(); });
 });
 
 describe('Auth boundary — 403 Forbidden', () => {
@@ -70,7 +68,7 @@ describe('Auth boundary — 403 Forbidden', () => {
     const { ApiError } = jest.requireActual('@/lib/api');
     (useAdminUsers as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isError: true, error: new ApiError({ code: 'FORBIDDEN', message: 'x', status: 403 }) });
     render(<AdminUsersView />);
-    expect(screen.getByText(byText('دسترسی'))).toBeInTheDocument();
+    expect(document.body.textContent).toContain('دسترسی');
   });
 });
 

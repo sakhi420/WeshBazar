@@ -22,11 +22,11 @@ describe('AdminDashboardView', () => {
   it('1. checking → spinner', () => { auth('checking'); render(<AdminDashboardView />); expect(screen.getByText(/بررسی نشست|در حال انتقال/i)).toBeInTheDocument(); });
   it('2. anonymous → redirects', () => { auth('anonymous'); render(<AdminDashboardView />); expect(routerReplace).toHaveBeenCalledWith(expect.stringContaining('/auth/login')); });
   it('3. unreachable → error + retry', () => { auth('unreachable'); render(<AdminDashboardView />); expect(screen.getByText(/ارتباط|برقرار نشد/i)).toBeInTheDocument(); fireEvent.click(screen.getByRole('button', { name: /تلاش/i })); expect(retryFn).toHaveBeenCalled(); });
-  it('4. USER → access denied', () => { auth('ready', { id: 'u', phone: '09', displayName: 'U', role: 'USER', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01' }); render(<AdminDashboardView />); expect(screen.getByText((c, el) => el?.textContent?.includes('دسترسی') ?? false)).toBeInTheDocument(); });
+  it('4. USER → access denied', () => { auth('ready', { id: 'u', phone: '09', displayName: 'U', role: 'USER', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01' }); render(<AdminDashboardView />); expect(document.body.textContent).toContain('دسترسی'); });
   it('5. ready + data → renders dashboard content', () => {
     auth('ready', { id: 'u', phone: '09', displayName: 'A', role: 'ADMIN', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01T00:00:00Z' });
     (useAdminDashboard as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { generatedAt: '2026-01-01T00:00:00Z', users: { total: 100, active: 80, suspended: 10, banned: 5, newLast7Days: 3 }, listings: { byStatus: { ACTIVE: 400, DRAFT: 20 }, newLast7Days: 15, publishedLast7Days: 10, soldLast7Days: 5 }, reports: { open: 5, underReview: 3, createdLast7Days: 7 } } });
     render(<AdminDashboardView />);
-    expect(document.body.textContent).toContain('100');
+    expect(document.body.textContent).toContain('۱۰۰');
   });
 });
