@@ -5,7 +5,6 @@
 import { render, screen } from '@testing-library/react';
 
 const pendingQ = { isPending: true, isError: false, isSuccess: false, isFetching: false, isPlaceholderData: false, data: undefined, error: null, refetch: jest.fn() };
-const mutStub = () => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() });
 const routerReplace = jest.fn();
 const retryFn = jest.fn();
 
@@ -15,15 +14,15 @@ jest.mock('@/features/auth', () => { const a = jest.requireActual('@/features/au
 jest.mock('../components/ActiveFilterChips', () => ({ ActiveFilterChips: () => null }));
 jest.mock('../components/admin-nav', () => ({ AdminNav: () => null }));
 jest.mock('../hooks', () => ({
-  useAdminUsers: jest.fn(), useSuspendUser: jest.fn(mutStub), useBanUser: jest.fn(mutStub), useRestoreUser: jest.fn(mutStub), useAdminUserDetail: jest.fn(),
-  useAdminReports: jest.fn(), useResolveReport: jest.fn(mutStub), useDismissReport: jest.fn(mutStub),
-  useAdminListings: jest.fn(), useListingModeration: jest.fn(mutStub),
-  useAdminDashboard: jest.fn(), useMarketplaceSummary: jest.fn(() => ({ ...pendingQ, isPending: true })),
-  useAdminCategories: jest.fn(), useCreateCategory: jest.fn(mutStub), useUpdateCategory: jest.fn(mutStub), useDeleteCategory: jest.fn(mutStub),
-  useAdminAttributes: jest.fn(), useCreateAttribute: jest.fn(mutStub), useUpdateAttribute: jest.fn(mutStub), useDeleteAttribute: jest.fn(mutStub),
-  useCreateOption: jest.fn(mutStub), useUpdateOption: jest.fn(mutStub), useDeleteOption: jest.fn(mutStub),
-  useAdminProvinces: jest.fn(), useCreateProvince: jest.fn(mutStub), useUpdateProvince: jest.fn(mutStub), useDeleteProvince: jest.fn(mutStub),
-  useAdminCities: jest.fn(), useCreateCity: jest.fn(mutStub), useUpdateCity: jest.fn(mutStub), useDeleteCity: jest.fn(mutStub),
+  useAdminUsers: jest.fn(), useSuspendUser: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useBanUser: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useRestoreUser: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useAdminUserDetail: jest.fn(),
+  useAdminReports: jest.fn(), useResolveReport: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useDismissReport: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })),
+  useAdminListings: jest.fn(), useListingModeration: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })),
+  useAdminDashboard: jest.fn(), useMarketplaceSummary: jest.fn(() => ({ isPending: true, isError: false, isSuccess: false, isFetching: false, isPlaceholderData: false, data: undefined, error: null, refetch: jest.fn() })),
+  useAdminCategories: jest.fn(), useCreateCategory: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useUpdateCategory: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useDeleteCategory: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })),
+  useAdminAttributes: jest.fn(), useCreateAttribute: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useUpdateAttribute: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useDeleteAttribute: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })),
+  useCreateOption: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useUpdateOption: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useDeleteOption: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })),
+  useAdminProvinces: jest.fn(), useCreateProvince: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useUpdateProvince: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useDeleteProvince: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })),
+  useAdminCities: jest.fn(), useCreateCity: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useUpdateCity: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })), useDeleteCity: jest.fn(() => ({ isPending: false, isSuccess: false, isError: false, error: null, mutate: jest.fn(), reset: jest.fn() })),
   useAdminAuditLogs: jest.fn(),
 }));
 
