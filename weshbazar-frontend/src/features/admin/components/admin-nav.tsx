@@ -16,6 +16,8 @@ const TABS = [
   { href: '/admin/reports', label: 'گزارش‌ها' },
   { href: '/admin/users', label: 'کاربران' },
   { href: '/admin/taxonomy', label: 'دسته‌بندی‌ها' },
+  { href: '/admin/locations', label: 'مکان‌ها' },
+  { href: '/admin/audit', label: 'رویدادها' },
 ] as const;
 
 export function AdminNav() {

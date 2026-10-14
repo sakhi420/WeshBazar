@@ -17,6 +17,7 @@ import { ErrorState } from '@/components/feedback/error-state';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { Skeleton } from '@/components/feedback/skeleton';
 import { Button } from '@/components/ui/button';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/features/listings';
 import { useAuthBootstrap } from '@/features/auth';
@@ -50,6 +51,8 @@ export function AdminUsersView({ className }: { className?: string }) {
   // Action state: which user + what operation is in-progress
   const [actionTarget, setActionTarget] = useState<{ userId: string; verb: 'suspend' | 'ban' } | null>(null);
   const [reason, setReason] = useState('');
+  // Confirmation dialog state — shown before action form appears
+  const [confirmTarget, setConfirmTarget] = useState<{ userId: string; verb: 'suspend' | 'ban'; name: string } | null>(null);
 
   const params = useMemo(() => ({
     q: search.trim() || undefined, page, limit: 20,
@@ -166,16 +169,18 @@ export function AdminUsersView({ className }: { className?: string }) {
                       <div className="flex items-center gap-1">
                         {u.status === 'ACTIVE' && (
                           <>
-                            <button type="button" disabled={isBusy} onClick={() => setActionTarget({ userId: u.id, verb: 'suspend' })}
-                              className="inline-flex items-center gap-1 rounded-control px-2 py-1 text-caption text-warning hover:bg-warning/10 transition-colors"
-                              title="تعلیق">
-                              <UserX className="size-3.5" /> تعلیق
-                            </button>
-                            <button type="button" disabled={isBusy} onClick={() => setActionTarget({ userId: u.id, verb: 'ban' })}
-                              className="inline-flex items-center gap-1 rounded-control px-2 py-1 text-caption text-danger hover:bg-danger/10 transition-colors"
-                              title="مسدود">
-                              <Ban className="size-3.5" /> مسدود
-                            </button>
+                            <button type="button" disabled={isBusy}
+                            onClick={() => setConfirmTarget({ userId: u.id, verb: 'suspend', name: u.displayName })}
+                            className="inline-flex items-center gap-1 rounded-control px-2 py-1 text-caption text-warning hover:bg-warning/10 transition-colors"
+                            title="تعلیق">
+                            <UserX className="size-3.5" /> تعلیق
+                          </button>
+                          <button type="button" disabled={isBusy}
+                            onClick={() => setConfirmTarget({ userId: u.id, verb: 'ban', name: u.displayName })}
+                            className="inline-flex items-center gap-1 rounded-control px-2 py-1 text-caption text-danger hover:bg-danger/10 transition-colors"
+                            title="مسدود">
+                            <Ban className="size-3.5" /> مسدود
+                          </button>
                           </>
                         )}
                         {(u.status === 'SUSPENDED' || u.status === 'BANNED') && (
@@ -203,6 +208,23 @@ export function AdminUsersView({ className }: { className?: string }) {
            </div>
          )}
        </>}
+
+      {/* Suspend/Ban confirmation */}
+      <ConfirmDialog
+        open={confirmTarget !== null}
+        onClose={() => setConfirmTarget(null)}
+        onConfirm={() => {
+          if (confirmTarget) {
+            setActionTarget({ userId: confirmTarget.userId, verb: confirmTarget.verb });
+            setConfirmTarget(null);
+          }
+        }}
+        title={confirmTarget?.verb === 'suspend' ? 'تعلیق کاربر؟' : 'مسدودیت کاربر؟'}
+        description={confirmTarget
+          ? `آیا مطمئنید می‌خواهید کاربر «${confirmTarget.name}» را ${confirmTarget.verb === 'suspend' ? 'معلق' : 'مسدود'} کنید؟`
+          : ''}
+        confirmLabel={confirmTarget?.verb === 'suspend' ? 'تعلیق' : 'مسدود'}
+      />
     </div>
   );
 }

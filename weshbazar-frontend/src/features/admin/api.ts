@@ -17,7 +17,21 @@ import type {
   AdminUserItem,
   AdminUsersQuery,
   AdminCategoryItem,
+  AdminProvinceItem,
+  AdminCityItem,
+  AdminAuditLogItem,
+  AdminAuditQuery,
+  AdminAttributeItem,
+  AdminAttributeOptionItem,
   MarketplaceSummary,
+  CreateProvincePayload,
+  UpdateProvincePayload,
+  CreateCityPayload,
+  UpdateCityPayload,
+  CreateAttributePayload,
+  UpdateAttributePayload,
+  CreateOptionPayload,
+  UpdateOptionPayload,
 } from './types';
 
 const ADMIN_BASE = '/admin';
@@ -162,4 +176,107 @@ export function updateCategory(
 
 export function deleteCategory(id: string): Promise<void> {
   return del<void>(`${ADMIN_BASE}/categories/${id}`);
+}
+// --- Locations ----------------------------------------------------------------
+
+export function fetchAdminProvinces(): Promise<AdminProvinceItem[]> {
+  return get<AdminProvinceItem[]>(`${ADMIN_BASE}/provinces`);
+}
+
+export function createProvince(
+  payload: CreateProvincePayload,
+): Promise<AdminProvinceItem> {
+  return post<AdminProvinceItem>(`${ADMIN_BASE}/provinces`, payload);
+}
+
+export function updateProvince(
+  id: string,
+  payload: UpdateProvincePayload,
+): Promise<AdminProvinceItem> {
+  return patch<AdminProvinceItem>(`${ADMIN_BASE}/provinces/${id}`, payload);
+}
+
+export function deleteProvince(id: string): Promise<void> {
+  return del<void>(`${ADMIN_BASE}/provinces/${id}`);
+}
+
+export function fetchAdminCities(provinceId: string): Promise<AdminCityItem[]> {
+  return get<AdminCityItem[]>(`${ADMIN_BASE}/provinces/${provinceId}/cities`);
+}
+
+export function createCity(
+  provinceId: string,
+  payload: CreateCityPayload,
+): Promise<AdminCityItem> {
+  return post<AdminCityItem>(`${ADMIN_BASE}/provinces/${provinceId}/cities`, payload);
+}
+
+export function updateCity(
+  id: string,
+  payload: UpdateCityPayload,
+): Promise<AdminCityItem> {
+  return patch<AdminCityItem>(`${ADMIN_BASE}/cities/${id}`, payload);
+}
+
+export function deleteCity(id: string): Promise<void> {
+  return del<void>(`${ADMIN_BASE}/cities/${id}`);
+}
+
+// --- Audit --------------------------------------------------------------------
+
+export function fetchAuditLogs(
+  params: AdminAuditQuery = {},
+): Promise<PageResult<AdminAuditLogItem>> {
+  return getPage<AdminAuditLogItem>(`${ADMIN_BASE}/audit-logs`, {
+    query: {
+      action: params.action,
+      entityType: params.entityType,
+      entityId: params.entityId,
+      actorUserId: params.actorUserId,
+      page: params.page,
+      limit: params.limit,
+    },
+  });
+}
+
+// --- Taxonomy attributes/options ----------------------------------------------
+
+export function fetchAttributes(categoryId: string): Promise<AdminAttributeItem[]> {
+  return get<AdminAttributeItem[]>(`${ADMIN_BASE}/categories/${categoryId}/attributes`);
+}
+
+export function createAttribute(
+  categoryId: string,
+  payload: CreateAttributePayload,
+): Promise<AdminAttributeItem> {
+  return post<AdminAttributeItem>(`${ADMIN_BASE}/categories/${categoryId}/attributes`, payload);
+}
+
+export function updateAttribute(
+  id: string,
+  payload: UpdateAttributePayload,
+): Promise<AdminAttributeItem> {
+  return patch<AdminAttributeItem>(`${ADMIN_BASE}/attributes/${id}`, payload);
+}
+
+export function deleteAttribute(id: string): Promise<void> {
+  return del<void>(`${ADMIN_BASE}/attributes/${id}`);
+}
+
+export function createOption(
+  attributeId: string,
+  payload: CreateOptionPayload,
+): Promise<AdminAttributeOptionItem> {
+  return post<AdminAttributeOptionItem>(`${ADMIN_BASE}/attributes/${attributeId}/options`, payload);
+}
+
+export function updateOption(
+  id: string,
+  payload: UpdateOptionPayload,
+): Promise<AdminAttributeOptionItem> {
+  return patch<AdminAttributeOptionItem>(`${ADMIN_BASE}/options/${id}`, payload);
+}
+
+export function deleteOption(id: string): Promise<void> {
+  return del<void>(`${ADMIN_BASE}/options/${id}`);
 }

@@ -234,3 +234,164 @@ export interface AdminCategoryItem {
   sortOrder: number;
   children?: AdminCategoryItem[];
 }
+// --- Locations ---------------------------------------------------------------
+
+export interface AdminProvinceItem {
+  id: string;
+  code: string;
+  slug: string;
+  status: string;
+  sortOrder: number;
+  name: string;
+  translations: Array<{ locale: string; name: string }>;
+  cityCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminCityItem {
+  id: string;
+  provinceId: string;
+  slug: string;
+  status: string;
+  sortOrder: number;
+  name: string;
+  translations: Array<{ locale: string; name: string }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateProvincePayload {
+  code: string;
+  translations: Array<{ locale: string; name: string }>;
+  slug?: string;
+  status?: string;
+  sortOrder?: number;
+}
+
+export interface UpdateProvincePayload {
+  code?: string;
+  slug?: string;
+  status?: string;
+  sortOrder?: number;
+  translations?: Array<{ locale: string; name: string }>;
+}
+
+export interface CreateCityPayload {
+  translations: Array<{ locale: string; name: string }>;
+  slug?: string;
+  status?: string;
+  sortOrder?: number;
+}
+
+export interface UpdateCityPayload {
+  slug?: string;
+  status?: string;
+  sortOrder?: number;
+  translations?: Array<{ locale: string; name: string }>;
+}
+
+// --- Audit -------------------------------------------------------------------
+
+export interface AdminAuditLogItem {
+  id: string;
+  actorUserId: string | null;
+  action: string;
+  entityType: string;
+  entityId: string | null;
+  metadata: Record<string, unknown>;
+  ipAddress: string | null;
+  userAgent: string | null;
+  createdAt: string;
+}
+
+export interface AdminAuditQuery {
+  action?: string;
+  entityType?: string;
+  entityId?: string;
+  actorUserId?: string;
+  page?: number;
+  limit?: number;
+}
+
+// --- Taxonomy attributes/options ---------------------------------------------
+
+export interface AdminAttributeItem {
+  id: string;
+  categoryId: string;
+  key: string;
+  label: string;
+  type: string;
+  required: boolean;
+  filterable: boolean;
+  searchable: boolean;
+  unit: string | null;
+  placeholder: string | null;
+  minValue: number | null;
+  maxValue: number | null;
+  minLength: number | null;
+  maxLength: number | null;
+  pattern: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  options: AdminAttributeOptionItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminAttributeOptionItem {
+  id: string;
+  attributeId: string;
+  value: string;
+  label: string;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+export interface CreateAttributePayload {
+  key: string;
+  label: string;
+  type: string;
+  required?: boolean;
+  filterable?: boolean;
+  searchable?: boolean;
+  unit?: string | null;
+  placeholder?: string | null;
+  minValue?: number | null;
+  maxValue?: number | null;
+  minLength?: number | null;
+  maxLength?: number | null;
+  pattern?: string | null;
+  sortOrder?: number;
+}
+
+export interface UpdateAttributePayload {
+  key?: string;
+  label?: string;
+  type?: string;
+  required?: boolean;
+  filterable?: boolean;
+  searchable?: boolean;
+  unit?: string | null;
+  placeholder?: string | null;
+  minValue?: number | null;
+  maxValue?: number | null;
+  minLength?: number | null;
+  maxLength?: number | null;
+  pattern?: string | null;
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
+export interface CreateOptionPayload {
+  value: string;
+  label: string;
+  sortOrder?: number;
+}
+
+export interface UpdateOptionPayload {
+  value?: string;
+  label?: string;
+  sortOrder?: number;
+  isActive?: boolean;
+}

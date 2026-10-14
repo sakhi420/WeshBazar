@@ -78,5 +78,7 @@ export const queryKeys = {
     auditLogs: (params: unknown) => ['admin', 'audit-logs', params] as const,
     categories: ['admin', 'categories'] as const,
     provinces: ['admin', 'provinces'] as const,
+    cities: (provinceId: string) => ['admin', 'provinces', provinceId, 'cities'] as const,
+    attributes: (categoryId: string) => ['admin', 'categories', categoryId, 'attributes'] as const,
   },
 } as const;

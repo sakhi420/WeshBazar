@@ -30,6 +30,22 @@ import {
   suspendUser,
   banUser,
   restoreUser,
+  fetchAdminProvinces,
+  createProvince,
+  updateProvince,
+  deleteProvince,
+  fetchAdminCities,
+  createCity,
+  updateCity,
+  deleteCity,
+  fetchAuditLogs,
+  fetchAttributes,
+  createAttribute,
+  updateAttribute,
+  deleteAttribute,
+  createOption,
+  updateOption,
+  deleteOption,
 } from './api';
 import type {
   AdminListingsQuery,
@@ -37,6 +53,7 @@ import type {
   AdminReportsQuery,
   AdminUsersQuery,
   ModerationAction,
+  AdminAuditQuery,
 } from './types';
 
 /** Dashboard counters (users, listings, reports). */
@@ -219,5 +236,158 @@ export function useRestoreUser() {
   return useMutation({
     mutationFn: restoreUser,
     onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'users'] }); },
+  });
+}
+// --- Locations ---------------------------------------------------------------
+
+export function useAdminProvinces(enabled: boolean) {
+  return useQuery({
+    queryKey: queryKeys.admin.provinces,
+    queryFn: fetchAdminProvinces,
+    enabled,
+    staleTime: 60_000,
+    retry: false,
+  });
+}
+
+export function useAdminCities(provinceId: string | null, enabled: boolean) {
+  return useQuery({
+    queryKey: queryKeys.admin.cities(provinceId ?? ''),
+    queryFn: () => fetchAdminCities(provinceId as string),
+    enabled: enabled && provinceId !== null,
+    staleTime: 30_000,
+    retry: false,
+  });
+}
+
+export function useCreateProvince() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: createProvince,
+    onSettled: () => { void qc.invalidateQueries({ queryKey: queryKeys.admin.provinces }); },
+  });
+}
+
+export function useUpdateProvince() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Parameters<typeof updateProvince>[1] }) =>
+      updateProvince(id, payload),
+    onSettled: () => { void qc.invalidateQueries({ queryKey: queryKeys.admin.provinces }); },
+  });
+}
+
+export function useDeleteProvince() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: deleteProvince,
+    onSettled: () => { void qc.invalidateQueries({ queryKey: queryKeys.admin.provinces }); },
+  });
+}
+
+export function useCreateCity() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ provinceId, payload }: { provinceId: string; payload: Parameters<typeof createCity>[1] }) =>
+      createCity(provinceId, payload),
+    onSettled: (_data, _error, vars) => {
+      void qc.invalidateQueries({ queryKey: queryKeys.admin.cities(vars.provinceId) });
+    },
+  });
+}
+
+export function useUpdateCity() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Parameters<typeof updateCity>[1] }) =>
+      updateCity(id, payload),
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'provinces'] }); },
+  });
+}
+
+export function useDeleteCity() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: deleteCity,
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'provinces'] }); },
+  });
+}
+
+// --- Audit -------------------------------------------------------------------
+
+export function useAdminAuditLogs(params: AdminAuditQuery, enabled: boolean) {
+  return useQuery({
+    queryKey: queryKeys.admin.auditLogs(params),
+    queryFn: () => fetchAuditLogs(params),
+    enabled,
+    staleTime: 15_000,
+    retry: false,
+    placeholderData: keepPreviousData,
+  });
+}
+
+// --- Taxonomy attributes/options ---------------------------------------------
+
+export function useAdminAttributes(categoryId: string | null, enabled: boolean) {
+  return useQuery({
+    queryKey: queryKeys.admin.attributes(categoryId ?? ''),
+    queryFn: () => fetchAttributes(categoryId as string),
+    enabled: enabled && categoryId !== null,
+    staleTime: 30_000,
+    retry: false,
+  });
+}
+
+export function useCreateAttribute() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ categoryId, payload }: { categoryId: string; payload: Parameters<typeof createAttribute>[1] }) =>
+      createAttribute(categoryId, payload),
+    onSettled: (_data, _error, vars) => {
+      void qc.invalidateQueries({ queryKey: queryKeys.admin.attributes(vars.categoryId) });
+    },
+  });
+}
+
+export function useUpdateAttribute() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Parameters<typeof updateAttribute>[1] }) =>
+      updateAttribute(id, payload),
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'categories'] }); },
+  });
+}
+
+export function useDeleteAttribute() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: deleteAttribute,
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'categories'] }); },
+  });
+}
+
+export function useCreateOption() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ attributeId, payload }: { attributeId: string; payload: Parameters<typeof createOption>[1] }) =>
+      createOption(attributeId, payload),
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'categories'] }); },
+  });
+}
+
+export function useUpdateOption() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Parameters<typeof updateOption>[1] }) =>
+      updateOption(id, payload),
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'categories'] }); },
+  });
+}
+
+export function useDeleteOption() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: deleteOption,
+    onSettled: () => { void qc.invalidateQueries({ queryKey: ['admin', 'categories'] }); },
   });
 }
