@@ -1,0 +1,39 @@
+﻿node.exe : FAIL src/features/admin/__tests__/admin-users-view.test.tsx
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL src/featur...s-view.test.tsx 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  ΓùÅ Test suite failed to run
+
+    Cannot find module '@testing-library/user-event' from 
+'src/features/admin/__tests__/admin-users-view.test.tsx'
+
+    [0m [90m 37 |[39m 
+jest[33m.[39mmock([32m'@/features/auth'[39m[33m,[39m () [33m=>[39m ({
+     [90m 38 |[39m   [33m...[39mjest[33m.[39mrequireActual([32m'@/featur
+es/auth'[39m)[33m,[39m
+    [31m[1m>[22m[39m[90m 39 |[39m   useAuthBootstrap[33m:[39m 
+jest[33m.[39mfn()[33m,[39m
+     [90m    |[39m                                                           
+[31m[1m^[22m[39m
+     [90m 40 |[39m }))[33m;[39m
+     [90m 41 |[39m jest[33m.[39mmock([32m'../hooks'[39m[33m,[39m () 
+[33m=>[39m ({
+     [90m 42 |[39m   useAdminUsers[33m:[39m 
+jest[33m.[39mfn()[33m,[39m[0m
+
+      at Resolver._throwModNotFoundError 
+(node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.<anonymous> 
+(src/features/admin/__tests__/admin-users-view.test.tsx:39:59)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        80.33 s
+Ran all test suites matching /admin-users-view/i.
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect 
+async operations that kept running after all tests finished?

@@ -6,7 +6,7 @@ const createJestConfig = nextJest({ dir: './' });
 const baseConfig = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/', '<rootDir>/e2e/'],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/', '<rootDir>/e2e/', '<rootDir>/src/.*/_test-helpers'],
 };
 
 // nextJest merges its own CSS/image mocks into moduleNameMapper, which
