@@ -1,6 +1,6 @@
 # WeshBazar Audit — Progress Tracking
 
-**Started:** 2026-10-13 | **Last Updated:** 2026-10-14 (P1 Implementation Complete)  
+**Started:** 2026-10-13 | **Last Updated:** 2026-10-14 (P2 Complete, P3 Defined)  
 **Scope:** Full-stack engineering audit of admin panel, authorization, moderation, and marketplace integration  
 **Method:** Evidence-based, line-level, traceable to source code and API contracts
 
@@ -26,14 +26,22 @@
 | P1 | AdminNav 5→7 tabs | ✅ | `9c73838` |
 | P1 | Vazir font self-hosted (next/font/local) | ✅ | `9c73838` |
 | P1 | Button-in-button hydration fix | ✅ | `9c73838` |
-| P1 | Browser testing @ 390px + 1440px | ⚪ Pending | — |
+| P1 | Browser testing @ 390px + 1440px | ⚪ → P3 | — |
 | P1 | Admin entry from public UI | ✅ | `a06d0de` |
 | P2 | User detail drill-down | ✅ | `a0cc662` |
-| P2 | Admin component tests | ✅ | `8c53744` |
-| P2 | Authorization boundary tests | ✅ | `8c53744` |
+| P2 | Admin component tests (8 suites, 49 tests) | ✅ | `0e6ba67` |
+| P2 | Authorization boundary tests | ✅ | `0e6ba67` |
 | P2 | WCAG 2.2 AA accessibility | ✅ | `cdf0c75` |
 | P2 | Bundle analysis + perf audit | ✅ | `c1e5549` |
 | P2 | Filter chips + clear all | ✅ | `d1fe9b8` |
+| P3 | Browser testing @ 390px + 1440px | 📋 | — |
+| P3 | Backend test suite verify + fix | 📋 | — |
+| P3 | E2E smoke tests (Playwright) | 📋 | — |
+| P3 | Bulk moderation (batch approve/reject) | 📋 | — |
+| P3 | Keyboard navigation audit | 📋 | — |
+| P3 | Performance profiling @ scale | 📋 | — |
+| P3 | UX polish (toggle→modal, reports verify) | 📋 | — |
+| P3 | Final documentation update | 📋 | — |
 
 ## Deliverables
 
