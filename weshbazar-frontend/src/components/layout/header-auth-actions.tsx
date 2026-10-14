@@ -11,7 +11,7 @@
  */
 
 import Link from 'next/link';
-import { LogOut, User, Loader2 } from 'lucide-react';
+import { LogOut, Shield, User, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth/auth-provider';
 
@@ -35,6 +35,14 @@ export function HeaderAuthActions() {
             <span className="truncate">{user.displayName}</span>
           </Link>
         </Button>
+        {(user.role === 'MODERATOR' || user.role === 'ADMIN') && (
+          <Button asChild variant="ghost" size="sm" aria-label="پنل مدیریت">
+            <Link href="/admin" className="inline-flex items-center gap-1.5">
+              <Shield className="size-4 shrink-0" aria-hidden />
+              <span className="hidden sm:inline">مدیریت</span>
+            </Link>
+          </Button>
+        )}
         <Button
           variant="ghost"
           size="icon"

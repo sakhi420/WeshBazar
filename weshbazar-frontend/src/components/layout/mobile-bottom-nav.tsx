@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Grid3X3, Heart, User } from 'lucide-react';
+import { Home, Search, Grid3X3, Heart, Shield, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/auth-provider';
 
@@ -20,9 +20,10 @@ const links = [
  */
 export function MobileBottomNav() {
   const pathname = usePathname();
-  const { status } = useAuth();
+  const { status, user } = useAuth();
 
   const accountHref = status === 'ready' ? '/account' : '/auth/login';
+  const showAdmin = status === 'ready' && user && (user.role === 'MODERATOR' || user.role === 'ADMIN');
 
   return (
     <nav
@@ -51,6 +52,27 @@ export function MobileBottomNav() {
             </li>
           );
         })}
+
+        {/* Admin tab — only for staff */}
+        {showAdmin && (
+          <li>
+            <Link
+              href="/admin"
+              className={cn(
+                'flex flex-col items-center gap-0.5 rounded-control px-2 py-1 min-w-touch text-caption transition-colors duration-small focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
+                pathname.startsWith('/admin')
+                  ? 'text-primary'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              <Shield
+                className={cn('size-5', pathname.startsWith('/admin') && 'stroke-[1.5]')}
+                aria-hidden
+              />
+              <span>مدیریت</span>
+            </Link>
+          </li>
+        )}
 
         {/* Account tab — auth-aware */}
         <li>
