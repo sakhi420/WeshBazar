@@ -1,6 +1,125 @@
-P3 Analysis — Polish, Scale & Ship
-**Date:** 2026-10-14 | **Status:** 📋 Defined
+# P3 Analysis — Polish, Scale & Ship
+
+**Date:** 2026-10-14 | **Status:** 📋 Audited (line-by-line code review complete)
+
 ---
+
+## 0. Pre-Flight Audit Results
+
+Before defining P3 tasks, every source file was read line-by-line. Here's what was found:
+
+### Already Done (not P3)
+
+| Item | Evidence | Status |
+|------|----------|:---:|
+| **Keyboard focus-visible** | `focus-visible:ring-2` on ALL admin inputs/buttons (100+ instances across 7 views) | ✅ |
+| **Keyboard tabIndex + Enter/Space** | `tabIndex={0}` + `onKeyDown` for Enter/Space on taxonomy locations clickable lists | ✅ |
+| **Escape closes modals** | ConfirmDialog uses native `<dialog>` with built-in Escape + focus trap | ✅ |
+| **Skip link** | `layout.tsx:60`: skip-to-main link for screen readers | ✅ |
+| **Taxonomy delete modal** | `admin-taxonomy-view.tsx:762`: Delete uses `<ConfirmDialog>` with title/description/confirm. Old "مطمئنی؟" toggle was REPLACED in P1 | ✅ |
+| **Reports resolve/dismiss** | `admin-reports-view.tsx:168-198`: Full UI — "حل شد" + "رد گزارش" buttons, note textarea, submit with loading spinner, aria-live announcements | ✅ |
+| **WCAG aria-live** | All 7 views have `aria-live="polite"` mutation feedback (Task 4 P2) | ✅ |
+| **role="alert" error banners** | All views have ErrorState with `role="alert"` (Task 4 P2) | ✅ |
+| **Bundle analyzer** | `@next/bundle-analyzer` installed, `ANALYZE=true` script configured (Task 5 P2) | ✅ |
+| **Jest tests** | 8 suites, 49 tests, all green (Task 2+3 P2) | ✅ |
+| **ConfirmDialog** | Exists at `components/ui/confirm-dialog.tsx`, used in users/locations/taxonomy views | ✅ |
+
+### Backend Tests (exist, never verified)
+
+| Type | Count | Files |
+|------|-------|-------|
+| E2E | 9 | test/e2e/: app-foundation, auth, discovery, engagement, jobs, listings, locations, media, profile, taxonomy |
+| Unit | 18 | src/**/*.spec.ts |
+| Integration | 1 | test/integration/database.integration-spec.ts |
+
+---
+
+## 1. P3 Task Overview (Corrected)
+
+| # | Task | Effort | Status |
+|---|------|--------|:---:|
+| 1 | Browser testing @ 390px + 1440px | 3-4h | ⚪ P1 leftover |
+| 2 | Backend test suite run + fix | 2-3h | ⚪ 28 files never executed |
+| 3 | Bulk moderation (frontend-only batch) | 4-6h | ⚪ Not implemented |
+| 4 | Lighthouse performance audit | 1-2h | ⚪ Never run |
+| 5 | E2E smoke tests (Playwright) | 4-6h | ⚪ No setup |
+| 6 | Update docs + findings | 1-2h | ⚪ Stale |
+
+~~Keyboard audit~~ — Done (focus-visible, tabIndex, onKeyDown, Escape all present)  
+~~UX polish~~ — Done (taxonomy uses ConfirmDialog, reports has resolve/dismiss)  
+
+**Total: ~16-23h**
+
+---
+
+## 2. Task 1 — Browser Testing
+
+Test all 7 admin views at 390×844 + 1440×900.
+
+| View | 390px | 1440px |
+|------|:---:|:---:|
+| Dashboard | ⚪ | ⚪ |
+| Listings | ⚪ | ⚪ |
+| Reports | ⚪ | ⚪ |
+| Users | ⚪ | ⚪ |
+| Taxonomy | ⚪ | ⚪ |
+| Locations | ⚪ | ⚪ |
+| Audit | ⚪ | ⚪ |
+
+---
+
+## 3. Task 2 — Backend Test Suite
+
+```bash
+cd weshbazar-backend/apps/api
+npx jest --testPathPattern='test|spec' --no-coverage
+```
+
+28 test files. Document pass/fail, fix critical failures.
+
+---
+
+## 4. Task 3 — Bulk Moderation
+
+Frontend-only: checkbox column + Promise.allSettled over existing review API.
+
+**Files:** `admin-listing-table.tsx`, `admin-listings-content.tsx`, `hooks.ts`
+
+---
+
+## 5. Task 4 — Lighthouse
+
+Run Lighthouse on all 7 admin pages (mobile + desktop). Target: Perf ≥ 80, Access ≥ 95.
+
+---
+
+## 6. Task 5 — E2E (Playwright)
+
+5 scenarios: USER blocked, MOD gates, ADMIN navigation, listing approve, category CRUD.
+
+---
+
+## 7. Task 6 — Final Docs
+
+Update README, findings, bundle-analysis.
+
+---
+
+## 8. Execution Order
+
+```
+Browser QA → Backend tests → Lighthouse → Bulk moderation → E2E → Docs
+```
+
+## 9. Acceptance
+
+- [ ] 7 views @ 390px + 1440px, no break
+- [ ] Backend tests ≥ 90% pass
+- [ ] Bulk moderation working
+- [ ] Lighthouse Perf ≥ 80, Access ≥ 95
+- [ ] 5 Playwright tests green
+- [ ] 49 Jest tests still green
+- [ ] Docs updated
 ## 1. P3 Task Overview
 | # | Task | Effort | Why | Source |
 |---|------|--------|-----|--------|
