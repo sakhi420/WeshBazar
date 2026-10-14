@@ -33,7 +33,7 @@
 | P2 | Authorization boundary tests | ⚪ Pending | — |
 | P2 | WCAG 2.2 AA accessibility | ⚪ Pending | — |
 | P2 | Bundle analysis + perf audit | ⚪ Pending | — |
-| P2 | Filter chips + clear all | ⚪ Pending | — |
+| P2 | Filter chips + clear all | ✅ | `d1fe9b8` |
 
 ## Deliverables
 
