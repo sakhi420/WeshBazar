@@ -31,7 +31,7 @@
 | P2 | User detail drill-down | ✅ | `a0cc662` |
 | P2 | Admin component tests | ⚪ Pending | — |
 | P2 | Authorization boundary tests | ⚪ Pending | — |
-| P2 | WCAG 2.2 AA accessibility | ⚪ Pending | — |
+| P2 | WCAG 2.2 AA accessibility | ✅ | `cdf0c75` |
 | P2 | Bundle analysis + perf audit | ✅ | `c1e5549` |
 | P2 | Filter chips + clear all | ✅ | `d1fe9b8` |
 
