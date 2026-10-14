@@ -317,6 +317,19 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
 
   return (
     <div className={cn('space-y-4', className)}>
+      {/* Announce CRUD outcomes for assistive technology */}
+      <div aria-live="polite" className="sr-only">
+        {createCategoryM.isSuccess ? 'دسته‌بندی با موفقیت ایجاد شد.' :
+         updateCategoryM.isSuccess ? 'دسته‌بندی با موفقیت ویرایش شد.' :
+         deleteCategoryM.isSuccess ? 'دسته‌بندی با موفقیت حذف شد.' :
+         createAttributeM.isSuccess ? 'ویژگی با موفقیت ایجاد شد.' :
+         updateAttributeM.isSuccess ? 'ویژگی با موفقیت ویرایش شد.' :
+         deleteAttributeM.isSuccess ? 'ویژگی با موفقیت حذف شد.' :
+         createOptionM.isSuccess ? 'گزینه با موفقیت ایجاد شد.' :
+         updateOptionM.isSuccess ? 'گزینه با موفقیت ویرایش شد.' :
+         deleteOptionM.isSuccess ? 'گزینه با موفقیت حذف شد.' :
+         ''}
+      </div>
       <div className="grid gap-4 lg:grid-cols-3">
         {/* ---- Left panel: Categories ---------------------------------------- */}
         <div className="space-y-3 rounded-card border border-border bg-surface p-4">

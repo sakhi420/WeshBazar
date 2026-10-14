@@ -81,10 +81,10 @@ export function AdminAuditView({ className }: { className?: string }) {
            <table className="w-full min-w-[600px] border-collapse text-ui">
              <thead>
                <tr className="border-b border-border bg-muted/20">
-                 <th className="py-2.5 pe-3 ps-4 text-start text-caption font-medium text-muted-foreground">زمان</th>
-                 <th className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">اقدام</th>
-                 <th className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">نوع</th>
-                 <th className="py-2.5 pe-4 text-start text-caption font-medium text-muted-foreground">شناسه</th>
+                 <th scope="col" className="py-2.5 pe-3 ps-4 text-start text-caption font-medium text-muted-foreground">زمان</th>
+                 <th scope="col" className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">اقدام</th>
+                 <th scope="col" className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">نوع</th>
+                 <th scope="col" className="py-2.5 pe-4 text-start text-caption font-medium text-muted-foreground">شناسه</th>
                </tr>
              </thead>
              <tbody>

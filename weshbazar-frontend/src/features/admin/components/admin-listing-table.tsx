@@ -47,25 +47,25 @@ export function AdminListingTable({
       <table className="w-full min-w-[880px] border-collapse text-ui">
         <thead>
           <tr className="border-b border-border bg-muted/20">
-            <th className="py-2.5 pe-3 ps-4 text-start text-caption font-medium text-muted-foreground">
+            <th scope="col" className="py-2.5 pe-3 ps-4 text-start text-caption font-medium text-muted-foreground">
               آگهی
             </th>
-            <th className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">
+            <th scope="col" className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">
               وضعیت
             </th>
-            <th className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">
+            <th scope="col" className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">
               فروشنده
             </th>
-            <th className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">
+            <th scope="col" className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">
               قیمت
             </th>
-            <th className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">
+            <th scope="col" className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">
               گزارش باز
             </th>
-            <th className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">
+            <th scope="col" className="py-2.5 pe-3 text-start text-caption font-medium text-muted-foreground">
               ثبت
             </th>
-            <th className="py-2.5 pe-4 text-start text-caption font-medium text-muted-foreground">
+            <th scope="col" className="py-2.5 pe-4 text-start text-caption font-medium text-muted-foreground">
               اقدامات
             </th>
           </tr>

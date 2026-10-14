@@ -239,6 +239,10 @@ export function AdminListingsContent({ onSessionLost }: { onSessionLost: () => v
           </Button>
         </div>
       ) : null}
+{/* Live region for moderation success */}
+      <div aria-live="polite" className="sr-only">
+        {moderation.isSuccess ? 'عملیات با موفقیت انجام شد.' : ''}
+      </div>
 
       {moderation.isError && !sessionLost ? (
         <div

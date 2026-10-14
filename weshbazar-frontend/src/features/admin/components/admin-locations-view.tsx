@@ -205,6 +205,16 @@ export function AdminLocationsView({ className }: { className?: string }) {
   const provinceItems = provinces.data ?? [];
   return (
     <div className={cn('space-y-6', className)}>
+      {/* Announce CRUD outcomes for assistive technology */}
+      <div aria-live="polite" className="sr-only">
+        {createProvinceM.isSuccess ? 'ولایت با موفقیت ایجاد شد.' :
+         updateProvinceM.isSuccess ? 'ولایت با موفقیت ویرایش شد.' :
+         deleteProvinceM.isSuccess ? 'ولایت با موفقیت حذف شد.' :
+         createCityM.isSuccess ? 'شهر با موفقیت ایجاد شد.' :
+         updateCityM.isSuccess ? 'شهر با موفقیت ویرایش شد.' :
+         deleteCityM.isSuccess ? 'شهر با موفقیت حذف شد.' :
+         ''}
+      </div>
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div>

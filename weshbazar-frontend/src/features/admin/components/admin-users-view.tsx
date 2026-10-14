@@ -171,7 +171,7 @@ export function AdminUsersView({ className }: { className?: string }) {
 
       {/* Mutation error banner */}
       {(suspendM.isError || banM.isError || restoreM.isError) && (
-        <div className="rounded-card border border-danger/30 bg-danger/5 p-3 text-ui text-danger">
+        <div role="alert" className="rounded-card border border-danger/30 bg-danger/5 p-3 text-ui text-danger">
           {(suspendM.error ?? banM.error ?? restoreM.error) instanceof ApiError
             ? (suspendM.error ?? banM.error ?? (restoreM.error as ApiError))?.message
             : 'عملیات ناموفق بود.'}
@@ -188,6 +188,13 @@ export function AdminUsersView({ className }: { className?: string }) {
           </button>
         </div>
       )}
+{/* Live region for mutation success announcements */}
+      <div aria-live="polite" className="sr-only">
+        {suspendM.isSuccess ? 'کاربر با موفقیت معلق شد.' :
+         banM.isSuccess ? 'کاربر با موفقیت مسدود شد.' :
+         restoreM.isSuccess ? 'کاربر با موفقیت بازگردانی شد.' :
+         ''}
+      </div>
 
       {/* Inline action form (suspend/ban reason) */}
       {actionTarget && (
@@ -241,13 +248,13 @@ export function AdminUsersView({ className }: { className?: string }) {
             <table className="w-full text-ui">
               <thead className="border-b border-border bg-muted/30 text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-3 text-start font-medium">نام</th>
-                  <th className="px-4 py-3 text-start font-medium">شماره</th>
-                  <th className="px-4 py-3 text-start font-medium">نقش</th>
-                  <th className="px-4 py-3 text-start font-medium">وضعیت</th>
-                  <th className="px-4 py-3 text-start font-medium">تأیید</th>
-                  <th className="px-4 py-3 text-start font-medium">تاریخ عضویت</th>
-                  <th className="px-4 py-3 text-start font-medium">عملیات</th>
+                  <th scope="col" className="px-4 py-3 text-start font-medium">نام</th>
+                  <th scope="col" className="px-4 py-3 text-start font-medium">شماره</th>
+                  <th scope="col" className="px-4 py-3 text-start font-medium">نقش</th>
+                  <th scope="col" className="px-4 py-3 text-start font-medium">وضعیت</th>
+                  <th scope="col" className="px-4 py-3 text-start font-medium">تأیید</th>
+                  <th scope="col" className="px-4 py-3 text-start font-medium">تاریخ عضویت</th>
+                  <th scope="col" className="px-4 py-3 text-start font-medium">عملیات</th>
                 </tr>
               </thead>
               <tbody>

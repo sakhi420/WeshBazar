@@ -138,6 +138,13 @@ export function AdminReportsView({ className }: { className?: string }) {
         onClearAll={() => { void setStatusParam(null); void setPageParam(null); }}
       />
 
+{/* Announce resolve/dismiss outcomes to assistive technology */}
+      <div aria-live="polite" className="sr-only">
+        {resolveM.isSuccess ? 'گزارش با موفقیت حل شد.' :
+         dismissM.isSuccess ? 'گزارش با موفقیت رد شد.' :
+         resolveM.isError || dismissM.isError ? 'عملیات ناموفق بود. دوباره تلاش کنید.' :
+         ''}
+      </div>
       {reports.isPending ? <ReportsSkeleton /> :
        reports.isError ? <ErrorState requestId={reports.error instanceof ApiError ? reports.error.requestId : undefined} title="دریافت گزارش‌ها ناموفق بود" onRetry={() => void reports.refetch()} /> :
        items.length === 0 ? <EmptyState icon={ShieldAlert} title="گزارشی در انتظار بررسی نیست" description="همهٔ گزارش‌ها بررسی شده‌اند." /> :
