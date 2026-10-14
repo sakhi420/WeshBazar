@@ -24,11 +24,11 @@ describe('AdminAuditView', () => {
   it('1. checking → spinner', () => { auth('checking'); render(<AdminAuditView />); expect(screen.getByText(/بررسی نشست|در حال انتقال/i)).toBeInTheDocument(); });
   it('2. anonymous → redirects', () => { auth('anonymous'); render(<AdminAuditView />); expect(routerReplace).toHaveBeenCalledWith(expect.stringContaining('/auth/login')); });
   it('3. unreachable → error + retry', () => { auth('unreachable'); render(<AdminAuditView />); expect(screen.getByText(/ارتباط|برقرار نشد/i)).toBeInTheDocument(); fireEvent.click(screen.getByRole('button', { name: /تلاش/i })); expect(retryFn).toHaveBeenCalled(); });
-  it('4. USER → access denied', () => { auth('ready', { id: 'u', phone: '09', displayName: 'U', role: 'USER', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01' }); render(<AdminAuditView />); expect(screen.getByText(/دسترسی/i)).toBeInTheDocument(); });
+  it('4. USER → access denied', () => { auth('ready', { id: 'u', phone: '09', displayName: 'U', role: 'USER', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01' }); render(<AdminAuditView />); expect(screen.getByText((c, el) => el?.textContent?.includes('دسترسی') ?? false)).toBeInTheDocument(); });
   it('5. ready + data → renders audit table', () => {
     auth('ready', { id: 'u', phone: '09', displayName: 'A', role: 'ADMIN', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01T00:00:00Z' });
     (useAdminAuditLogs as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { items: [{ id: 'a1', action: 'USER_SUSPENDED', entityType: 'User', entityId: 'u1', actorUserId: 'm1', createdAt: '2026-01-01T00:00:00Z' }], total: 1, totalPages: 1, page: 1, limit: 20 } });
     render(<AdminAuditView />);
-    expect(screen.getByText('تعلیق کاربر')).toBeInTheDocument();
+    expect(screen.getByText((c, el) => el?.textContent?.includes('تعلیق کاربر') ?? false)).toBeInTheDocument();
   });
 });

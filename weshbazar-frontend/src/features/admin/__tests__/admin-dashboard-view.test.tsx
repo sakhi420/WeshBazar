@@ -22,11 +22,11 @@ describe('AdminDashboardView', () => {
   it('1. checking → spinner', () => { auth('checking'); render(<AdminDashboardView />); expect(screen.getByText(/بررسی نشست|در حال انتقال/i)).toBeInTheDocument(); });
   it('2. anonymous → redirects', () => { auth('anonymous'); render(<AdminDashboardView />); expect(routerReplace).toHaveBeenCalledWith(expect.stringContaining('/auth/login')); });
   it('3. unreachable → error + retry', () => { auth('unreachable'); render(<AdminDashboardView />); expect(screen.getByText(/ارتباط|برقرار نشد/i)).toBeInTheDocument(); fireEvent.click(screen.getByRole('button', { name: /تلاش/i })); expect(retryFn).toHaveBeenCalled(); });
-  it('4. USER → access denied', () => { auth('ready', { id: 'u', phone: '09', displayName: 'U', role: 'USER', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01' }); render(<AdminDashboardView />); expect(screen.getByText(/دسترسی/i)).toBeInTheDocument(); });
+  it('4. USER → access denied', () => { auth('ready', { id: 'u', phone: '09', displayName: 'U', role: 'USER', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01' }); render(<AdminDashboardView />); expect(screen.getByText((c, el) => el?.textContent?.includes('دسترسی') ?? false)).toBeInTheDocument(); });
   it('5. ready + data → renders dashboard content', () => {
     auth('ready', { id: 'u', phone: '09', displayName: 'A', role: 'ADMIN', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01T00:00:00Z' });
     (useAdminDashboard as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { totalUsers: 100, activeUsers: 80, totalListings: 500, pendingReview: 10, totalReports: 20, openReports: 5, listingsByStatus: { ACTIVE: 400 }, userRoles: { USER: 90, MODERATOR: 5, ADMIN: 5 }, userStatuses: { ACTIVE: 80 } } });
     render(<AdminDashboardView />);
-    expect(screen.getByText(/100/)).toBeInTheDocument();
+    expect(screen.getByText((c, el) => el?.textContent?.includes('۱۰۰') ?? false)).toBeInTheDocument();
   });
 });

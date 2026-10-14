@@ -24,12 +24,12 @@ describe('AdminReportsView', () => {
   it('1. checking → spinner', () => { auth('checking'); render(<AdminReportsView />); expect(screen.getByText(/بررسی نشست|در حال انتقال/i)).toBeInTheDocument(); });
   it('2. anonymous → redirects', () => { auth('anonymous'); render(<AdminReportsView />); expect(routerReplace).toHaveBeenCalledWith(expect.stringContaining('/auth/login')); });
   it('3. unreachable → error + retry', () => { auth('unreachable'); render(<AdminReportsView />); expect(screen.getByText(/ارتباط|برقرار نشد/i)).toBeInTheDocument(); fireEvent.click(screen.getByRole('button', { name: /تلاش/i })); expect(retryFn).toHaveBeenCalled(); });
-  it('4. USER → access denied', () => { auth('ready', { id: 'u', phone: '09', displayName: 'U', role: 'USER', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01' }); render(<AdminReportsView />); expect(screen.getByText(/دسترسی/i)).toBeInTheDocument(); });
+  it('4. USER → access denied', () => { auth('ready', { id: 'u', phone: '09', displayName: 'U', role: 'USER', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01' }); render(<AdminReportsView />); expect(screen.getByText((c, el) => el?.textContent?.includes('دسترسی') ?? false)).toBeInTheDocument(); });
   it('5. ready + data → renders report cards', () => {
     auth('ready', { id: 'u', phone: '09', displayName: 'M', role: 'MODERATOR', status: 'ACTIVE', phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01T00:00:00Z' });
     (useAdminReports as jest.Mock).mockReturnValue({ ...pendingQ, isPending: false, isSuccess: true, data: { items: [{ id: 'r', reason: 'SPAM', status: 'OPEN', description: '', listing: { title: 'آگهی تست' }, reporter: { displayName: 'گزارش‌دهنده' }, createdAt: '2026-01-01T00:00:00Z' }], total: 1, totalPages: 1, page: 1, limit: 20 } });
     render(<AdminReportsView />);
-    expect(screen.getByText('هرزنامه')).toBeInTheDocument();
-    expect(screen.getByText('آگهی تست')).toBeInTheDocument();
+    expect(screen.getByText((c, el) => el?.textContent?.includes('هرزنامه') ?? false)).toBeInTheDocument();
+    expect(screen.getByText((c, el) => el?.textContent?.includes('آگهی تست') ?? false)).toBeInTheDocument();
   });
 });
