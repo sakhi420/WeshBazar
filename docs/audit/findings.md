@@ -41,7 +41,7 @@
 | GAP-004 | ✅ RESOLVED | Taxonomy attributes/options: full UI | `admin-taxonomy-view.tsx` rebuilt with attribute CRUD + option management |
 | GAP-005 | ✅ RESOLVED | AdminNav has 7 tabs: dashboard, listings, reports, users, taxonomy, locations, audit | `admin-nav.tsx:13-21`: TABS has 7 entries |
 | GAP-006 | ✅ RESOLVED | Vazir self-hosted via next/font/local | `layout.tsx`: localFont with 4 weight files in `./fonts/` |
-| GAP-007 | 🟡 P2 | No admin panel entry point from public pages | No "Admin" link visible to MODERATOR/ADMIN users |
+| GAP-007 | ✅ RESOLVED | Admin entry from public UI — Shield link in header + bottom nav for MOD/ADMIN | `header-auth-actions.tsx`, `mobile-bottom-nav.tsx` |
 
 ## UX (UX)
 
@@ -49,7 +49,7 @@
 |----|--------|---------|----------|
 | UX-001 | ⚪ NOT VERIFIED | Responsive behavior at 390×844 and 1440×900 | No browser testing |
 | UX-002 | ⚪ NOT VERIFIED | Keyboard navigation and focus management | No assistive tech testing |
-| UX-003 | 🟡 P2 | Users view: suspend/ban use inline reason form (no modal confirmation) | `admin-users-view.tsx:77-80` |
+| UX-003 | ✅ RESOLVED | Users view: suspend/ban use ConfirmDialog before inline reason form | `admin-users-view.tsx` — ConfirmDialog + reason form |
 | UX-004 | 🟡 P2 | Taxonomy delete uses toggle "مطمئنی؟" not modal | `admin-taxonomy-view.tsx:171-179` |
 | UX-005 | ✅ PASS | All admin views have loading, error, empty, denied states | Every view component handles 5+ states |
 | UX-006 | ✅ PASS | Listing moderation has inline reject reason + archive confirmation | `admin-listing-actions.tsx:54-145` |

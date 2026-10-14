@@ -27,8 +27,8 @@
 | P1 | Vazir font self-hosted (next/font/local) | ✅ | `9c73838` |
 | P1 | Button-in-button hydration fix | ✅ | `9c73838` |
 | P1 | Browser testing @ 390px + 1440px | ⚪ Pending | — |
-| P1 | Admin entry from public UI | ⚪ Pending | — |
-| P2 | User detail drill-down | ⚪ Pending | — |
+| P1 | Admin entry from public UI | ✅ | `a06d0de` |
+| P2 | User detail drill-down | ✅ | `a0cc662` |
 | P2 | Admin component tests | ⚪ Pending | — |
 | P2 | Authorization boundary tests | ⚪ Pending | — |
 | P2 | WCAG 2.2 AA accessibility | ⚪ Pending | — |
