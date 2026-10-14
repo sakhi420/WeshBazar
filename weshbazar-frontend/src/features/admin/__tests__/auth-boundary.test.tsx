@@ -27,7 +27,7 @@ jest.mock('../hooks', () => ({
 }));
 
 import { useAuthBootstrap } from '@/features/auth';
-import { useAdminUsers, useAdminReports, useAdminDashboard, useAdminCategories, useAdminProvinces, useAdminAuditLogs } from '../hooks';
+import { useAdminUsers, useAdminReports, useAdminDashboard, useAdminCategories, useAdminAttributes, useAdminProvinces, useAdminAuditLogs } from '../hooks';
 import { AdminUsersView } from '../components/admin-users-view';
 import { AdminReportsView } from '../components/admin-reports-view';
 const USER = { id: 'u', phone: '09', displayName: 'U', role: 'USER' as const, status: 'ACTIVE' as const, phoneVerified: true, phoneVerifiedAt: null, createdAt: '2026-01-01' };
@@ -39,7 +39,7 @@ function auth(s: string, u: unknown = null) { (useAuthBootstrap as jest.Mock).mo
 beforeEach(() => {
   jest.clearAllMocks();
   auth('ready', ADMIN);
-  [useAdminUsers, useAdminReports, useAdminDashboard, useAdminCategories, useAdminProvinces, useAdminAuditLogs].forEach((fn) => (fn as jest.Mock).mockReturnValue(pendingQ));
+  [useAdminUsers, useAdminReports, useAdminDashboard, useAdminCategories, useAdminAttributes, useAdminProvinces, useAdminAuditLogs].forEach((fn) => (fn as jest.Mock).mockReturnValue(pendingQ));
 });
 
 describe('Auth boundary — USER blocked from all 7 views', () => {
