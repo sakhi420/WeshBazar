@@ -75,6 +75,10 @@ enough to mask it.
 
 ### CONTRACT-001 — `sellerSlug` (OpenAPI + frontend) vs `slug` (backend runtime)
 
+**Status:** ✅ **Resolved in Phase 2.** DTO + OpenAPI + frontend now standardize on
+`slug` (backend `seller-responses.dto.ts:6`, `openapi.json`, `sellers/types.ts`,
+`seller/[slug]/page.tsx`), plus a `generateMetadata` regression test.
+
 - **Category:** Contract conformance / SEO metadata. **Priority:** P2.
 
 **Actual behavior.** The public seller profile response field is named differently

@@ -10,22 +10,23 @@ acceptance, and dependencies.
 
 | Status | Count | Meaning |
 | --- | --- | --- |
-| PASS | 31 | Verified in source (+ e2e/unit coverage where cited). |
-| FAIL | 4 | IDENT-005 (avatar), IDENT-006 (sellerSlug), CACHE-001, CACHE-002. |
+| PASS | 34 | Verified in source (incl. Phases 1–2 fixes). |
+| FAIL | 1 | IDENT-005 (avatar — product decision pending). |
 | NOT VERIFIED | 6 | CACHE-003, CACHE-005, UX-003, A11Y-002, A11Y-005, TEST-003 (need browser harness). |
 
 **Headline:** the system is strong on authorization, presenter separation, session
-lifecycle, verification truth, and draft isolation (all PASS). The material gaps are
-(a) incomplete cache clearing / non-user-scoped keys on secondary sign-out paths,
-and (b) the `sellerSlug`/`slug` contract mismatch; the rest are product/UX decisions
-or need browser QA.
+lifecycle, verification truth, and draft isolation (all PASS). The material gaps
+found at audit time — (a) incomplete cache clearing / non-user-scoped keys on
+secondary sign-out paths, and (b) the `sellerSlug`/`slug` contract mismatch — are
+now **resolved** (Phases 1–2). Remaining open item is the avatar scope (IDENT-005);
+the rest are product/UX decisions or need browser QA.
 
 ## 4.1 Identity & profile correctness
 
 - **Solid:** display name + seller name/bio editing, immutable slug, server-derived
   verification, zero fabricated trust metrics (IDENT-001…004 all PASS).
 - **Gaps:** `IDENT-005` avatar — writable `avatarKey` without upload/validity/render
-  (FAIL). `IDENT-006` `sellerSlug` vs `slug` (FAIL; breaks canonical URL).
+  (FAIL). `IDENT-006` `sellerSlug` vs `slug` now **resolved** (Phase 2).
 - **No duplicate-identity issue:** uniqueness is `phoneNormalized`; slug allocation
   is collision-safe with deterministic + suffixed fallback (covered by
   `profile.e2e-spec.ts` slug tests).
@@ -54,8 +55,9 @@ or need browser QA.
 ## 4.4 Cache & account switching
 
 - **PASS:** draft isolation by userId + clear-on-logout (CACHE-004).
-- **FAIL:** `clearUserCaches` omits `listings`/`contacts`/`analytics` on secondary
-  sign-out (CACHE-001), and private query keys are not user-scoped (CACHE-002).
+- **Resolved (Phase 1):** `clearUserCaches` now clears the full private set via
+  `clearUserScopedCaches` (CACHE-001), and cross-account cache reuse is mitigated by
+  complete clearing (CACHE-002; explicit key user-scoping deferred).
 - **NOT VERIFIED:** full A→B sequence (CACHE-003) and in-flight repopulation
   (CACHE-005) — no Playwright suite exists to assert them.
 

@@ -8,7 +8,7 @@
 
 /** `PublicSellerProfileDto` — public seller profile. */
 export interface PublicSellerProfile {
-  sellerSlug: string;
+  slug: string;
   displayName: string;
   bio: string | null;
   memberSince: string;

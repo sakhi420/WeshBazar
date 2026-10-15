@@ -171,7 +171,7 @@ test, fix it before anything else.
 - **Dependencies:** a backing test environment + backend running (dev).
 - **Acceptance:** all 12 V5 §7 scenarios green.
 
-### P2 — Contract conformance (CONTRACT-001)
+### P2 — Contract conformance (CONTRACT-001) — ✅ DONE (Phase 2)
 - **Affected:** backend `sellers/dto/seller-responses.dto.ts` (rename `sellerSlug`→`slug`),
   regenerate `docs/openapi.json`; frontend `src/features/sellers/types.ts` +
   `src/app/seller/[slug]/page.tsx:27`.
@@ -209,6 +209,6 @@ test, fix it before anything else.
 
 ### Rollout order
 1. ✅ **DONE (Phase 1)** — CACHE-001/CACHE-002 + SESSION-001.
-2. CONTRACT-001 (fix + regenerate contract).
+2. ✅ **DONE (Phase 2)** — CONTRACT-001 (fix + regenerate contract).
 3. TEST-003 Playwright suite (locks in 1 and 2 and future work).
 4. P3 items as product decisions are made.

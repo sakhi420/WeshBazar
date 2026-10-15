@@ -60,7 +60,7 @@ Status key: **F** = fully reviewed (read in full), **P** = partially reviewed
 | `src/features/listings/my-listings/view-model.ts` / `hooks.ts` | status tabs + lifecycle perms + mutations | F |
 | `src/features/listings/my-listings/components/my-listings-view.tsx` / `listing-manage-card.tsx` | management hub + per-row actions | F |
 | `src/features/sellers/api.ts` / `types.ts` | public seller profile read | F |
-| `src/app/seller/[slug]/page.tsx` | public seller profile page (uses `sellerSlug`) | F |
+| `src/app/seller/[slug]/page.tsx` | public seller profile page (uses `slug` — CONTRACT-001 fixed) | F |
 | `src/features/listings/sell/draft.ts` | user-scoped draft keys + clear-on-logout | F |
 | `src/features/contacts/api.ts` / `components/contact-section.tsx` | contact reveal (component-local state, not cached) | F |
 | `src/features/listings/edit/*` / `src/app/sell/*` | seller edit + sell wizard | P (draft model only) |

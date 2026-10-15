@@ -75,6 +75,9 @@ token-storage defect was found. Full detail is in `findings.md`.
   - **SESSION-001** — `clearSessionCookie()` (`src/lib/api/session-cookie.ts`) now called from `useLogout`/`useSignOutLocal`.
   - Fixed a latent bug: `performLogout` passed the `queryKeys.analytics` object instead of a prefix, so the analytics cache was never cleared.
   - Verification: `typecheck` exit 0 · **34 suites / 265 tests / 0 failed**.
-- **Phase 2 (CONTRACT-001 sellerSlug fix)** — pending.
+- **Phase 2 (CONTRACT-001 sellerSlug fix)** — ✅ DONE.
+  - Standardized field name on `slug` in the backend DTO (`seller-responses.dto.ts`), `docs/openapi.json`, frontend `sellers/types.ts` + `seller/[slug]/page.tsx`.
+  - Added a `generateMetadata` regression test (canonical = `/seller/{slug}`).
+  - Verification: openapi.json valid + `slug` exposed · frontend typecheck exit 0 · 35 suites / 267 tests / 0 failed · backend typecheck exit 0.
 - **Phase 3 (TEST-003 Playwright session regression)** — pending.
 - **Phase 4 (P3 optional items)** — product decisions pending.

@@ -1093,7 +1093,7 @@ Public information can include:
 
 ```text
 displayName
-sellerSlug
+slug
 memberSince
 phoneVerified indicator
 activeListingCount

@@ -84,12 +84,12 @@
     "rationale": "OpenAPI authoritative (AGENTS.md).",
     "applicability": "required",
     "expected": "Runtime and documented field identical.",
-    "status": "FAIL",
+    "status": "PASS",
     "source": "CONTRACT-001",
-    "evidence": "seller.presenter.ts:36-43 (slug) vs seller-responses.dto.ts:6 + openapi.json:4365 (sellerSlug); sellers/types.ts:11; seller/[slug]/page.tsx:27",
-    "reproduction": "Canonical becomes /seller/undefined.",
+    "evidence": "seller-responses.dto.ts:6 (slug); openapi.json PublicSellerProfileDto (slug, no sellerSlug); sellers/types.ts:11; seller/[slug]/page.tsx:27 + page.test.tsx",
+    "reproduction": "No longer reproducible — canonical uses profile.slug.",
     "severity": "medium", "priority": "P2",
-    "remediation": "Standardize on 'slug'; fix DTO + regenerate openapi.json + frontend.",
+    "remediation": "Done Phase 2: standardized on 'slug' (DTO + openapi.json + frontend + regression test).",
     "acceptance": "Canonical = /seller/{slug}; openapi + runtime agree.", "dependencies": ""
   }
   ,

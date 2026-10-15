@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: SellerPageProps): Promise<Met
     return {
       title: profile.displayName,
       description: description.length > 160 ? `${description.slice(0, 157)}…` : description,
-      alternates: { canonical: `/seller/${profile.sellerSlug}` },
+      alternates: { canonical: `/seller/${profile.slug}` },
     };
   } catch {
     return { title: 'پروفایل فروشنده', alternates: { canonical: `/seller/${slug}` } };

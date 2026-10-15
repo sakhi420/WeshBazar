@@ -1090,7 +1090,7 @@ Public DTO باید فقط safe information داشته باشد:
 
 ```text
 displayName
-sellerSlug
+slug
 memberSince
 phoneVerified indicator
 activeListingCount

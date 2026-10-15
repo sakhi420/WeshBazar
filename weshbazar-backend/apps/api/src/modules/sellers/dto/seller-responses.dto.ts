@@ -3,7 +3,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PublicSellerProfileDto {
   @ApiProperty({ example: 'ahmad-wesh' })
-  sellerSlug!: string;
+  slug!: string;
 
   @ApiProperty({ example: 'Ahmad Wesh' })
   displayName!: string;
