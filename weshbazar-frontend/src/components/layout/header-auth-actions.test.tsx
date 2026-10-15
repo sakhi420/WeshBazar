@@ -56,31 +56,37 @@ describe('HeaderAuthActions', () => {
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
-  it('ready as USER → account + logout, no admin link', () => {
+  it('ready as USER → account menu (account, listings, favorites) without admin', () => {
     authStub('ready', { ...baseUser, displayName: 'مریم' });
     render(<HeaderAuthActions />);
-    expect(screen.getByText('مریم')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /مریم/ })).toHaveAttribute('href', '/account');
-    expect(screen.queryByLabelText('پنل مدیریت')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'خروج از حساب' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /مریم/ }));
+    const hrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href'));
+    expect(hrefs).toContain('/account');
+    expect(hrefs).toContain('/my-listings');
+    expect(hrefs).toContain('/favorites');
+    expect(hrefs).not.toContain('/admin');
+    expect(screen.getByRole('button', { name: /خروج/ })).toBeInTheDocument();
   });
 
-  it('ready as ADMIN → shows the admin panel link', () => {
+  it('ready as ADMIN → menu includes the admin panel link', () => {
     authStub('ready', { ...baseUser, displayName: 'احمد', role: 'ADMIN' });
     render(<HeaderAuthActions />);
-    expect(screen.getByRole('link', { name: 'پنل مدیریت' })).toHaveAttribute('href', '/admin');
+    fireEvent.click(screen.getByRole('button', { name: /احمد/ }));
+    expect(screen.getByRole('link', { name: /پنل مدیریت/ })).toHaveAttribute('href', '/admin');
   });
 
   it('logout → calls performLogout', () => {
     authStub('ready', { ...baseUser, displayName: 'مریم' });
     render(<HeaderAuthActions />);
-    fireEvent.click(screen.getByRole('button', { name: 'خروج از حساب' }));
+    fireEvent.click(screen.getByRole('button', { name: /مریم/ }));
+    fireEvent.click(screen.getByRole('button', { name: /خروج/ }));
     expect(performLogout).toHaveBeenCalled();
   });
 
-  it('anonymous → shows the login link', () => {
+  it('anonymous → shows separate log-in and sign-up links', () => {
     authStub('anonymous');
     render(<HeaderAuthActions />);
-    expect(screen.getByRole('link', { name: 'ورود به حساب' })).toHaveAttribute('href', '/auth/login');
+    expect(screen.getByRole('link', { name: /ورود/ })).toHaveAttribute('href', '/auth/login');
+    expect(screen.getByRole('link', { name: /ثبت/ })).toHaveAttribute('href', '/auth/register');
   });
 });

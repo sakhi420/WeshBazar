@@ -3,17 +3,21 @@
 /**
  * Client-only auth actions for the app header.
  * Reads the global auth context and shows the appropriate controls:
- *  - signed-in → user name, account link, logout
- *  - anonymous → login link
- *  - checking → subtle skeleton
+ *  - signed-in → account name/avatar that opens a menu (account, listings,
+ *    favorites, admin for staff, logout)
+ *  - anonymous → visible "log in" + "sign up" side by side
+ *  - checking → subtle spinner
  *
  * Master prompt §7, §101, §491.
  */
 
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { LogOut, Shield, User, Loader2 } from 'lucide-react';
+import { ChevronDown, Heart, Loader2, LogOut, Shield, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/auth-provider';
+import type { UserSummary } from '@/features/auth';
 
 export function HeaderAuthActions() {
   const { status, user, performLogout } = useAuth();
@@ -27,40 +31,107 @@ export function HeaderAuthActions() {
   }
 
   if (status === 'ready' && user) {
-    return (
-      <div className="flex items-center gap-2">
-        <Button asChild variant="ghost" size="sm" className="max-w-32 truncate">
-          <Link href="/account" className="inline-flex items-center gap-1.5">
-            <User className="size-4 shrink-0" aria-hidden />
-            <span className="truncate">{user.displayName}</span>
-          </Link>
-        </Button>
-        {(user.role === 'MODERATOR' || user.role === 'ADMIN') && (
-          <Button asChild variant="ghost" size="sm" aria-label="پنل مدیریت">
-            <Link href="/admin" className="inline-flex items-center gap-1.5">
-              <Shield className="size-4 shrink-0" aria-hidden />
-              <span className="hidden sm:inline">مدیریت</span>
-            </Link>
-          </Button>
-        )}
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="خروج از حساب"
-          onClick={() => void performLogout()}
-        >
-          <LogOut className="size-4" aria-hidden />
-        </Button>
-      </div>
-    );
+    return <AccountMenu user={user} onLogout={performLogout} />;
   }
 
-  // anonymous, unreachable → login entry
+  // anonymous → visible "log in" + "sign up" (NN/g: keep them together)
   return (
-    <Button asChild variant="ghost" size="icon" aria-label="ورود به حساب">
-      <Link href="/auth/login">
-        <User aria-hidden />
-      </Link>
-    </Button>
+    <div className="flex items-center gap-1.5 sm:gap-2">
+      <Button asChild variant="ghost" size="sm">
+        <Link href="/auth/login">ورود</Link>
+      </Button>
+      <Button asChild variant="default" size="sm">
+        <Link href="/auth/register">ثبت‌نام</Link>
+      </Button>
+    </div>
+  );
+}
+
+function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Promise<void> }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(event: MouseEvent) {
+      if (rootRef.current && !rootRef.current.contains(event.target as Node)) setOpen(false);
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false);
+    }
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
+
+  const isStaff = user.role === 'MODERATOR' || user.role === 'ADMIN';
+  const initial = (user.displayName ?? '').trim().charAt(0) || '؟';
+
+  const itemClass =
+    'flex w-full items-center gap-2 px-4 py-2.5 text-start text-ui text-foreground transition-colors duration-small hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+
+  return (
+    <div ref={rootRef} className="relative">
+      <Button
+        variant="ghost"
+        size="sm"
+        aria-haspopup="true"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+        className="gap-1.5"
+      >
+        <span
+          aria-hidden
+          className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary-soft text-caption font-bold text-primary"
+        >
+          {initial}
+        </span>
+        <span className="max-w-40 truncate" title={user.displayName}>
+          {user.displayName}
+        </span>
+        <ChevronDown
+          className={cn('size-4 shrink-0 transition-transform', open && 'rotate-180')}
+          aria-hidden
+        />
+      </Button>
+
+      {open ? (
+        <div className="absolute end-0 top-full z-drawer mt-1 w-52 overflow-hidden rounded-surface border border-border bg-surface shadow-lg">
+          <Link href="/account" className={itemClass} onClick={() => setOpen(false)}>
+            <User className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            حساب کاربری
+          </Link>
+          <Link href="/my-listings" className={itemClass} onClick={() => setOpen(false)}>
+            <Tag className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            آگهی‌های من
+          </Link>
+          <Link href="/favorites" className={itemClass} onClick={() => setOpen(false)}>
+            <Heart className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            علاقه‌مندی‌ها
+          </Link>
+          {isStaff ? (
+            <Link href="/admin" className={itemClass} onClick={() => setOpen(false)}>
+              <Shield className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+              پنل مدیریت
+            </Link>
+          ) : null}
+          <div className="my-1 border-t border-border" aria-hidden />
+          <button
+            type="button"
+            className={itemClass}
+            onClick={() => {
+              setOpen(false);
+              void onLogout();
+            }}
+          >
+            <LogOut className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            خروج از حساب
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }
