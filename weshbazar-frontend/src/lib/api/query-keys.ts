@@ -63,6 +63,7 @@ export const queryKeys = {
   },
 
   analytics: {
+    all: ['analytics'] as const,
     sellerSummary: ['analytics', 'seller', 'summary'] as const,
   },
 

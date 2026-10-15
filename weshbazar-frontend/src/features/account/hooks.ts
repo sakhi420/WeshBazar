@@ -16,7 +16,7 @@ import { useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { logout } from '@/features/auth';
 import type { MeResponse } from '@/features/auth';
-import { clearAccessToken, queryKeys } from '@/lib/api';
+import { clearAccessToken, clearSessionCookie, clearUserScopedCaches, queryKeys } from '@/lib/api';
 import {
   changePassword,
   fetchSessions,
@@ -25,11 +25,10 @@ import {
   updateMyProfile,
 } from './api';
 
-/** Drop every user-scoped cache — shared by sign-out and logout-all. */
+/** Drop the auth snapshot plus every user-scoped cache — shared by sign-out paths. */
 function clearUserCaches(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.removeQueries({ queryKey: queryKeys.auth.all });
-  queryClient.removeQueries({ queryKey: queryKeys.account.all });
-  queryClient.removeQueries({ queryKey: queryKeys.favorites.all });
+  clearUserScopedCaches(queryClient);
 }
 
 /**
@@ -41,6 +40,7 @@ export function useSignOutLocal(): () => void {
   const queryClient = useQueryClient();
   return useCallback(() => {
     clearAccessToken();
+    clearSessionCookie();
     clearUserCaches(queryClient);
   }, [queryClient]);
 }
@@ -67,6 +67,7 @@ export function useLogout() {
   return useMutation({
     mutationFn: logout,
     onSettled: () => {
+      clearSessionCookie();
       clearUserCaches(queryClient);
     },
   });

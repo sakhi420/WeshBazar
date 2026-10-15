@@ -25,30 +25,10 @@ import {
 } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { clearAccessToken, queryKeys } from '@/lib/api';
+import { clearAccessToken, clearSessionCookie, clearUserScopedCaches, queryKeys, setSessionCookie } from '@/lib/api';
 import { logout as logoutApi, useAuthBootstrap } from '@/features/auth';
 import type { AuthState } from '@/features/auth';
 import { clearSellDraftForUser } from '@/features/listings/sell';
-
-// ---------------------------------------------------------------------------
-// Session cookie helpers (mirrored by Page Middleware)
-// ---------------------------------------------------------------------------
-
-const SESSION_COOKIE = 'weshbazar_session';
-
-function setSessionCookie() {
-  // A non‑HttpOnly, path=/ cookie — the middleware reads it on every SSR
-  // page request. It carries no secret; it only signals "browser has a
-  // valid server session". Set max-age to match the refresh token TTL (~30d).
-  if (typeof document === 'undefined') return;
-  document.cookie = `${SESSION_COOKIE}=1;path=/;SameSite=Lax;max-age=2592000`;
-}
-
-function clearSessionCookie() {
-  // Expire immediately so the middleware sees the absence.
-  if (typeof document === 'undefined') return;
-  document.cookie = `${SESSION_COOKIE}=;path=/;SameSite=Lax;max-age=0`;
-}
 
 // ---------------------------------------------------------------------------
 // Context
@@ -108,15 +88,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     clearAccessToken();
 
-    // 4. Nuke every user-scoped TanStack Query cache so no stale private
-    //    data survives in memory after the redirect.
+    // 4. Drop every user-scoped TanStack Query cache so no stale private
+    //    data survives in memory after the redirect. `auth` is invalidated
+    //    (not removed) so the bootstrap refetch flips the UI to anonymous.
     void queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
-    queryClient.removeQueries({ queryKey: queryKeys.account.all });
-    queryClient.removeQueries({ queryKey: queryKeys.favorites.all });
-    queryClient.removeQueries({ queryKey: queryKeys.listings.all });
-    queryClient.removeQueries({ queryKey: queryKeys.contacts.all });
-    queryClient.removeQueries({ queryKey: queryKeys.analytics });
-    queryClient.removeQueries({ queryKey: queryKeys.admin.all });
+    clearUserScopedCaches(queryClient);
 
     // 5. Redirect to homepage; public browsing stays functional (§7).
     router.replace('/');
