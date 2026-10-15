@@ -15,4 +15,6 @@ export interface PublicSellerProfile {
   phoneVerified: boolean;
   /** Number of ACTIVE listings at response time. */
   activeListingCount: number;
+  /** Public URL of the seller avatar image, null when none set. */
+  avatarUrl: string | null;
 }

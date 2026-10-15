@@ -27,6 +27,7 @@ import {
   Tag,
 } from 'lucide-react';
 import { ErrorState } from '@/components/feedback/error-state';
+import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { toPersianDigits, useAuthBootstrap } from '@/features/auth';
 import { INPUT_CLASS } from '@/features/auth/components';
@@ -34,7 +35,8 @@ import { formatMonthYear } from '@/features/listings';
 import { ApiError, ApiErrorCode, queryKeys } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { fetchMyProfile } from '../api';
-import { formatRoleLabel, initialsFrom } from '../format';
+import { formatRoleLabel } from '../format';
+import { ProfilePhotoControls } from './profile-photo-controls';
 import { useLogout, useUpdateProfile } from '../hooks';
 import type { MyProfile } from '../types';
 
@@ -181,12 +183,7 @@ function ProfileContent({ profile, className }: { profile: MyProfile; className?
         className="rounded-card border border-border bg-surface p-4 sm:p-5"
       >
         <div className="flex items-start gap-4">
-          <span
-            aria-hidden
-            className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary-soft text-card-title font-bold text-primary"
-          >
-            {initialsFrom(profile.displayName)}
-          </span>
+          <Avatar name={profile.displayName} src={profile.avatarUrl ?? null} size="lg" />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-card-title font-semibold text-foreground">{profile.displayName}</p>
@@ -200,6 +197,7 @@ function ProfileContent({ profile, className }: { profile: MyProfile; className?
             <p className="mt-1 text-ui text-muted-foreground">
               <span dir="ltr">{profile.phone}</span>
             </p>
+            <ProfilePhotoControls hasAvatar={Boolean(profile.avatarUrl)} />
             <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-meta text-muted-foreground">
               <span>{formatRoleLabel(profile.role)}</span>
               <span aria-hidden>·</span>
@@ -310,12 +308,28 @@ function ProfileContent({ profile, className }: { profile: MyProfile; className?
             title="آگهی‌های من"
             description="مدیریت آگهی‌های ثبت‌شده"
           />
-          <AccountLink
-            href={`/seller/${profile.seller.slug}`}
-            icon={<Store aria-hidden className="size-4" />}
-            title="صفحهٔ فروشندهٔ من"
-            description="نمای عمومی شما برای خریداران"
-          />
+          {profile.seller.status === 'ACTIVE' ? (
+            <AccountLink
+              href={`/seller/${profile.seller.slug}`}
+              icon={<Store aria-hidden className="size-4" />}
+              title="صفحهٔ فروشندهٔ من"
+              description="نمای عمومی شما برای خریداران"
+              avatarName={profile.seller.displayName}
+              avatarSrc={profile.avatarUrl ?? null}
+            />
+          ) : (
+            <li>
+              <div className="flex items-center gap-3 px-4 py-3 text-muted-foreground">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-control bg-muted/10 text-muted-foreground">
+                  <Lock aria-hidden className="size-4" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-ui font-medium text-foreground">صفحهٔ فروشندهٔ من</span>
+                  <span className="block truncate text-caption">حساب فروشندگی موقتاً غیرفعال است.</span>
+                </span>
+              </div>
+            </li>
+          )}
           {profile.role !== 'USER' ? (
             <AccountLink
               href="/admin"
@@ -360,18 +374,25 @@ interface AccountLinkProps {
   icon: ReactNode;
   title: string;
   description: string;
+  /** Optional avatar (image + initials fallback) rendered instead of `icon`. */
+  avatarName?: string;
+  avatarSrc?: string | null;
 }
 
-function AccountLink({ href, icon, title, description }: AccountLinkProps) {
+function AccountLink({ href, icon, title, description, avatarName, avatarSrc }: AccountLinkProps) {
   return (
     <li>
       <Link
         href={href}
         className="flex items-center gap-3 px-4 py-3 transition-colors duration-small hover:bg-primary-soft/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-control bg-muted/10 text-muted-foreground">
-          {icon}
-        </span>
+        {avatarName !== undefined ? (
+          <Avatar name={avatarName} src={avatarSrc ?? null} size="md" />
+        ) : (
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-control bg-muted/10 text-muted-foreground">
+            {icon}
+          </span>
+        )}
         <span className="min-w-0 flex-1">
           <span className="block text-ui font-medium text-foreground">{title}</span>
           <span className="block truncate text-caption text-muted-foreground">{description}</span>

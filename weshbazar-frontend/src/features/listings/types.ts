@@ -84,6 +84,7 @@ export interface PublicSellerRef {
   displayName: string;
   memberSince: string;
   phoneVerified: boolean;
+  avatarUrl: string | null;
 }
 
 /** Enabled contact methods on a listing (ListingContactType enum). */

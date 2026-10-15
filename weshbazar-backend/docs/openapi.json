@@ -732,6 +732,52 @@
         ]
       }
     },
+    "/api/v1/me/avatar": {
+      "post": {
+        "operationId": "me_users_uploadAvatar",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyProfileDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Upload my profile picture (multipart, single file)",
+        "tags": [
+          "me"
+        ]
+      }
+    },
     "/api/v1/categories": {
       "get": {
         "operationId": "categories_list",
@@ -4387,6 +4433,11 @@
             "type": "number",
             "description": "Number of ACTIVE listings.",
             "example": 4
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Public URL of the seller avatar image, null when none set."
           }
         },
         "required": [
@@ -4543,6 +4594,11 @@
             "type": "string",
             "nullable": true,
             "description": "Storage key of the avatar image."
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Public URL of the avatar image, null when none set."
           },
           "createdAt": {
             "type": "string",
@@ -5972,6 +6028,11 @@
           },
           "phoneVerified": {
             "type": "boolean"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Public URL of the seller avatar, null when none set."
           }
         },
         "required": [

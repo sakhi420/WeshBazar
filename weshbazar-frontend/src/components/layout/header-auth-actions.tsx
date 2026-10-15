@@ -12,11 +12,15 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { ChevronDown, Heart, Loader2, LogOut, Shield, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { queryKeys } from '@/lib/api';
 import { useAuth } from '@/components/auth/auth-provider';
+import { fetchMyProfile } from '@/features/account/api';
 import type { UserSummary } from '@/features/auth';
 
 export function HeaderAuthActions() {
@@ -50,6 +54,12 @@ export function HeaderAuthActions() {
 function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Promise<void> }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const profileQuery = useQuery({
+    queryKey: queryKeys.account.profile,
+    queryFn: fetchMyProfile,
+    staleTime: 30_000,
+    retry: false,
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -68,7 +78,6 @@ function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Pr
   }, [open]);
 
   const isStaff = user.role === 'MODERATOR' || user.role === 'ADMIN';
-  const initial = ((user.displayName ?? '').trim().charAt(0) || '؟').toUpperCase();
 
   const itemClass =
     'flex w-full items-center gap-2 px-4 py-2.5 text-start text-ui text-foreground transition-colors duration-small hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
@@ -83,12 +92,7 @@ function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Pr
         onClick={() => setOpen((value) => !value)}
         className="gap-1.5"
       >
-        <span
-          aria-hidden
-          className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-caption font-bold text-primary-foreground ring-2 ring-primary-soft"
-        >
-          {initial}
-        </span>
+        <Avatar name={user.displayName ?? ''} src={profileQuery.data?.avatarUrl ?? null} size="sm" />
         <span className="max-w-40 truncate" title={user.displayName}>
           {user.displayName}
         </span>

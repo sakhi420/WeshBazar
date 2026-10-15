@@ -14,6 +14,9 @@ const performLogout = jest.fn();
 jest.mock('@/components/auth/auth-provider', () => ({
   useAuth: jest.fn(),
 }));
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: () => ({ data: null }),
+}));
 jest.mock('next/link', () => {
   return function MockLink({
     href,

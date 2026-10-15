@@ -19,4 +19,7 @@ export class PublicSellerProfileDto {
 
   @ApiProperty({ description: 'Number of ACTIVE listings.', example: 4 })
   activeListingCount!: number;
+
+  @ApiPropertyOptional({ nullable: true, description: 'Public URL of the seller avatar image, null when none set.' })
+  avatarUrl!: string | null;
 }

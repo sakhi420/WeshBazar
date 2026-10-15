@@ -56,6 +56,9 @@ export class PublicSellerRefDto {
 
   @ApiProperty()
   phoneVerified!: boolean;
+
+  @ApiPropertyOptional({ nullable: true, description: 'Public URL of the seller avatar, null when none set.' })
+  avatarUrl!: string | null;
 }
 
 export class PublicListingSummaryDto {

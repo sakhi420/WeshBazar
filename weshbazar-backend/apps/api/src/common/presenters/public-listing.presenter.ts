@@ -35,6 +35,8 @@ export interface PublicSellerRef {
   displayName: string;
   memberSince: Date;
   phoneVerified: boolean;
+  /** Public URL of the seller avatar, null when none set. */
+  avatarUrl: string | null;
 }
 
 export interface PublicListingSummary {

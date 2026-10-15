@@ -54,6 +54,9 @@ export class MyProfileDto {
   @ApiPropertyOptional({ nullable: true, description: 'Storage key of the avatar image.' })
   avatarKey!: string | null;
 
+  @ApiPropertyOptional({ nullable: true, description: 'Public URL of the avatar image, null when none set.' })
+  avatarUrl!: string | null;
+
   @ApiProperty({ type: String, format: 'date-time' })
   createdAt!: Date;
 

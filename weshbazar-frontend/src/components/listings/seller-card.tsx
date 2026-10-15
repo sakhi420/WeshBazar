@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { BadgeCheck, UserRound } from 'lucide-react';
+import { BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { formatMonthYear } from '@/features/listings';
 import type { PublicSellerRef } from '@/features/listings';
@@ -27,9 +28,7 @@ export function SellerCard({ seller, className }: SellerCardProps) {
         فروشنده
       </h2>
       <div className="mt-3 flex items-center gap-3">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
-          <UserRound className="size-5" aria-hidden />
-        </span>
+        <Avatar name={seller.displayName} src={seller.avatarUrl ?? null} size="md" />
         <div className="min-w-0 space-y-0.5">
           <p className="truncate text-ui font-semibold text-foreground">{seller.displayName}</p>
           <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-caption text-muted-foreground">

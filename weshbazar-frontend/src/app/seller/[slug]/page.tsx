@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { BadgeCheck, SearchX, UserRound } from 'lucide-react';
+import { BadgeCheck, Package, SearchX } from 'lucide-react';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { Breadcrumbs } from '@/components/layout/breadcrumbs';
 import { PageContainer } from '@/components/layout/page-container';
+import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { formatMonthYear, formatNumber } from '@/features/listings';
 import { fetchSellerProfileServer } from '@/features/sellers';
@@ -64,9 +65,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
         className="mt-4 rounded-card border border-border bg-surface p-5"
       >
         <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-          <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
-            <UserRound className="size-8" aria-hidden />
-          </span>
+          <Avatar name={profile.displayName} src={profile.avatarUrl ?? null} size="xl" />
           <div className="min-w-0 space-y-1">
             <h1
               id="seller-profile-title"
@@ -106,25 +105,33 @@ export default async function SellerPage({ params }: SellerPageProps) {
         >
           آگهی‌های فروشنده
         </h2>
-        <EmptyState
-          className="mt-4"
-          icon={SearchX}
-          title={
-            hasActiveListings
-              ? 'فهرست آگهی‌ها در این صفحه نمایش داده نمی‌شود'
-              : 'این فروشنده در حال حاضر آگهی فعالی ندارد'
-          }
-          description={
-            hasActiveListings
-              ? `این فروشنده ${formatNumber(profile.activeListingCount)} آگهی فعال دارد؛ برای دیدن آن‌ها از جست‌وجو استفاده کنید.`
-              : 'می‌توانید سایر آگهی‌های بازار را در صفحهٔ جست‌وجو ببینید.'
-          }
-          action={
+        {hasActiveListings ? (
+          <div className="mt-4 flex flex-col items-start gap-3 rounded-card border border-primary/20 bg-primary-soft/40 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
+                <Package className="size-5" aria-hidden />
+              </span>
+              <p className="text-ui text-foreground">
+                این فروشنده <span className="font-semibold">{formatNumber(profile.activeListingCount)}</span> آگهی فعال دارد.
+              </p>
+            </div>
             <Button asChild>
               <Link href="/search">جست‌وجوی آگهی‌ها</Link>
             </Button>
-          }
-        />
+          </div>
+        ) : (
+          <EmptyState
+            className="mt-4"
+            icon={SearchX}
+            title="این فروشنده در حال حاضر آگهی فعالی ندارد"
+            description="می‌توانید سایر آگهی‌های بازار را در صفحهٔ جست‌وجو ببینید."
+            action={
+              <Button asChild>
+                <Link href="/search">جست‌وجوی آگهی‌ها</Link>
+              </Button>
+            }
+          />
+        )}
       </section>
     </PageContainer>
   );

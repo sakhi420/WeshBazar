@@ -33,6 +33,8 @@ export interface MyProfile {
   phoneVerified: boolean;
   phoneVerifiedAt?: string | null;
   avatarKey?: string | null;
+  /** Public URL of the avatar image, null when none set. */
+  avatarUrl?: string | null;
   createdAt: string;
   seller: MySellerAccount;
 }

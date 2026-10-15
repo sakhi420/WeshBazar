@@ -5,7 +5,7 @@
  * Listings will reference `sellerAccountId` — never raw user IDs — so future
  * business/store accounts can be introduced without touching ownership rows.
  */
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { AppException } from '../../common/errors/app.exception';
 import { isUniqueViolation } from '../../common/errors/prisma-errors';
 import {
@@ -17,6 +17,7 @@ import {
 import { isValidSlugFormat, slugSuffix, slugify } from '../../common/utils/slug.utils';
 import { PrismaService } from '../../database/prisma.service';
 import { Prisma, type SellerAccount, type User } from '../../generated/prisma/client';
+import { STORAGE_PROVIDER, type StorageProvider } from '../../providers/storage/storage.provider';
 import { publiclyVisibleActiveListingWhere } from '../listings/listing-visibility';
 
 /** Fields accepted when creating an individual seller account. */
@@ -28,7 +29,10 @@ const MAX_SLUG_ATTEMPTS = 6;
 export class SellerAccountsService {
   private readonly logger = new Logger(SellerAccountsService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(STORAGE_PROVIDER) private readonly storage: StorageProvider,
+  ) {}
 
   // --- Creation ----------------------------------------------------------------
 
@@ -153,7 +157,7 @@ export class SellerAccountsService {
       where: { slug },
       include: {
         owner: {
-          select: { status: true, deletedAt: true, createdAt: true, phoneVerifiedAt: true },
+          select: { status: true, deletedAt: true, createdAt: true, phoneVerifiedAt: true, avatarKey: true },
         },
       },
     });
@@ -175,6 +179,7 @@ export class SellerAccountsService {
         ...publiclyVisibleActiveListingWhere(new Date()),
       },
     });
-    return toPublicSellerProfile(seller, seller.owner, activeListingCount);
+    const avatarUrl = seller.owner.avatarKey ? this.storage.getPublicUrl(seller.owner.avatarKey) : null;
+    return toPublicSellerProfile(seller, seller.owner, activeListingCount, avatarUrl);
   }
 }

@@ -6,7 +6,7 @@
  */
 
 import type { SessionSummary } from '@/features/auth';
-import { del, get, patch, post } from '@/lib/api';
+import { del, get, patch, post, request } from '@/lib/api';
 import type {
   ChangePasswordPayload,
   ChangePhonePayload,
@@ -28,6 +28,15 @@ export function fetchMyProfile(): Promise<MyProfile> {
 /** Update display name / avatar / seller profile; returns the fresh profile. */
 export function updateMyProfile(payload: UpdateMePayload): Promise<MyProfile> {
   return patch<MyProfile>(ME_BASE, payload);
+}
+
+/** Upload (or replace) the profile photo; returns the fresh profile. */
+export function uploadAvatar(file: File): Promise<MyProfile> {
+  const formData = new FormData();
+  formData.append('file', file, file.name);
+  return request<MyProfile>('/me/avatar', { method: 'POST', formData }).then(
+    (envelope) => envelope.data,
+  );
 }
 
 // --- Security (§33) ------------------------------------------------------------

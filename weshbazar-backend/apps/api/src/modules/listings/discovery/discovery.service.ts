@@ -76,7 +76,7 @@ const DETAIL_ROW_INCLUDE = {
       slug: true,
       displayName: true,
       status: true,
-      owner: { select: { createdAt: true, phoneVerifiedAt: true } },
+      owner: { select: { createdAt: true, phoneVerifiedAt: true, avatarKey: true } },
     },
   },
   contactMethods: { where: { enabled: true }, orderBy: { type: 'asc' } },
@@ -273,6 +273,9 @@ export class DiscoveryService {
       displayName: row.sellerAccount.displayName,
       memberSince: row.sellerAccount.owner.createdAt,
       phoneVerified: row.sellerAccount.owner.phoneVerifiedAt !== null,
+      avatarUrl: row.sellerAccount.owner.avatarKey
+        ? this.mediaUrl(row.sellerAccount.owner.avatarKey)
+        : null,
     };
     const attributes = await this.publicAttributes(row);
     return toPublicListingDetail(row, locale, this.mediaUrl, { attributes, seller, contact });

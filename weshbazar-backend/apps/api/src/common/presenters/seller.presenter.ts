@@ -15,6 +15,8 @@ export interface PublicSellerProfile {
   memberSince: Date;
   phoneVerified: boolean;
   activeListingCount: number;
+  /** Public URL of the seller's profile photo, or null when none is set. */
+  avatarUrl: string | null;
 }
 
 export interface MySellerAccount {
@@ -32,6 +34,7 @@ export function toPublicSellerProfile(
   seller: Pick<SellerAccount, 'slug' | 'displayName' | 'bio'>,
   owner: Pick<User, 'createdAt' | 'phoneVerifiedAt'>,
   activeListingCount: number,
+  avatarUrl: string | null,
 ): PublicSellerProfile {
   return {
     slug: seller.slug,
@@ -40,6 +43,7 @@ export function toPublicSellerProfile(
     memberSince: owner.createdAt,
     phoneVerified: owner.phoneVerifiedAt !== null,
     activeListingCount,
+    avatarUrl,
   };
 }
 
