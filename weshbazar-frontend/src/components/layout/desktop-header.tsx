@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { Plus, Grid3X3 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/brand-logo';
 import { Button } from '@/components/ui/button';
 import { HeaderAuthActions } from '@/components/layout/header-auth-actions';
@@ -8,7 +8,7 @@ import { SearchField } from '@/features/search/components/search-field';
 
 /**
  * Desktop header (master prompt §102): 64px full top bar.
- * Logo + wide search + location + categories + sell CTA + auth actions.
+ * Logo + wide search + sell CTA + auth actions.
  * Visible only on screens >= 768px (hidden lg:flex).
  */
 export function DesktopHeader() {
@@ -26,12 +26,6 @@ export function DesktopHeader() {
         <Suspense fallback={null}>
           <SearchField className="min-w-0 max-w-xl flex-1" redirectToSearch />
         </Suspense>
-
-        <Button asChild variant="ghost" size="icon" aria-label="دسته‌بندی‌ها">
-          <Link href="/categories">
-            <Grid3X3 aria-hidden />
-          </Link>
-        </Button>
 
         <Button asChild variant="accent" size="sm">
           <Link href="/sell">

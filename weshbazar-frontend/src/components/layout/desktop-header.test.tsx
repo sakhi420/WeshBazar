@@ -1,8 +1,9 @@
 /**
  * DesktopHeader — desktop navigation destinations (HF-TEST-001, HF-NAV-002).
  *
- * Verifies the category button now targets /categories and that the header
- * passes `redirectToSearch` to the inline keyword field.
+ * The redundant category shortcut was removed from the desktop header (the home
+ * carousel and mobile bottom nav now own category discovery). Verifies the sell
+ * CTA stays on /sell and the header keeps logo / search / auth actions.
  */
 
 import { render, screen } from '@testing-library/react';
@@ -31,9 +32,9 @@ jest.mock('@/components/layout/header-auth-actions', () => ({
 import { DesktopHeader } from './desktop-header';
 
 describe('DesktopHeader', () => {
-  it('points the category button at /categories (HF-NAV-002)', () => {
+  it('no longer renders the redundant category button (HF-NAV-002)', () => {
     render(<DesktopHeader />);
-    expect(screen.getByRole('link', { name: 'دسته‌بندی‌ها' })).toHaveAttribute('href', '/categories');
+    expect(screen.queryByRole('link', { name: 'دسته‌بندی‌ها' })).not.toBeInTheDocument();
   });
 
   it('keeps the sell CTA on /sell', () => {

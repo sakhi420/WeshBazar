@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { SectionHeader } from '@/components/layout/section-header';
 import { ApiError } from '@/lib/api';
 import { siteConfig } from '@/config/site';
-import { fetchCategoriesServer, type CategorySummary } from '@/features/categories';
+import { fetchCategoriesServer, orderHomeCategories, type CategorySummary } from '@/features/categories';
 import { fetchListingsServer, type PublicListingSummary } from '@/features/listings';
 
 export const metadata: Metadata = {
@@ -63,7 +63,7 @@ async function loadLatestListings(): Promise<ListingsResult> {
 
 export default async function HomePage() {
   const [catResult, listResult] = await Promise.all([loadCategories(), loadLatestListings()]);
-  const topCategories = catResult.status === 'ok' ? catResult.categories.slice(0, 8) : [];
+  const topCategories = catResult.status === 'ok' ? orderHomeCategories(catResult.categories) : [];
 
   return (
     <PageContainer className="space-y-8">

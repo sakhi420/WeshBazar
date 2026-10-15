@@ -110,4 +110,13 @@
   .flip-rtl:where([dir='rtl'] *) {
     transform: scaleX(-1);
   }
+
+  /* Hide horizontal carousel scrollbars while keeping the row scrollable. */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }

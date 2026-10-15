@@ -7,6 +7,7 @@ import { PageContainer } from '@/components/layout/page-container';
 import { PageHeading } from '@/components/layout/page-heading';
 import { fetchCategoryTreeServer } from '@/features/categories';
 import type { CategoryNode } from '@/features/categories';
+import { categoryIcon } from '@/features/categories/icon';
 import { ApiError } from '@/lib/api';
 
 export const metadata: Metadata = {
@@ -55,31 +56,34 @@ export default async function CategoriesPage() {
           aria-label="فهرست دسته‌ها"
           className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {result.tree.map((node) => (
-            <div key={node.id} className="rounded-surface border border-border bg-surface p-4">
-              <Link
-                href={`/category/${node.slug}`}
-                className="inline-flex items-center gap-2 rounded-control text-card-title font-semibold text-foreground transition-colors duration-small hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-              >
-                <FolderTree className="size-5 shrink-0 text-primary" aria-hidden />
-                {node.name}
-              </Link>
-              {node.children.length > 0 ? (
-                <ul className="mt-3 space-y-1.5">
-                  {node.children.map((child) => (
-                    <li key={child.id}>
-                      <Link
-                        href={`/category/${child.slug}`}
-                        className="inline-flex rounded-control text-ui text-muted-foreground transition-colors duration-small hover:text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-                      >
-                        {child.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-          ))}
+          {result.tree.map((node) => {
+            const Icon = categoryIcon(node.iconKey);
+            return (
+              <div key={node.id} className="rounded-surface border border-border bg-surface p-4">
+                <Link
+                  href={`/category/${node.slug}`}
+                  className="inline-flex items-center gap-2 rounded-control text-card-title font-semibold text-foreground transition-colors duration-small hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                >
+                  <Icon className="size-5 shrink-0 text-primary" aria-hidden />
+                  {node.name}
+                </Link>
+                {node.children.length > 0 ? (
+                  <ul className="mt-3 space-y-1.5">
+                    {node.children.map((child) => (
+                      <li key={child.id}>
+                        <Link
+                          href={`/category/${child.slug}`}
+                          className="inline-flex rounded-control text-ui text-muted-foreground transition-colors duration-small hover:text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                        >
+                          {child.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            );
+          })}
         </section>
       ) : null}
 

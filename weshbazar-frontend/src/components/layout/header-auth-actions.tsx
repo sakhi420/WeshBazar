@@ -68,7 +68,7 @@ function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Pr
   }, [open]);
 
   const isStaff = user.role === 'MODERATOR' || user.role === 'ADMIN';
-  const initial = (user.displayName ?? '').trim().charAt(0) || '؟';
+  const initial = ((user.displayName ?? '').trim().charAt(0) || '؟').toUpperCase();
 
   const itemClass =
     'flex w-full items-center gap-2 px-4 py-2.5 text-start text-ui text-foreground transition-colors duration-small hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
@@ -85,7 +85,7 @@ function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Pr
       >
         <span
           aria-hidden
-          className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary-soft text-caption font-bold text-primary"
+          className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-caption font-bold text-primary-foreground ring-2 ring-primary-soft"
         >
           {initial}
         </span>

@@ -6,6 +6,7 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs';
 import { PageContainer } from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { fetchCategoryDetailServer, fetchFilterSchemaServer } from '@/features/categories';
+import { categoryIcon } from '@/features/categories/icon';
 import { fetchListingsServer } from '@/features/listings';
 import type { PublicListingSummary } from '@/features/listings';
 import { fetchProvincesServer } from '@/features/locations';
@@ -104,17 +105,25 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
       {detail.children.length > 0 ? (
         <section aria-label="زیردسته‌ها" className="mt-4">
-          <ul className="flex flex-wrap gap-2">
-            {detail.children.map((child) => (
-              <li key={child.id}>
-                <Link
-                  href={`/category/${child.slug}`}
-                  className="inline-flex min-h-11 items-center rounded-card border border-border bg-surface px-4 text-ui text-foreground transition-colors duration-small hover:border-primary hover:bg-primary-soft hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background lg:min-h-9"
-                >
-                  {child.name}
-                </Link>
-              </li>
-            ))}
+          <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6">
+            {detail.children.map((child) => {
+              const Icon = categoryIcon(child.iconKey);
+              return (
+                <li key={child.id}>
+                  <Link
+                    href={`/category/${child.slug}`}
+                    className="flex w-full flex-col items-center justify-center gap-1.5 rounded-card border border-border bg-surface px-2 py-3 text-center shadow-soft transition-all duration-small hover:border-primary/20 hover:bg-primary-soft/60 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
+                      <Icon className="size-5" strokeWidth={1.75} aria-hidden />
+                    </span>
+                    <span className="line-clamp-2 text-caption leading-4 text-foreground">
+                      {child.name}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </section>
       ) : null}
