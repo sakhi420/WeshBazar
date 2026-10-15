@@ -72,10 +72,10 @@ export function RegisterForm({ next }: RegisterFormProps) {
         password,
         ...(trimmedName ? { displayName: trimmedName } : {}),
       });
-      void result;
-      // Registration replaces any previously cached identity — drop all
-      // user-scoped caches before the app refetches for the new session.
-      queryClient.removeQueries({ queryKey: queryKeys.auth.all });
+      // Registration replaces any previously cached identity — reflect it into
+      // the auth cache immediately so the header updates without a reload.
+      queryClient.setQueryData(queryKeys.auth.me, { user: result.user, session: null });
+      queryClient.removeQueries({ queryKey: queryKeys.auth.sessions });
       queryClient.removeQueries({ queryKey: queryKeys.account.all });
       queryClient.removeQueries({ queryKey: queryKeys.favorites.all });
       router.replace(`/auth/verify?next=${encodeURIComponent(next)}`);

@@ -59,7 +59,8 @@ export function LoginForm({ next, justReset }: LoginFormProps) {
       // A sign-in may belong to a different user than whatever identity the
       // caches were filled under — drop all user-scoped caches before the app
       // refetches for the new session.
-      queryClient.removeQueries({ queryKey: queryKeys.auth.all });
+      queryClient.setQueryData(queryKeys.auth.me, { user: result.user, session: null });
+      queryClient.removeQueries({ queryKey: queryKeys.auth.sessions });
       queryClient.removeQueries({ queryKey: queryKeys.account.all });
       queryClient.removeQueries({ queryKey: queryKeys.favorites.all });
       const target = result.user.phoneVerified

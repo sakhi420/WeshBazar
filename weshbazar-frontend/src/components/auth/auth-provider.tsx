@@ -110,7 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // 4. Nuke every user-scoped TanStack Query cache so no stale private
     //    data survives in memory after the redirect.
-    queryClient.removeQueries({ queryKey: queryKeys.auth.all });
+    void queryClient.invalidateQueries({ queryKey: queryKeys.auth.all });
     queryClient.removeQueries({ queryKey: queryKeys.account.all });
     queryClient.removeQueries({ queryKey: queryKeys.favorites.all });
     queryClient.removeQueries({ queryKey: queryKeys.listings.all });
