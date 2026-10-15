@@ -77,6 +77,12 @@ export default function AboutPage() {
           </Link>{' '}
           را بخوانید.
         </p>
+        <div className="rounded-surface border border-border bg-surface p-4">
+          <h2 className="text-section font-semibold text-foreground">بنیان‌گذار</h2>
+          <p className="mt-2 text-ui text-muted-foreground">
+            وش‌بازار توسط نثار احمد سخی نژاد بنیان‌گذاری شده است.
+          </p>
+        </div>
       </div>
     </PageContainer>
   );

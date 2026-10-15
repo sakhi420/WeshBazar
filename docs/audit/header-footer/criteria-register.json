@@ -136,15 +136,15 @@
 
  "severity": "P1",
 
- "evidence": "/categories link in bottom nav leads to 404. No src/app/categories/ directory.",
+ "evidence": "/categories route exists (src/app/categories/page.tsx). Bottom-nav routes resolve to existing pages.",
 
  "file": "mobile-bottom-nav.tsx:12",
 
  "route": "/categories",
 
- "verification": "Filesystem check  browser test would confirm",
+ "verification": "Filesystem check (route existence)",
 
- "remediation": "Create /categories page or change link to /search",
+ "remediation": null,
 
  "acceptance": "All nav links resolve to valid pages"
 
@@ -164,15 +164,15 @@
 
  "severity": "P1",
 
- "evidence": "Grid3X3 icon button links to /search, not categories. Label says 'دسته‌بندی‌ها' but leads to search.",
+ "evidence": "Grid3X3 icon button links to /categories; the /categories page exists.",
 
  "file": "desktop-header.tsx:27-31",
 
- "route": "/search",
+ "route": "/categories",
 
  "verification": "Code review",
 
- "remediation": "Change to /category page or relabel as search",
+ "remediation": null,
 
  "acceptance": "Category button navigates to actual category content"
 
@@ -192,7 +192,7 @@
 
  "severity": "P1",
 
- "evidence": "SearchField uses useQueryState('q') which writes q to current URL. On non-search pages, no results appear. redirectToSearch prop exists but is not passed from header.",
+ "evidence": "SearchField implements redirectToSearch (search-field.tsx:49-56): on /search it updates q, otherwise navigates to /search?q=... DesktopHeader passes redirectToSearch.",
 
  "file": "desktop-header.tsx:25, search-field.tsx:20,27-29",
 
@@ -200,7 +200,7 @@
 
  "verification": "Code review",
 
- "remediation": "Pass redirectToSearch={true} to SearchField in desktop header",
+ "remediation": null,
 
  "acceptance": "Search submission navigates to /search?q=..."
 
@@ -220,7 +220,7 @@
 
  "severity": "P1",
 
- "evidence": "Mobile header has logo  auth only. No search input or entry point.",
+ "evidence": "Search icon button links to /search (mobile-header.tsx:25-29).",
 
  "file": "mobile-header.tsx:12-35",
 
@@ -228,7 +228,7 @@
 
  "verification": "Code review",
 
- "remediation": "Add search icon button linking to /search",
+ "remediation": null,
 
  "acceptance": "Search accessible from mobile header"
 
@@ -248,7 +248,7 @@
 
  "severity": "P1",
 
- "evidence": "BrandLogo wrapped in <Link href=\\"/\\"> with aria-label in all three locations",
+ "evidence": "BrandLogo wrapped in <Link href=\"/\"> with aria-label in all three locations",
 
  "file": "desktop-header.tsx:17-23, mobile-header.tsx:16-22, site-footer.tsx:24-30",
 
@@ -472,7 +472,7 @@
 
  "severity": "P2",
 
- "evidence": "No safety/help/about/contact links in footer. Only marketplace and account link groups.",
+ "evidence": "Footer has three link groups (marketplace, account, help). Help group links to /about, /help/safety, /help, /contact; all target pages exist.",
 
  "file": "site-footer.tsx:1-81",
 
@@ -480,7 +480,7 @@
 
  "verification": "Code review",
 
- "remediation": "Add third link group with about, safety, help, contact links. Create target pages.",
+ "remediation": null,
 
  "acceptance": "Footer includes links to safety guidance and help content"
 
@@ -612,7 +612,7 @@
 
  "severity": "P2",
 
- "evidence": "Most interactive elements have focus-visible rings. LocationPicker dropdown option buttons lack focus-visible styles.",
+ "evidence": "Interactive elements have focus-visible rings. LocationPicker option buttons include focus-visible:ring-2 focus-visible:ring-ring.",
 
  "file": "location-picker.tsx:69-78",
 
@@ -620,7 +620,7 @@
 
  "verification": "Code review",
 
- "remediation": "Add focus-visible:ring-2 to dropdown option buttons",
+ "remediation": null,
 
  "acceptance": "All interactive elements show visible focus indicators"
 
@@ -808,15 +808,15 @@
 
  "severity": "P2",
 
- "evidence": "Zero tests for HeaderAuthActions, MobileBottomNav, SiteFooter, AuthProvider, DesktopHeader, MobileHeader.",
+ "evidence": "Test suites exist for DesktopHeader, MobileHeader, HeaderAuthActions, MobileBottomNav, SiteFooter, SearchField, and About/Contact/Help pages.",
 
- "file": "No test files for layout/ or auth/",
+ "file": "components/layout/*.test.tsx, features/search/components/*.test.tsx, app/about/*.test.tsx, app/contact/*.test.tsx, app/help/*.test.tsx",
 
  "route": "N/A",
 
- "verification": "Code search for __tests__",
+ "verification": "Code search for *.test.tsx",
 
- "remediation": "Add unit tests for all shared layout and auth components",
+ "remediation": null,
 
  "acceptance": "All shared components have passing tests"
 
