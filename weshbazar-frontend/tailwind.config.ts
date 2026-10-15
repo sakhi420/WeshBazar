@@ -93,6 +93,14 @@ const config: Config = {
         header: '3.5rem', // 56px app header
         'bottom-nav': '4rem', // 64px mobile bottom navigation (§103)
       },
+      boxShadow: {
+        // Layered, brand-tinted depth (teal/green-tinted neutrals) — softer and
+        // more intentional than Tailwind's default drop shadows.
+        soft: '0 1px 2px hsl(var(--foreground) / 0.04), 0 4px 12px hsl(var(--foreground) / 0.05)',
+        card: '0 1px 3px hsl(var(--foreground) / 0.05), 0 8px 24px hsl(var(--foreground) / 0.06)',
+        lift: '0 2px 6px hsl(var(--foreground) / 0.06), 0 18px 44px hsl(var(--foreground) / 0.10)',
+        glow: '0 0 0 1px hsl(var(--primary) / 0.10), 0 10px 28px hsl(var(--primary) / 0.18)',
+      },
       zIndex: {
         header: '40',
         drawer: '50',
@@ -100,9 +108,10 @@ const config: Config = {
         toast: '70',
       },
       transitionDuration: {
-        // §15 motion durations.
+        // §15 motion durations (+ medium for image/lift zooms).
         micro: '120ms',
         small: '160ms',
+        medium: '300ms',
         dialog: '200ms',
       },
       fontFamily: {
@@ -117,10 +126,20 @@ const config: Config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'fade-up': {
+          from: { opacity: '0', transform: 'translateY(8px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'fade-in': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 200ms ease-out',
         'accordion-up': 'accordion-up 200ms ease-out',
+        'fade-up': 'fade-up 500ms ease-out both',
+        'fade-in': 'fade-in 400ms ease-out both',
       },
     },
   },

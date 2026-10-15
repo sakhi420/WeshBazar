@@ -11,7 +11,7 @@ import { HeaderAuthActions } from '@/components/layout/header-auth-actions';
  */
 export function MobileHeader() {
   return (
-    <header className="sticky top-0 z-header border-b border-border bg-surface lg:hidden">
+    <header className="sticky top-0 z-header border-b border-border bg-surface/80 shadow-soft backdrop-blur-md lg:hidden">
       <div className="flex h-header items-center justify-between px-4">
         <Link
           href="/"

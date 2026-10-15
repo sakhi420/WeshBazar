@@ -13,7 +13,7 @@ import { SearchField } from '@/features/search/components/search-field';
  */
 export function DesktopHeader() {
   return (
-    <header className="sticky top-0 z-header hidden border-b border-border bg-surface lg:flex">
+    <header className="sticky top-0 z-header hidden border-b border-border bg-surface/80 shadow-soft backdrop-blur-md lg:flex">
       <div className="container flex h-[4rem] items-center gap-3">
         <Link
           href="/"

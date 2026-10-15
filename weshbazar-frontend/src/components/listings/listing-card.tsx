@@ -29,7 +29,7 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
     <div className={cn('group relative h-full', className)}>
       <Link
         href={`/listing/${listing.slug}`}
-        className="flex h-full flex-col overflow-hidden rounded-card border border-border bg-surface transition-shadow duration-small hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="flex h-full flex-col overflow-hidden rounded-card border border-border bg-surface shadow-soft transition-all duration-small hover:-translate-y-px hover:border-primary/20 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-muted/20">
           {image ? (

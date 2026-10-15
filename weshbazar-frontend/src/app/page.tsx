@@ -68,7 +68,7 @@ export default async function HomePage() {
   return (
     <PageContainer className="space-y-8">
       {/* Search-first opening viewport (§16, §55). No giant hero banner. */}
-      <section className="rounded-surface border border-border bg-surface p-4 sm:p-6">
+      <section className="animate-fade-up rounded-surface border border-border bg-surface p-4 shadow-card sm:p-6">
         <h1 className="text-display-mobile font-bold text-foreground sm:text-heading">
           بازار خرید و فروش در افغانستان
         </h1>
@@ -132,7 +132,7 @@ export default async function HomePage() {
       </section>
 
       {/* Sell CTA */}
-      <section className="rounded-surface border border-border bg-surface p-4 text-center sm:p-6">
+      <section className="rounded-surface border border-border bg-surface p-4 text-center shadow-card sm:p-6">
         <h2 className="text-section font-semibold text-foreground">کالایی برای فروش دارید؟</h2>
         <p className="mt-1 mx-auto max-w-prose text-body text-muted-foreground">
           آگهی خود را رایگان ثبت کنید و مستقیماً با خریداران در تماس باشید.
@@ -143,7 +143,7 @@ export default async function HomePage() {
       </section>
 
       {/* Safety */}
-      <section className="rounded-surface border border-border bg-surface p-4 sm:p-6">
+      <section className="rounded-surface border border-border bg-surface p-4 shadow-card sm:p-6">
         <div className="flex items-start gap-3">
           <ShieldAlert className="size-5 shrink-0 text-warning" aria-hidden />
           <div>

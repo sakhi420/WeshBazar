@@ -10,12 +10,12 @@ import { cn } from '@/lib/utils';
  * marketplace actions such as Sell / Post Listing (§10).
  */
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-control text-ui font-medium transition-colors duration-small outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-control text-ui font-medium transition-all duration-small active:scale-[0.98] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary-dark',
-        accent: 'bg-accent text-accent-foreground hover:bg-accent-dark',
+        default: 'bg-primary text-primary-foreground shadow-soft hover:bg-primary-dark hover:shadow-card',
+        accent: 'bg-accent text-accent-foreground shadow-soft hover:bg-accent-dark hover:shadow-card',
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90',
         outline: 'border border-input bg-surface hover:bg-primary-soft hover:text-primary',
         ghost: 'hover:bg-primary-soft hover:text-primary',

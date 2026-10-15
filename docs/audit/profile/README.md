@@ -79,5 +79,7 @@ token-storage defect was found. Full detail is in `findings.md`.
   - Standardized field name on `slug` in the backend DTO (`seller-responses.dto.ts`), `docs/openapi.json`, frontend `sellers/types.ts` + `seller/[slug]/page.tsx`.
   - Added a `generateMetadata` regression test (canonical = `/seller/{slug}`).
   - Verification: openapi.json valid + `slug` exposed · frontend typecheck exit 0 · 35 suites / 267 tests / 0 failed · backend typecheck exit 0.
-- **Phase 3 (TEST-003 Playwright session regression)** — pending.
+- **Phase 3 — visual polish (first pass)** — ✅ DONE (added on request; TEST-003 Playwright is still blocked by the missing browser harness).
+  - Warm gradient canvas, brand-tinted layered shadows (`soft`/`card`/`lift`/`glow`), translucent blurred header, button press feedback, listing-card hover lift, subtle hero reveal — layered on top of the frozen §10–16 tokens.
+  - Verification: frontend typecheck exit 0 · 35 suites / 267 tests / 0 failed. Cosmetic only — **not visually verified here (no browser)**; please review live and share visual feedback.
 - **Phase 4 (P3 optional items)** — product decisions pending.
