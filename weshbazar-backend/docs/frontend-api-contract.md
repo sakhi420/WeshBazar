@@ -192,12 +192,13 @@ GET /api/v1/listings?category=electronics&province=kabul&minPrice=1000&maxPrice=
 | POST | /api/v1/auth/forgot-password | auth_forgotPassword | P | - |
 | POST | /api/v1/auth/reset-password | auth_resetPassword | P | - |
 
-### 10.2 me (5)
+### 10.2 me (6)
 
 | Method | Path | operationId | Auth | Role |
 | --- | --- | --- | --- | --- |
 | GET | /api/v1/me | me_users_getMe | B | user |
 | PATCH | /api/v1/me | me_users_updateMe | B | user |
+| POST | /api/v1/me/avatar | me_users_uploadAvatar | B | user |
 | GET | /api/v1/me/analytics/summary | me_analytics_summary | B | seller |
 | GET | /api/v1/me/listings | me_listings_list | B | seller |
 | GET | /api/v1/me/listings/{id} | me_listings_get | B | seller |
@@ -344,6 +345,7 @@ node dist/scripts/generate-openapi.js # writes docs/openapi.json
 | Remove | `DELETE /api/v1/listings/{id}/images/{imageId}` (`listings_media_remove`). |
 | Dev serving | `GET /media/<key>` (immutable, 1-day cache) - production swaps in object storage / CDN. |
 | Public base URL | `PUBLIC_STORAGE_BASE_URL` (dev `http://localhost:3000`). Image URLs in responses are absolute. |
+| Profile photo | `POST /api/v1/me/avatar` (`me_users_uploadAvatar`) — reuses the same media pipeline (JPEG/PNG/WebP, 5 MiB, 25 MP); stores one WebP avatar and returns the refreshed `MyProfile` (with absolute `avatarUrl`). `PATCH /me` `{ avatarKey: '' }` clears it. |
 
 > Upload requires a listing in `DRAFT` state; orphan media is cleaned by a background job after
 > `ORPHAN_MEDIA_RETENTION_DAYS` (7 days). Send `Idempotency-Key` on uploads to make retries safe.

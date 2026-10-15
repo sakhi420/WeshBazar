@@ -108,8 +108,8 @@ and (non-USER only) the admin panel. A logout button sits at the bottom.
 **Editability.** Only the display name is inline-editable; `PATCH /me` accepts
 `displayName` (2–80, trimmed), `avatarKey`, and `seller.{displayName,bio}`.
 `seller.slug` is immutable. Validation is server-authoritative (`VALIDATION_ERROR`);
-the UI binds `fieldErrors` to the name input. `avatarKey` is accepted but never
-rendered (PROFILE-002).
+the UI binds `fieldErrors` to the name input. `avatarKey` ~~is accepted but never
+rendered (PROFILE-002)~~ — ✅ **resolved**: server-side photo upload (`POST /me/avatar`) + `Avatar` render everywhere.
 
 **Save / dirty / failure.** The name edit has explicit ذخیره / انصراف and shows
 "ذخیره نمایش نام ناموفق بود" on failure; on success `useUpdateProfile` writes the

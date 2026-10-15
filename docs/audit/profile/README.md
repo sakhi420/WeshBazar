@@ -60,8 +60,9 @@ The material gaps found are:
   runtime) field-name mismatch breaks the seller page canonical URL (`/seller/undefined`).
 - **SESSION-001 (P2)** — the middleware `weshbazar_session` marker cookie is not
   cleared on the account/security sign-out paths (only the header logout clears it).
-- **PROFILE-002 (P2)** — `avatarKey` is writable but has no upload workflow, no
-  ownership check, and no rendering; arbitrary keys can be stored.
+- **PROFILE-002 (P2)** — ~~`avatarKey` is writable but has no upload workflow, no
+  ownership check, and no rendering~~ ✅ **Resolved** — `POST /me/avatar` + `avatarUrl`
+  rendered in header, account, seller page and listing seller card.
 - **PROFILE-003 (P3)** — no user-facing account deletion/deactivation endpoint exists
   in the frozen v1 contract (product/legal decision required).
 
@@ -83,3 +84,9 @@ token-storage defect was found. Full detail is in `findings.md`.
   - Warm gradient canvas, brand-tinted layered shadows (`soft`/`card`/`lift`/`glow`), translucent blurred header, button press feedback, listing-card hover lift, subtle hero reveal — layered on top of the frozen §10–16 tokens.
   - Verification: frontend typecheck exit 0 · 35 suites / 267 tests / 0 failed. Cosmetic only — **not visually verified here (no browser)**; please review live and share visual feedback.
 - **Phase 4 (P3 optional items)** — product decisions pending.
+- **Phase 5 (avatar — IDENT-005 / PROFILE-002)** — ✅ DONE.
+  - `POST /me/avatar` ends the "no upload path" gap; `avatarUrl` flows through `/me`,
+    `PublicSellerProfile` and the listing `PublicSellerRef`.
+  - `Avatar` renders the photo (initials fallback) in header, account card + nav,
+    seller page and listing seller card. OpenAPI regenerated (84 operations).
+  - Verification: frontend typecheck 0 · 36 suites / 269 tests · backend typecheck 0 + unit tests.

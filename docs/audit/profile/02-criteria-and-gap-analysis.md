@@ -10,23 +10,24 @@ acceptance, and dependencies.
 
 | Status | Count | Meaning |
 | --- | --- | --- |
-| PASS | 34 | Verified in source (incl. Phases 1–2 fixes). |
-| FAIL | 1 | IDENT-005 (avatar — product decision pending). |
+| PASS | 35 | Verified in source (incl. Phases 1–2 + the avatar feature). |
+| FAIL | 0 | — (the single avatar FAIL, IDENT-005, was resolved by shipping the avatar upload + render). |
 | NOT VERIFIED | 6 | CACHE-003, CACHE-005, UX-003, A11Y-002, A11Y-005, TEST-003 (need browser harness). |
 
 **Headline:** the system is strong on authorization, presenter separation, session
 lifecycle, verification truth, and draft isolation (all PASS). The material gaps
 found at audit time — (a) incomplete cache clearing / non-user-scoped keys on
-secondary sign-out paths, and (b) the `sellerSlug`/`slug` contract mismatch — are
-now **resolved** (Phases 1–2). Remaining open item is the avatar scope (IDENT-005);
-the rest are product/UX decisions or need browser QA.
+secondary sign-out paths, (b) the `sellerSlug`/`slug` contract mismatch, and (c)
+the avatar scope (IDENT-005) — are now **resolved** (Phases 1–2 + the avatar
+feature). The only remaining items are product/UX decisions or need browser QA.
 
 ## 4.1 Identity & profile correctness
 
 - **Solid:** display name + seller name/bio editing, immutable slug, server-derived
   verification, zero fabricated trust metrics (IDENT-001…004 all PASS).
-- **Gaps:** `IDENT-005` avatar — writable `avatarKey` without upload/validity/render
-  (FAIL). `IDENT-006` `sellerSlug` vs `slug` now **resolved** (Phase 2).
+- **Gaps:** `IDENT-005` avatar — ~~writable `avatarKey` without upload/validity/render~~
+  ✅ now **resolved**: `POST /me/avatar` + `avatarUrl` rendered everywhere. `IDENT-006`
+  `sellerSlug` vs `slug` also **resolved** (Phase 2).
 - **No duplicate-identity issue:** uniqueness is `phoneNormalized`; slug allocation
   is collision-safe with deterministic + suffixed fallback (covered by
   `profile.e2e-spec.ts` slug tests).

@@ -148,9 +148,11 @@ and call it in `useSignOutLocal`/`useLogout`).
 
 **Confidence.** High.
 
-### PROFILE-002 — `avatarKey` writable but no upload/validity/render path
+### PROFILE-002 — ~~`avatarKey` writable but no upload/validity/render path~~
 
-- **Category:** Identity correctness / privacy. **Priority:** P2.
+**Status:** ✅ **Resolved — avatar feature shipped** (`POST /me/avatar` upload + `avatarUrl` rendered everywhere with an initials fallback).
+
+- **Category:** Identity correctness / privacy. **Priority:** P2 (was).
 
 **Actual behavior.** `PATCH /me` accepts `avatarKey` validated only as a storage-key
 *shape*; no ownership/validity check; no avatar upload endpoint in the frozen contract:

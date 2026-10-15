@@ -124,6 +124,8 @@ Every error response uses the standard envelope. HTTP status matches the code (s
 
 ### 3.7 Media
 
+> The profile-photo upload (`POST /api/v1/me/avatar`) reuses this exact pipeline and returns the same image error codes below.
+
 | Code | HTTP | Retryable | Frontend action |
 | --- | --- | --- | --- |
 | `MEDIA_NOT_FOUND` | 404 | No | Remove broken image tile. |
