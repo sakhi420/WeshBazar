@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { ChevronLeft, ChevronRight, ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatNumber, pickImageVariant } from '@/features/listings';
@@ -34,18 +35,18 @@ export function ListingGallery({ images, title, sold = false, className }: Listi
   return (
     <div className={cn('space-y-2', className)}>
       <div className="relative overflow-hidden rounded-card border border-border bg-muted/20">
-        <div className="aspect-[4/3] w-full">
+        <div className="relative aspect-[4/3] w-full">
           {mainVariant ? (
-            // eslint-disable-next-line @next/next/no-img-element -- API origin is deploy-time configurable; next/image remotePatterns cannot know it
-            <img
+            <Image
+              fill
+              priority
               src={mainVariant.url}
-              width={mainVariant.width}
-              height={mainVariant.height}
               alt={title}
-              className="h-full w-full object-cover"
+              sizes="(max-width: 1024px) 100vw, 60vw"
+              className="object-cover"
             />
           ) : (
-            <span className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted">
+            <span className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground">
               <ImageOff className="size-8" aria-hidden />
               <span className="text-caption">تصویری برای این آگهی ثبت نشده است</span>
             </span>
@@ -107,14 +108,12 @@ export function ListingGallery({ images, title, sold = false, className }: Listi
                       : 'border-border opacity-80 hover:opacity-100',
                   )}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element -- same as the main image note above */}
-                  <img
+                  <Image
                     src={thumb.url}
-                    width={thumb.width}
-                    height={thumb.height}
+                    width={64}
+                    height={64}
                     alt=""
-                    loading="lazy"
-                    decoding="async"
+                    sizes="64px"
                     className="h-full w-full object-cover"
                   />
                 </button>

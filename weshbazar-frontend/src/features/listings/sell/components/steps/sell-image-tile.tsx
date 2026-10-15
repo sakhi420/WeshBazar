@@ -44,7 +44,7 @@ export function SellImageTile({
   removeLabel,
 }: SellImageTileProps) {
   return (
-    <li className="overflow-hidden rounded-card border border-border bg-card">
+    <li className="overflow-hidden rounded-card border border-border bg-surface">
       <div className="relative aspect-[4/3] bg-muted/20">
         {/* eslint-disable-next-line @next/next/no-img-element -- object URLs and the deploy-time-configurable API origin cannot use next/image here */}
         <img src={src} alt={alt} className="h-full w-full object-cover" />

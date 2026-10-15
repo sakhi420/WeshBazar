@@ -201,7 +201,7 @@ function PreviewStep() {
           <>
             <ListingGallery images={serverImages} title={draft.title || 'آگهی'} />
 
-            <section className="space-y-3 rounded-card border border-border bg-card p-4">
+            <section className="space-y-3 rounded-card border border-border bg-surface p-4">
               <h2 className="text-ui font-medium text-foreground">{draft.title}</h2>
               <p className="text-ui font-medium text-primary">
                 {priceLabel}
@@ -230,7 +230,7 @@ function PreviewStep() {
           </section>
         ) : null}
 
-        <section className="space-y-2 rounded-card border border-border bg-card p-4">
+        <section className="space-y-2 rounded-card border border-border bg-surface p-4">
           <h2 className="text-ui font-medium text-foreground">موقعیت</h2>
           <p className="text-ui text-foreground/90">{locationLabel}</p>
           <h2 className="pt-2 text-ui font-medium text-foreground">راه‌های تماس</h2>
@@ -317,7 +317,7 @@ function UploadStatusCard({ upload, error, onRetry }: UploadStatusCardProps) {
       : `در حال بارگذاری تصویر ${formatNumber(inFlight)} از ${formatNumber(upload.total)}…`;
 
   return (
-    <div role="status" className="space-y-2 rounded-card border border-border bg-card p-4">
+    <div role="status" className="space-y-2 rounded-card border border-border bg-surface p-4">
       <p className="flex items-center gap-2 text-ui text-foreground">
         {upload.status === 'uploading' ? (
           <Loader2 aria-hidden className="size-4 animate-spin text-primary" />

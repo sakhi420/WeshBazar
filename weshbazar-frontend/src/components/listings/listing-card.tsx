@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
@@ -32,15 +33,12 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
       >
         <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-primary-soft/40">
           {image ? (
-            // eslint-disable-next-line @next/next/no-img-element -- API origin is deploy-time configurable; next/image remotePatterns cannot know it
-            <img
+            <Image
+              fill
               src={image.url}
-              width={image.width}
-              height={image.height}
               alt=""
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover transition-transform duration-medium group-hover:scale-[1.03]"
+              sizes="(max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+              className="object-cover transition-transform duration-medium group-hover:scale-[1.03]"
             />
           ) : (
             <span className="relative flex h-full w-full flex-col items-center justify-center gap-1.5 text-primary/50">

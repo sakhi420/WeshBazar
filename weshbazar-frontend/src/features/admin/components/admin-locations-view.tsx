@@ -459,7 +459,7 @@ export function AdminLocationsView({ className }: { className?: string }) {
           else deleteCityM.mutate(deleteTarget.id);
           setDeleteTarget(null);
         }}
-        title={deleteTarget?.type === 'province' ? 'حذف ولایت ؟' : 'حذف شهر؟'}
+        title={deleteTarget?.type === 'province' ? 'حذف ولایت؟' : 'حذف شهر؟'}
         description={
           deleteTarget?.type === 'province'
             ? 'در صورت وجود شهر یا آگهی در این ولایت ، حذف مسدود خواهد شد.'
@@ -497,7 +497,7 @@ function LocationForm({
           value={form.code}
           onChange={(e) => setForm({ ...form, code: e.target.value })}
           placeholder="کد ولایت (مثلاً AF-KAB)"
-          className="rounded-input w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="rounded-control w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           dir="ltr"
         />
       )}
@@ -506,14 +506,14 @@ function LocationForm({
         value={form.nameFa}
         onChange={(e) => setForm({ ...form, nameFa: e.target.value })}
         placeholder="نام فارسی"
-        className="rounded-input w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="rounded-control w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />
       <input
         type="text"
         value={form.nameEn}
         onChange={(e) => setForm({ ...form, nameEn: e.target.value })}
         placeholder="نام انگلیسی (اختیاری)"
-        className="rounded-input w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="rounded-control w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         dir="ltr"
       />
       <input
@@ -521,7 +521,7 @@ function LocationForm({
         value={form.slug}
         onChange={(e) => setForm({ ...form, slug: e.target.value })}
         placeholder="اسلاگ (اختیاری، خودکار)"
-        className="rounded-input w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="rounded-control w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         dir="ltr"
       />
       <div className="flex items-center gap-2">

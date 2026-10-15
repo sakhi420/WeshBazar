@@ -7,6 +7,7 @@
  * piece of state.
  */
 
+import Image from 'next/image';
 import { ChevronDown, Eye, Flag, Heart, ImageOff, Store } from 'lucide-react';
 import { formatNumber, formatRelativeTime } from '@/features/listings';
 import { cn } from '@/lib/utils';
@@ -46,13 +47,12 @@ export function AdminListingCard({
         <div className="flex gap-3">
           <div className="relative size-20 shrink-0 overflow-hidden rounded-control bg-muted/20">
             {listing.thumbnailUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element -- API origin is deploy-time configurable; next/image remotePatterns cannot know it
-              <img
+              <Image
+                fill
                 src={listing.thumbnailUrl}
                 alt=""
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover"
+                sizes="80px"
+                className="object-cover"
               />
             ) : (
               <span className="flex h-full w-full items-center justify-center text-muted">
@@ -106,7 +106,7 @@ export function AdminListingCard({
               ) : null}
             </p>
 
-            <p className="mt-1 text-caption text-muted">{formatRelativeTime(listing.createdAt)}</p>
+            <p className="mt-1 text-caption text-muted-foreground">{formatRelativeTime(listing.createdAt)}</p>
 
             {listing.status === 'REJECTED' && listing.rejectedReason ? (
               <p className="mt-1 text-caption text-danger">

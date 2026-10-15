@@ -6,6 +6,7 @@
  * own loading/error states — a failing detail never breaks the queue.
  */
 
+import Image from 'next/image';
 import { ErrorState } from '@/components/feedback/error-state';
 import { Skeleton } from '@/components/feedback/skeleton';
 import { Button } from '@/components/ui/button';
@@ -62,15 +63,13 @@ export function AdminListingDetailPanel({
         <ul className="flex gap-2 overflow-x-auto pb-1" aria-label="تصاویر آگهی">
           {data.images.map((image) => (
             <li key={image.id} className="shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element -- API origin is deploy-time configurable; next/image remotePatterns cannot know it */}
-              <img
+              <Image
                 src={image.url}
-                width={image.width}
-                height={image.height}
+                width={112}
+                height={80}
                 alt=""
-                loading="lazy"
-                decoding="async"
-                className="h-20 w-28 rounded-control border border-border object-cover"
+                sizes="112px"
+                className="rounded-control border border-border object-cover"
               />
             </li>
           ))}
@@ -108,7 +107,7 @@ export function AdminListingDetailPanel({
                 className={
                   method.enabled
                     ? 'rounded-control border border-border bg-surface px-2 py-0.5 text-caption text-foreground'
-                    : 'rounded-control border border-border px-2 py-0.5 text-caption text-muted line-through'
+                    : 'rounded-control border border-border px-2 py-0.5 text-caption text-muted-foreground line-through'
                 }
               >
                 {formatContactMethodType(method.type)}

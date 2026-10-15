@@ -18,7 +18,7 @@ import { EmptyState } from '@/components/feedback/empty-state';
 import { Skeleton } from '@/components/feedback/skeleton';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { formatRelativeTime } from '@/features/listings';
+import { formatNumber, formatRelativeTime } from '@/features/listings';
 import { useAuthBootstrap } from '@/features/auth';
 import { ApiError } from '@/lib/api';
 import { isForbiddenError, isSessionLostError } from '../errors';
@@ -171,7 +171,7 @@ export function AdminReportsView({ className }: { className?: string }) {
                       <div className="space-y-2">
                         <textarea value={note} onChange={(e) => setNote(e.target.value)}
                           placeholder="یادداشت (دلیل اقدام)…" rows={2}
-                          className="w-full rounded-input border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                          className="w-full rounded-control border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
                         <div className="flex items-center gap-2">
                           <Button size="sm" disabled={resolveM.isPending || dismissM.isPending}
                             onClick={() => { if (actionTarget!.verb === 'resolve') resolveM.mutate({ id: r.id, payload: { note: note.trim() } }); else dismissM.mutate({ id: r.id, payload: { note: note.trim() } }); }}>
@@ -203,10 +203,10 @@ export function AdminReportsView({ className }: { className?: string }) {
          {/* Pagination */}
          {totalPages > 1 && (
            <div className="flex items-center justify-between gap-3">
-             <p className="text-caption text-muted-foreground">{total.toLocaleString('fa-IR')} گزارش</p>
+             <p className="text-caption text-muted-foreground">{formatNumber(total)} گزارش</p>
              <div className="flex items-center gap-2">
                <Button variant="outline" size="sm" disabled={page <= 1 || reports.isFetching} onClick={() => void setPageParam(page - 1)}>قبلی</Button>
-               <span className="text-caption text-muted-foreground">صفحهٔ {page.toLocaleString('fa-IR')} از {totalPages.toLocaleString('fa-IR')}</span>
+               <span className="text-caption text-muted-foreground">صفحهٔ {formatNumber(page)} از {formatNumber(totalPages)}</span>
                <Button variant="outline" size="sm" disabled={page >= totalPages || reports.isFetching} onClick={() => void setPageParam(page + 1)}>بعدی</Button>
              </div>
            </div>

@@ -13,7 +13,11 @@ import { Button } from '@/components/ui/button';
 import { SectionHeader } from '@/components/layout/section-header';
 import { ApiError } from '@/lib/api';
 import { siteConfig } from '@/config/site';
-import { fetchCategoriesServer, orderHomeCategories, type CategorySummary } from '@/features/categories';
+import {
+  fetchCategoriesServer,
+  orderHomeCategories,
+  type CategorySummary,
+} from '@/features/categories';
 import { fetchListingsServer, type PublicListingSummary } from '@/features/listings';
 
 export const metadata: Metadata = {
@@ -68,7 +72,7 @@ export default async function HomePage() {
   return (
     <PageContainer className="space-y-8">
       {/* Search-first opening viewport (§16, §55). No giant hero banner. */}
-      <section className="animate-fade-up rounded-surface border border-border bg-surface p-4 shadow-card sm:p-6">
+      <section className="animate-fade-up rounded-surface border border-primary/15 bg-gradient-to-b from-primary-soft/40 to-surface p-4 shadow-card sm:p-6">
         <h1 className="text-display-mobile font-bold text-foreground sm:text-heading">
           بازار خرید و فروش در افغانستان
         </h1>
@@ -78,15 +82,18 @@ export default async function HomePage() {
         </p>
 
         <Suspense fallback={null}>
-          <SearchField className="mt-4 w-full" />
-          <LocationPicker className="mt-3" />
+          <SearchField className="mt-4 w-full" redirectToSearch />
+          <LocationPicker className="mt-3" redirectToSearch />
         </Suspense>
       </section>
 
       {/* Category discovery — compact one-row pills (§108) */}
       {catResult.status === 'ok' ? (
         <section aria-labelledby="categories-heading" className="space-y-2">
-          <h2 id="categories-heading" className="flex items-center gap-2 text-section font-semibold">
+          <h2
+            id="categories-heading"
+            className="flex items-center gap-2 text-section font-semibold"
+          >
             <LayoutGrid className="size-5 text-primary" aria-hidden />
             دسته‌بندی‌ها
           </h2>
@@ -114,31 +121,39 @@ export default async function HomePage() {
           id="latest-heading"
           title="آخرین آگهی‌ها"
           action={
-            <Link href="/search?sort=newest" className="inline-flex items-center gap-1 rounded-control text-ui text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+            <Link
+              href="/search?sort=newest"
+              className="inline-flex items-center gap-1 rounded-control text-ui text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
               مشاهده همه
               <ArrowLeft className="size-4" aria-hidden />
             </Link>
           }
         />
-        {listResult.status === 'ok' ? (
-          <ListingGrid listings={listResult.listings} />
-        ) : null}
+        {listResult.status === 'ok' ? <ListingGrid listings={listResult.listings} /> : null}
         {listResult.status === 'empty' ? (
           <EmptyState title="هنوز آگهی‌ای ثبت نشده است" description="اولین آگهی را شما ثبت کنید!" />
         ) : null}
         {listResult.status === 'error' ? (
-          <ErrorState title="آگهی‌ها بارگذاری نشد" description="در حال حاضر امکان دریافت آگهی‌ها وجود ندارد." requestId={listResult.requestId} />
+          <ErrorState
+            title="آگهی‌ها بارگذاری نشد"
+            description="در حال حاضر امکان دریافت آگهی‌ها وجود ندارد."
+            requestId={listResult.requestId}
+          />
         ) : null}
       </section>
 
       {/* Sell CTA */}
       <section className="rounded-surface border border-border bg-surface p-4 text-center shadow-card sm:p-6">
         <h2 className="text-section font-semibold text-foreground">کالایی برای فروش دارید؟</h2>
-        <p className="mt-1 mx-auto max-w-prose text-body text-muted-foreground">
+        <p className="mx-auto mt-1 max-w-prose text-body text-muted-foreground">
           آگهی خود را رایگان ثبت کنید و مستقیماً با خریداران در تماس باشید.
         </p>
         <Button asChild variant="accent" size="lg" className="mt-4">
-          <Link href="/sell"><Plus aria-hidden /><span>ثبت آگهی رایگان</span></Link>
+          <Link href="/sell">
+            <Plus aria-hidden />
+            <span>ثبت آگهی رایگان</span>
+          </Link>
         </Button>
       </section>
 
@@ -149,10 +164,10 @@ export default async function HomePage() {
           <div>
             <h2 className="text-ui font-semibold text-foreground">نکات ایمنی</h2>
             <ul className="mt-2 space-y-1 text-ui text-muted-foreground">
-              <li>·  قبل از پرداخت، کالا را از نزدیک بررسی کنید.</li>
-              <li>·  در مکان عمومی و امن معامله کنید.</li>
-              <li>·  از واریز بیعانه خودداری کنید.</li>
-              <li>·  در صورت مشاهده تخلف، آگهی را گزارش دهید.</li>
+              <li>· قبل از پرداخت، کالا را از نزدیک بررسی کنید.</li>
+              <li>· در مکان عمومی و امن معامله کنید.</li>
+              <li>· از واریز بیعانه خودداری کنید.</li>
+              <li>· در صورت مشاهده تخلف، آگهی را گزارش دهید.</li>
             </ul>
           </div>
         </div>

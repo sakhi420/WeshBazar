@@ -2,19 +2,35 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 
 const withBundleAnalyzer = bundleAnalyzer({ enabled: process.env.ANALYZE === 'true' });
 
+/** Build the allowed remote pattern for backend media. The backend emits
+ *  absolute image URLs whose origin is deploy-time configurable
+ *  (`NEXT_PUBLIC_MEDIA_BASE_URL`, shared with `src/lib/env.ts`), so a static
+ *  `remotePatterns` list cannot know the host ahead of time. Derive it at
+ *  config time and keep a localhost/media default for dev. */
+function mediaRemotePattern() {
+  const raw =
+    process.env.NEXT_PUBLIC_MEDIA_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    'http://localhost:3000';
+  try {
+    const url = new URL(raw);
+    return {
+      protocol: url.protocol.slice(0, -1), // 'http:' -> 'http'
+      hostname: url.hostname,
+      port: url.port || undefined,
+      pathname: '/**',
+    };
+  } catch {
+    return { protocol: 'http', hostname: 'localhost', port: '3000', pathname: '/media/**' };
+  }
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3000',
-        pathname: '/media/**',
-      },
-    ],
+    remotePatterns: [mediaRemotePattern()],
   },
   async headers() {
     return [

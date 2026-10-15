@@ -26,7 +26,7 @@ export function RouteScaffold({ title, route, purpose }: RouteScaffoldProps) {
         title="این صفحه در مرحلهٔ بعدی ساخته می‌شود"
         description="زیرساخت پروژه آماده است؛ پیاده‌سازی این صفحه بر اساس قرارداد صفحه در مستند اصلی انجام خواهد شد."
       />
-      <p className="bidi-ltr mt-4 text-center text-caption text-muted">
+      <p className="bidi-ltr mt-4 text-center text-caption text-muted-foreground">
         route: <span className="font-mono">{route}</span>
       </p>
     </PageContainer>

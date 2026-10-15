@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 /**
  * Admin taxonomy view (§47) — category CRUD + attribute/option management.
@@ -29,6 +29,7 @@ import { Skeleton } from '@/components/feedback/skeleton';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useAuthBootstrap } from '@/features/auth';
+import { formatNumber } from '@/features/listings';
 import { cn } from '@/lib/utils';
 import { isForbiddenError, isSessionLostError } from '../errors';
 import {
@@ -355,7 +356,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                 value={categoryForm.nameFa}
                 onChange={(e) => setCategoryForm((f) => ({ ...f, nameFa: e.target.value }))}
                 placeholder="نام فارسی *"
-                className="rounded-input w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="rounded-control w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
               <input
                 type="text"
@@ -363,7 +364,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                 onChange={(e) => setCategoryForm((f) => ({ ...f, nameEn: e.target.value }))}
                 placeholder="نام انگلیسی (اختیاری)"
                 dir="ltr"
-                className="rounded-input w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="rounded-control w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
               <input
                 type="text"
@@ -371,7 +372,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                 onChange={(e) => setCategoryForm((f) => ({ ...f, slug: e.target.value }))}
                 placeholder="اسلاگ (اختیاری، خودکار)"
                 dir="ltr"
-                className="rounded-input w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="rounded-control w-full border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
               {parentCategoryOptions.length > 0 && (
                 <select
@@ -379,7 +380,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                   onChange={(e) =>
                     setCategoryForm((f) => ({ ...f, parentId: e.target.value || null }))
                   }
-                  className="rounded-input w-full border border-border bg-surface px-3 py-2 text-ui focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="rounded-control w-full border border-border bg-surface px-3 py-2 text-ui focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <option value="">بدون والد</option>
                   {parentCategoryOptions.map((p) => (
@@ -467,7 +468,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                           e.stopPropagation();
                           setDeleteTarget({ kind: 'category', id: c.id, label: c.name });
                         }}
-                        className="hover:bg-destructive/10 hover:text-destructive rounded p-1 text-muted-foreground"
+                        className="hover:bg-danger/10 hover:text-danger rounded p-1 text-muted-foreground"
                       >
                         <Trash2 className="size-3.5" />
                       </button>
@@ -514,21 +515,21 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                         onChange={(e) => setAttributeForm((f) => ({ ...f, key: e.target.value }))}
                         placeholder="کلید (مثلاً brand) *"
                         dir="ltr"
-                        className="rounded-input border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="rounded-control border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                       <input
                         type="text"
                         value={attributeForm.label}
                         onChange={(e) => setAttributeForm((f) => ({ ...f, label: e.target.value }))}
                         placeholder="برچسب فارسی *"
-                        className="rounded-input border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="rounded-control border border-border bg-surface px-3 py-2 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
                       <select
                         value={attributeForm.type}
                         onChange={(e) => setAttributeForm((f) => ({ ...f, type: e.target.value }))}
-                        className="rounded-input border border-border bg-surface px-3 py-2 text-ui focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        className="rounded-control border border-border bg-surface px-3 py-2 text-ui focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         {ATTRIBUTE_TYPES.map((t) => (
                           <option key={t.key} value={t.key}>
@@ -608,11 +609,11 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                               {a.key}
                             </span>
                             {a.required && (
-                              <span className="text-destructive text-caption">*الزامی</span>
+                              <span className="text-danger text-caption">*الزامی</span>
                             )}
                             {a.options.length > 0 && (
                               <span className="text-caption text-muted-foreground">
-                                {a.options.length.toLocaleString('fa-IR')} گزینه
+                                {formatNumber(a.options.length)} گزینه
                               </span>
                             )}
                           </button>
@@ -631,7 +632,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                               onClick={() =>
                                 setDeleteTarget({ kind: 'attribute', id: a.id, label: a.label })
                               }
-                              className="hover:bg-destructive/10 hover:text-destructive rounded p-1 text-muted-foreground"
+                              className="hover:bg-danger/10 hover:text-danger rounded p-1 text-muted-foreground"
                             >
                               <Trash2 className="size-3.5" />
                             </button>
@@ -665,7 +666,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                                       }
                                       placeholder="مقدار *"
                                       dir="ltr"
-                                      className="rounded-input border border-border bg-surface px-2 py-1.5 text-caption placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                      className="rounded-control border border-border bg-surface px-2 py-1.5 text-caption placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                     />
                                     <input
                                       type="text"
@@ -674,7 +675,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                                         setOptionForm((f) => ({ ...f, label: e.target.value }))
                                       }
                                       placeholder="برچسب فارسی *"
-                                      className="rounded-input border border-border bg-surface px-2 py-1.5 text-caption placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                      className="rounded-control border border-border bg-surface px-2 py-1.5 text-caption placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                     />
                                   </div>
                                   <div className="flex items-center gap-2">
@@ -717,7 +718,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                                         </span>{' '}
                                         <span className="text-muted-foreground">←</span> {o.label}
                                         {!o.isActive && (
-                                          <span className="text-destructive ml-1">(غیرفعال)</span>
+                                          <span className="text-danger ml-1">(غیرفعال)</span>
                                         )}
                                       </span>
                                       <span className="flex gap-1">
@@ -737,7 +738,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                                               label: o.label,
                                             })
                                           }
-                                          className="hover:bg-destructive/10 hover:text-destructive rounded p-0.5 text-muted-foreground"
+                                          className="hover:bg-danger/10 hover:text-danger rounded p-0.5 text-muted-foreground"
                                         >
                                           <Trash2 className="size-3" />
                                         </button>

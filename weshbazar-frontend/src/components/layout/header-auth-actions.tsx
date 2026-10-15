@@ -11,7 +11,7 @@
  * Master prompt §7, §101, §491.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { ChevronDown, Heart, Loader2, LogOut, Shield, Tag, User } from 'lucide-react';
@@ -54,6 +54,8 @@ export function HeaderAuthActions() {
 function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Promise<void> }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const profileQuery = useQuery({
     queryKey: queryKeys.account.profile,
     queryFn: fetchMyProfile,
@@ -67,7 +69,10 @@ function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Pr
       if (rootRef.current && !rootRef.current.contains(event.target as Node)) setOpen(false);
     }
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
     }
     document.addEventListener('mousedown', onPointerDown);
     document.addEventListener('keydown', onKeyDown);
@@ -77,17 +82,43 @@ function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Pr
     };
   }, [open]);
 
+  // When the menu opens, move focus into it so keyboard users can reach items.
+  useEffect(() => {
+    if (open) {
+      menuRef.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+    }
+  }, [open]);
+
   const isStaff = user.role === 'MODERATOR' || user.role === 'ADMIN';
 
+  // Roving focus for ArrowUp / ArrowDown / Home / End inside the menu.
+  function handleMenuKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
+    const items = Array.from(
+      menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [],
+    );
+    if (items.length === 0) return;
+    const currentIndex = items.indexOf(document.activeElement as HTMLElement);
+    let nextIndex: number | null = null;
+    if (event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % items.length;
+    else if (event.key === 'ArrowUp') nextIndex = (currentIndex - 1 + items.length) % items.length;
+    else if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = items.length - 1;
+    if (nextIndex !== null) {
+      event.preventDefault();
+      items[nextIndex]?.focus();
+    }
+  }
+
   const itemClass =
-    'flex w-full items-center gap-2 px-4 py-2.5 text-start text-ui text-foreground transition-colors duration-small hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+    'flex w-full items-center gap-2 px-4 py-2.5 text-start text-ui text-foreground transition-colors duration-small hover:bg-primary-soft focus:bg-primary-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
   return (
     <div ref={rootRef} className="relative">
       <Button
+        ref={triggerRef}
         variant="ghost"
         size="sm"
-        aria-haspopup="true"
+        aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
         className="gap-1.5"
@@ -103,21 +134,27 @@ function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Pr
       </Button>
 
       {open ? (
-        <div className="absolute end-0 top-full z-drawer mt-1 w-52 overflow-hidden rounded-surface border border-border bg-surface shadow-lg">
-          <Link href="/account" className={itemClass} onClick={() => setOpen(false)}>
+        <div
+          ref={menuRef}
+          role="menu"
+          aria-label="منوی حساب"
+          onKeyDown={handleMenuKeyDown}
+          className="absolute end-0 top-full z-drawer mt-1 w-52 overflow-hidden rounded-surface border border-border bg-surface shadow-lg"
+        >
+          <Link href="/account" role="menuitem" className={itemClass} onClick={() => setOpen(false)}>
             <User className="size-4 shrink-0 text-muted-foreground" aria-hidden />
             حساب کاربری
           </Link>
-          <Link href="/my-listings" className={itemClass} onClick={() => setOpen(false)}>
+          <Link href="/my-listings" role="menuitem" className={itemClass} onClick={() => setOpen(false)}>
             <Tag className="size-4 shrink-0 text-muted-foreground" aria-hidden />
             آگهی‌های من
           </Link>
-          <Link href="/favorites" className={itemClass} onClick={() => setOpen(false)}>
+          <Link href="/favorites" role="menuitem" className={itemClass} onClick={() => setOpen(false)}>
             <Heart className="size-4 shrink-0 text-muted-foreground" aria-hidden />
             علاقه‌مندی‌ها
           </Link>
           {isStaff ? (
-            <Link href="/admin" className={itemClass} onClick={() => setOpen(false)}>
+            <Link href="/admin" role="menuitem" className={itemClass} onClick={() => setOpen(false)}>
               <Shield className="size-4 shrink-0 text-muted-foreground" aria-hidden />
               پنل مدیریت
             </Link>
@@ -125,6 +162,7 @@ function AccountMenu({ user, onLogout }: { user: UserSummary; onLogout: () => Pr
           <div className="my-1 border-t border-border" aria-hidden />
           <button
             type="button"
+            role="menuitem"
             className={itemClass}
             onClick={() => {
               setOpen(false);

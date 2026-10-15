@@ -9,6 +9,7 @@
  */
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   Archive,
@@ -93,15 +94,12 @@ export function ListingManageCard({
       <div className="flex gap-3">
         <div className="relative size-24 shrink-0 overflow-hidden rounded-control bg-muted/20">
           {image ? (
-            // eslint-disable-next-line @next/next/no-img-element -- API origin is deploy-time configurable; next/image remotePatterns cannot know it
-            <img
+            <Image
+              fill
               src={image.url}
-              width={image.width}
-              height={image.height}
               alt=""
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover"
+              sizes="96px"
+              className="object-cover"
             />
           ) : (
             <span className="flex h-full w-full items-center justify-center text-muted">

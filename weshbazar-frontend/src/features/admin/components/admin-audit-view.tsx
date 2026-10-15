@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/feedback/skeleton';
 import { Button } from '@/components/ui/button';
 import { useAuthBootstrap } from '@/features/auth';
 import { cn } from '@/lib/utils';
-import { formatRelativeTime } from '@/features/listings';
+import { formatNumber, formatRelativeTime } from '@/features/listings';
 import { isForbiddenError, isSessionLostError } from '../errors';
 import { useAdminAuditLogs } from '../hooks';
 import { ActiveFilterChips } from './ActiveFilterChips';
@@ -101,11 +101,11 @@ export function AdminAuditView({ className }: { className?: string }) {
          </div>
          {totalPages > 1 && (
            <div className="flex items-center justify-between gap-3">
-             <p className="text-caption text-muted-foreground">{total.toLocaleString('fa-IR')} رویداد</p>
+             <p className="text-caption text-muted-foreground">{formatNumber(total)} رویداد</p>
              <div className="flex items-center gap-2">
                <Button variant="outline" size="sm" disabled={page <= 1 || auditLogs.isFetching}
                  onClick={() => void setPageParam(page - 1)}>قبلی</Button>
-               <span className="text-caption text-muted-foreground">صفحهٔ {page.toLocaleString('fa-IR')} از {totalPages.toLocaleString('fa-IR')}</span>
+               <span className="text-caption text-muted-foreground">صفحهٔ {formatNumber(page)} از {formatNumber(totalPages)}</span>
                <Button variant="outline" size="sm" disabled={page >= totalPages || auditLogs.isFetching}
                  onClick={() => void setPageParam(page + 1)}>بعدی</Button>
              </div>

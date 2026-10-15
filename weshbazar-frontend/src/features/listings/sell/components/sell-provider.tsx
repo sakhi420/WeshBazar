@@ -116,7 +116,7 @@ export function SellProvider({
       setRestored(true);
     }
     setReady(true);
-  }, []);
+  }, [storageKey, userId]);
 
   // Revoke outstanding object URLs when the wizard unmounts.
   useEffect(

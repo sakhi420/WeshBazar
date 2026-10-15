@@ -124,7 +124,7 @@ function StartPicker() {
             ))}
           </nav>
 
-          <ul className="overflow-hidden rounded-card border border-border bg-card">
+          <ul className="overflow-hidden rounded-card border border-border bg-surface">
             {visible.map((category) => {
               const selected = category.id === draft.categoryId;
               return (

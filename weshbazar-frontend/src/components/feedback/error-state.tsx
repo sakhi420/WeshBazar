@@ -36,7 +36,7 @@ export function ErrorState({
       <p className="text-card-title font-semibold text-foreground">{title}</p>
       <p className="max-w-prose text-ui text-muted-foreground">{description}</p>
       {requestId ? (
-        <p className="bidi-ltr text-caption text-muted">
+        <p className="bidi-ltr text-caption text-muted-foreground">
           شناسه پیگیری: <span className="font-mono">{requestId}</span>
         </p>
       ) : null}

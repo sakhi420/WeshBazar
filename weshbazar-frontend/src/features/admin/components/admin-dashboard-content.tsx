@@ -261,7 +261,7 @@ function MarketplaceSummaryCard({ data }: { data: MarketplaceSummary }) {
             <dd className="mt-1 text-card-title font-bold text-foreground">
               {formatNumber(data.engagement.totals[item.key])}
             </dd>
-            <dd className="text-caption text-muted">
+            <dd className="text-caption text-muted-foreground">
               ۷ روز اخیر: {formatNumber(recent[item.key])}
             </dd>
           </div>
@@ -276,7 +276,7 @@ function SummaryStat({ label, total, recent }: { label: string; total: number; r
     <div className="rounded-control border border-border bg-background p-3">
       <p className="text-caption text-muted-foreground">{label}</p>
       <p className="mt-1 text-card-title font-bold text-foreground">{formatNumber(total)}</p>
-      <p className="text-caption text-muted">۷ روز اخیر: {formatNumber(recent)}</p>
+      <p className="text-caption text-muted-foreground">۷ روز اخیر: {formatNumber(recent)}</p>
     </div>
   );
 }

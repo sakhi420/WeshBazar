@@ -27,7 +27,7 @@ export function MethodRow({
   children,
 }: MethodRowProps) {
   return (
-    <div className="bg-card rounded-card border border-border p-4">
+    <div className="bg-surface rounded-card border border-border p-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/40 text-muted-foreground">

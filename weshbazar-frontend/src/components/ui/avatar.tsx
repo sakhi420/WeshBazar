@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 /**
@@ -27,10 +28,18 @@ const SIZES = {
   xl: 'size-16 text-heading',
 } as const;
 
+/** Rendered pixel size per variant (mirrors the `size-*` values in SIZES). */
+const SIZES_PX: Record<keyof typeof SIZES, number> = {
+  sm: 28,
+  md: 40,
+  lg: 56,
+  xl: 64,
+};
+
 export interface AvatarProps {
   /** Person's display name — source of the initials fallback. */
   name: string;
-  /** Image source (local data URL today; a future avatar CDN URL later). */
+  /** Absolute server URL of the avatar (backend `avatarUrl`); initials when null. */
   src?: string | null;
   size?: keyof typeof SIZES;
   className?: string;
@@ -38,12 +47,13 @@ export interface AvatarProps {
 
 export function Avatar({ name, src, size = 'md', className }: AvatarProps) {
   if (src) {
+    const px = SIZES_PX[size];
     return (
-      <img
+      <Image
         src={src}
         alt=""
-        width={64}
-        height={64}
+        width={px}
+        height={px}
         className={cn(
           'shrink-0 rounded-full object-cover ring-2 ring-primary-soft',
           SIZES[size],

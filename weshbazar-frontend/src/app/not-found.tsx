@@ -17,7 +17,7 @@ export default function NotFound() {
         <span className="flex size-16 items-center justify-center rounded-full bg-primary-soft text-primary">
           <FileQuestion className="size-8" aria-hidden />
         </span>
-        <p className="bidi-ltr text-display font-bold text-muted">۴۰۴</p>
+        <p className="bidi-ltr text-display font-bold text-muted-foreground">۴۰۴</p>
         <h1 className="text-heading font-bold text-foreground">صفحه پیدا نشد</h1>
         <p className="max-w-prose text-ui text-muted-foreground">
           این آگهی یا صفحه ممکن است حذف شده، فروخته شده، یا نشانی آن تغییر کرده باشد.

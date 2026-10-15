@@ -12,14 +12,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryState } from 'nuqs';
 import { parseAsInteger, parseAsString } from 'nuqs';
-import { Ban, ChevronDown, ChevronUp, Loader2, Search, UserCheck, UserX } from 'lucide-react';
+import { Ban, ChevronDown, ChevronUp, ClipboardList, Flag, Loader2, Search, UserCheck, UserX } from 'lucide-react';
 import { ErrorState } from '@/components/feedback/error-state';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { Skeleton } from '@/components/feedback/skeleton';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { cn } from '@/lib/utils';
-import { formatRelativeTime } from '@/features/listings';
+import { formatNumber, formatRelativeTime } from '@/features/listings';
 import { useAuthBootstrap } from '@/features/auth';
 import { ApiError } from '@/lib/api';
 import { isForbiddenError, isSessionLostError } from '../errors';
@@ -207,7 +207,7 @@ export function AdminUsersView({ className }: { className?: string }) {
             onChange={(e) => setReason(e.target.value)}
             placeholder="علت این اقدام را وارد کنید…"
             rows={2}
-            className="rounded-input w-full border border-border bg-surface p-2.5 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-control w-full border border-border bg-surface p-2.5 text-ui placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
           <div className="flex items-center gap-2">
             <Button size="sm" disabled={!reason.trim() || isBusy} onClick={handleActionSubmit}>
@@ -353,7 +353,7 @@ export function AdminUsersView({ className }: { className?: string }) {
           {totalPages > 1 && (
             <div className="flex items-center justify-between gap-3">
               <p className="text-caption text-muted-foreground">
-                {total.toLocaleString('fa-IR')} کاربر
+                {formatNumber(total)} کاربر
               </p>
               <div className="flex items-center gap-2">
                 <Button
@@ -365,7 +365,7 @@ export function AdminUsersView({ className }: { className?: string }) {
                   قبلی
                 </Button>
                 <span className="text-caption text-muted-foreground">
-                  صفحهٔ {page.toLocaleString('fa-IR')} از {totalPages.toLocaleString('fa-IR')}
+                  صفحهٔ {formatNumber(page)} از {formatNumber(totalPages)}
                 </span>
                 <Button
                   variant="outline"
@@ -385,7 +385,7 @@ export function AdminUsersView({ className }: { className?: string }) {
                   <Loader2 className="size-4 animate-spin mx-2" /> در حال بارگذاری جزئیات…
                 </div>
               ) : userDetail.isError ? (
-                <div className="py-4 text-center text-caption text-destructive">
+                <div className="py-4 text-center text-caption text-danger">
                   دریافت جزئیات ناموفق بود.
                   <button type="button" className="ms-2 underline" onClick={() => void userDetail.refetch()}>تلاش دوباره</button>
                 </div>
@@ -405,8 +405,8 @@ export function AdminUsersView({ className }: { className?: string }) {
                     </div>
                   </div>
                   <div className="flex gap-4 text-caption text-muted-foreground">
-                    <span>📋 گزارش‌های ثبت‌شده: <strong>{userDetail.data.reportsSubmitted}</strong></span>
-                    <span>🚩 گزارش‌های دریافتی: <strong>{userDetail.data.openReportsAbout}</strong></span>
+                    <span><ClipboardList aria-hidden className="size-3.5" /> گزارش‌های ثبت‌شده: <strong>{userDetail.data.reportsSubmitted}</strong></span>
+                    <span><Flag aria-hidden className="size-3.5" /> گزارش‌های دریافتی: <strong>{userDetail.data.openReportsAbout}</strong></span>
                   </div>
                 </>
               ) : null}
