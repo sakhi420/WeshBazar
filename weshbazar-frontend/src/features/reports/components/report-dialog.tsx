@@ -155,7 +155,7 @@ export function ReportDialog({ listingId, className }: ReportDialogProps) {
                 maxLength={MAX_DESCRIPTION_LENGTH}
                 rows={3}
                 placeholder="جزئیاتی که به بررسی کمک می‌کند…"
-                className="mt-2 w-full rounded-control border border-input bg-surface p-3 text-ui text-foreground outline-none transition-colors duration-small placeholder:text-muted focus-visible:ring-2 focus-visible:ring-ring"
+                className="mt-2 w-full rounded-control border border-input bg-surface p-3 text-ui text-foreground outline-none transition-colors duration-small placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
               />
               <p className="mt-1 text-end text-caption text-muted-foreground">
                 {formatNumber(description.length)} / {formatNumber(MAX_DESCRIPTION_LENGTH)}

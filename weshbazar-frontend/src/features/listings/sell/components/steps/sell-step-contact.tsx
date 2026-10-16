@@ -199,7 +199,7 @@ function ContactForm() {
                 mergedError('contactMethods.WHATSAPP'),
                 OVERRIDE_HINT,
               )}
-              className={cn(INPUT_CLASS, 'text-left')}
+              className={cn(INPUT_CLASS, 'text-start')}
             />
           </FormField>
         </MethodRow>

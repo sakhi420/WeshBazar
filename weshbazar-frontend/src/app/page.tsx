@@ -72,18 +72,19 @@ export default async function HomePage() {
   return (
     <PageContainer className="space-y-8">
       {/* Search-first opening viewport (§16, §55). No giant hero banner. */}
-      <section className="animate-fade-up rounded-surface border border-primary/15 bg-gradient-to-b from-primary-soft/40 to-surface p-4 shadow-card sm:p-6">
-        <h1 className="text-display-mobile font-bold text-foreground sm:text-heading">
+      <section className="animate-fade-up relative overflow-hidden rounded-surface border border-primary/15 bg-gradient-to-br from-primary-soft/50 via-primary-soft/20 to-surface p-5 shadow-card sm:p-8">
+        <div aria-hidden className="pointer-events-none absolute -end-12 -top-12 size-44 rounded-full bg-accent/10 blur-2xl" />
+        <h1 className="relative text-display-mobile font-bold leading-tight text-foreground sm:text-display">
           بازار خرید و فروش در افغانستان
         </h1>
-        <p className="mt-2 max-w-prose text-body text-muted-foreground">
+        <p className="relative mt-3 max-w-2xl text-body text-muted-foreground">
           اجناس نو و دست‌دوم را در شهر خود جست‌وجو کنید، یا آگهی خود را رایگان ثبت کنید و مستقیم با
           فروشنده در تماس باشید.
         </p>
 
         <Suspense fallback={null}>
-          <SearchField className="mt-4 w-full" redirectToSearch />
-          <LocationPicker className="mt-3" redirectToSearch />
+          <SearchField className="relative mt-5 w-full" redirectToSearch />
+          <LocationPicker className="relative mt-3" redirectToSearch />
         </Suspense>
       </section>
 

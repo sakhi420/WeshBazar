@@ -12,14 +12,19 @@ export const SESSION_COOKIE = 'weshbazar_session';
 // Match the refresh-token TTL (~30 days).
 const SESSION_MAX_AGE_SECONDS = 2592000;
 
+/** True on a real HTTPS origin so the marker cookie gets the Secure flag. */
+function isHttpsOrigin(): boolean {
+  return typeof window !== 'undefined' && window.location?.protocol === 'https:';
+}
+
 /** Mark the browser as session-holding for the middleware gate. */
 export function setSessionCookie(): void {
   if (typeof document === 'undefined') return;
-  document.cookie = `${SESSION_COOKIE}=1;path=/;SameSite=Lax;max-age=${SESSION_MAX_AGE_SECONDS}`;
+  document.cookie = `${SESSION_COOKIE}=1;path=/;SameSite=Lax;max-age=${SESSION_MAX_AGE_SECONDS}${isHttpsOrigin() ? ';Secure' : ''}`;
 }
 
 /** Immediately expire the marker so the middleware sees a guest. */
 export function clearSessionCookie(): void {
   if (typeof document === 'undefined') return;
-  document.cookie = `${SESSION_COOKIE}=;path=/;SameSite=Lax;max-age=0`;
+  document.cookie = `${SESSION_COOKIE}=;path=/;SameSite=Lax;max-age=0${isHttpsOrigin() ? ';Secure' : ''}`;
 }

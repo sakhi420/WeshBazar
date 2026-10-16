@@ -31,7 +31,7 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
         href={`/listing/${listing.slug}`}
         className="flex h-full flex-col overflow-hidden rounded-card border border-border bg-surface shadow-soft transition-all duration-small hover:-translate-y-px hover:border-primary/20 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-primary-soft/40">
+        <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-gradient-to-br from-primary-soft/50 via-primary-soft/25 to-muted/15">
           {image ? (
             <Image
               fill
@@ -41,22 +41,10 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
               className="object-cover transition-transform duration-medium group-hover:scale-[1.03]"
             />
           ) : (
-            <span className="relative flex h-full w-full flex-col items-center justify-center gap-1.5 text-primary/50">
-              <svg
-                viewBox="0 0 120 90"
-                preserveAspectRatio="none"
-                aria-hidden
-                className="absolute inset-0 h-full w-full text-primary/10"
-              >
-                <path
-                  d="M-10 90 L30 -10 M10 90 L50 -10 M40 90 L80 -10 M70 90 L110 -10 M100 90 L140 -10"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-              </svg>
+            <span className="relative flex h-full w-full flex-col items-center justify-center gap-2 text-primary/40">
               <svg
                 viewBox="0 0 48 48"
-                className="size-9"
+                className="size-10"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={1.5}
@@ -68,7 +56,7 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
                 <circle cx="16" cy="18" r="3" />
                 <path d="M9 35l10-10 7 7 7-7 9 9" />
               </svg>
-              <span className="text-caption font-medium text-primary/60">بدون تصویر</span>
+              <span className="text-caption font-medium text-primary/50">بدون تصویر</span>
             </span>
           )}
           {sold ? (
