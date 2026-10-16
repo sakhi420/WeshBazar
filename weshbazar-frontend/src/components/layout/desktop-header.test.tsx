@@ -28,6 +28,9 @@ jest.mock('@/features/search/components/search-field', () => ({
 jest.mock('@/components/layout/header-auth-actions', () => ({
   HeaderAuthActions: () => <div data-testid="auth-actions" />,
 }));
+jest.mock('@/components/location/location-picker', () => ({
+  LocationPicker: () => <div data-testid="location-picker" />,
+}));
 
 import { DesktopHeader } from './desktop-header';
 

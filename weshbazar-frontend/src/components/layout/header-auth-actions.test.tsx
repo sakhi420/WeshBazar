@@ -63,26 +63,26 @@ describe('HeaderAuthActions', () => {
     authStub('ready', { ...baseUser, displayName: 'مریم' });
     render(<HeaderAuthActions />);
     fireEvent.click(screen.getByRole('button', { name: /مریم/ }));
-    const hrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href'));
+    const hrefs = screen.getAllByRole('menuitem').map((item) => item.getAttribute('href'));
     expect(hrefs).toContain('/account');
     expect(hrefs).toContain('/my-listings');
     expect(hrefs).toContain('/favorites');
     expect(hrefs).not.toContain('/admin');
-    expect(screen.getByRole('button', { name: /خروج/ })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /خروج/ })).toBeInTheDocument();
   });
 
   it('ready as ADMIN → menu includes the admin panel link', () => {
     authStub('ready', { ...baseUser, displayName: 'احمد', role: 'ADMIN' });
     render(<HeaderAuthActions />);
     fireEvent.click(screen.getByRole('button', { name: /احمد/ }));
-    expect(screen.getByRole('link', { name: /پنل مدیریت/ })).toHaveAttribute('href', '/admin');
+    expect(screen.getByRole('menuitem', { name: /پنل مدیریت/ })).toHaveAttribute('href', '/admin');
   });
 
   it('logout → calls performLogout', () => {
     authStub('ready', { ...baseUser, displayName: 'مریم' });
     render(<HeaderAuthActions />);
     fireEvent.click(screen.getByRole('button', { name: /مریم/ }));
-    fireEvent.click(screen.getByRole('button', { name: /خروج/ }));
+    fireEvent.click(screen.getByRole('menuitem', { name: /خروج/ }));
     expect(performLogout).toHaveBeenCalled();
   });
 

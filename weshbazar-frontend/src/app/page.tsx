@@ -45,6 +45,9 @@ async function loadCategories(): Promise<CategoriesResult> {
     if (!Array.isArray(categories) || categories.length === 0) return { status: 'empty' };
     return { status: 'ok', categories };
   } catch (error) {
+    // Offline/unreachable backend under SSR: degrade to an empty feed instead
+    // of letting the node thread hang. Real API failures stay honest.
+    if (error instanceof ApiError && error.isNetworkError) return { status: 'empty' };
     return {
       status: 'error',
       requestId: error instanceof ApiError ? error.requestId : undefined,
@@ -58,6 +61,9 @@ async function loadLatestListings(): Promise<ListingsResult> {
     if (!page.items || page.items.length === 0) return { status: 'empty' };
     return { status: 'ok', listings: page.items };
   } catch (error) {
+    // Offline/unreachable backend under SSR: degrade to an empty feed instead
+    // of letting the node thread hang. Real API failures stay honest.
+    if (error instanceof ApiError && error.isNetworkError) return { status: 'empty' };
     return {
       status: 'error',
       requestId: error instanceof ApiError ? error.requestId : undefined,
@@ -71,20 +77,22 @@ export default async function HomePage() {
 
   return (
     <PageContainer className="space-y-8">
-      {/* Search-first opening viewport (§16, §55). No giant hero banner. */}
-      <section className="animate-fade-up relative overflow-hidden rounded-surface border border-primary/15 bg-gradient-to-br from-primary-soft/50 via-primary-soft/20 to-surface p-5 shadow-card sm:p-8">
-        <div aria-hidden className="pointer-events-none absolute -end-12 -top-12 size-44 rounded-full bg-accent/10 blur-2xl" />
-        <h1 className="relative text-display-mobile font-bold leading-tight text-foreground sm:text-display">
+      {/* Search-first opening viewport (§16, §55). Enhanced with stronger gradient and visual hierarchy. */}
+      <section className="animate-fade-up relative overflow-hidden rounded-surface border border-primary/20 bg-gradient-to-br from-primary-soft/70 via-primary-soft/30 to-surface p-6 shadow-card sm:p-10">
+        {/* Decorative gradient orbs — enhanced visibility */}
+        <div aria-hidden className="pointer-events-none absolute -end-16 -top-16 size-56 rounded-full bg-accent/15 blur-3xl" />
+        <div aria-hidden className="pointer-events-none absolute -start-16 -bottom-16 size-48 rounded-full bg-primary/10 blur-3xl" />
+        
+        <h1 className="relative text-3xl font-extrabold leading-tight text-foreground sm:text-4xl lg:text-[2.5rem]">
           بازار خرید و فروش در افغانستان
         </h1>
-        <p className="relative mt-3 max-w-2xl text-body text-muted-foreground">
-          اجناس نو و دست‌دوم را در شهر خود جست‌وجو کنید، یا آگهی خود را رایگان ثبت کنید و مستقیم با
-          فروشنده در تماس باشید.
+        <p className="relative mt-4 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+          اجناس نو و دست‌دوم را در شهر خود جست‌وجو کنید، یا آگهی خود را رایگان ثبت کنید و مستقیم با فروشنده در تماس باشید.
         </p>
 
         <Suspense fallback={null}>
-          <SearchField className="relative mt-5 w-full" redirectToSearch />
-          <LocationPicker className="relative mt-3" redirectToSearch />
+          <SearchField className="relative mt-6 w-full" redirectToSearch />
+          <LocationPicker className="relative mt-3 sm:absolute sm:end-8 sm:top-auto sm:mt-0" redirectToSearch />
         </Suspense>
       </section>
 
@@ -144,16 +152,21 @@ export default async function HomePage() {
         ) : null}
       </section>
 
-      {/* Sell CTA */}
-      <section className="rounded-surface border border-border bg-surface p-4 text-center shadow-card sm:p-6">
-        <h2 className="text-section font-semibold text-foreground">کالایی برای فروش دارید؟</h2>
-        <p className="mx-auto mt-1 max-w-prose text-body text-muted-foreground">
+      {/* Sell CTA — Enhanced with gradient background and stronger visual presence */}
+      <section className="relative overflow-hidden rounded-surface border border-accent/20 bg-gradient-to-br from-accent/10 via-accent/5 to-surface p-6 text-center shadow-card sm:p-8">
+        {/* Decorative accent gradient */}
+        <div aria-hidden className="pointer-events-none absolute -end-8 -top-8 size-32 rounded-full bg-accent/20 blur-2xl" />
+        
+        <h2 className="relative text-xl font-bold text-foreground sm:text-2xl">
+          کالایی برای فروش دارید؟
+        </h2>
+        <p className="relative mx-auto mt-2 max-w-prose text-body text-muted-foreground sm:text-lg">
           آگهی خود را رایگان ثبت کنید و مستقیماً با خریداران در تماس باشید.
         </p>
-        <Button asChild variant="accent" size="lg" className="mt-4">
+        <Button asChild variant="accent" size="lg" className="relative mt-5 shadow-md hover:shadow-lg">
           <Link href="/sell">
             <Plus aria-hidden />
-            <span>ثبت آگهی رایگان</span>
+            <span className="font-semibold">ثبت آگهی رایگان</span>
           </Link>
         </Button>
       </section>

@@ -39,9 +39,15 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-/** Only run on page routes, never on static assets or API calls. */
+/**
+ * Only run on page routes, never on static assets, API calls, or the
+ * `/.well-known/*` probes Chrome DevTools issues (e.g.
+ * `/.well-known/appspecific/com.chrome.devtools.json`). Skipping those keeps
+ * benign 404 probe requests from forcing a `/_not-found` server render and
+ * stalling the middleware on an offline backend.
+ */
 export const config = {
   matcher: [
-    '/((?!_next|api|favicon|brand|fonts|media).*)',
+    '/((?!_next|api|favicon|brand|fonts|media|\\.well-known).*)',
   ],
 };
