@@ -129,7 +129,7 @@ interface PublicDetailData extends PublicSummaryData {
   description: string;
   attributes: PublicAttributeData[];
   images: PublicImageData[];
-  seller: { slug: string; displayName: string; memberSince: string; phoneVerified: boolean };
+  seller: { slug: string; displayName: string; memberSince: string; phoneVerified: boolean; avatarUrl: string | null };
   contact: { available: boolean; methods: string[] };
   soldAt: string | null;
   createdAt: string;
@@ -1412,6 +1412,7 @@ describe('Discovery (e2e)', () => {
         displayName: account.displayName,
         memberSince: owner.createdAt.toISOString(),
         phoneVerified: true,
+        avatarUrl: null,
       });
       expect(detail.contact).toEqual({ available: true, methods: ['PHONE', 'WHATSAPP'] });
       expect(detail.images).toEqual([]);
