@@ -15,6 +15,7 @@ import type {
   PublicAttribute,
   PublicListingStatus,
 } from './types';
+import { translateAttributeValue } from './attribute-translations';
 
 const FA_LOCALE = 'fa-AF';
 
@@ -156,14 +157,20 @@ export function formatMonthYear(iso: string): string {
 
 // --- Attributes --------------------------------------------------------------
 
-/** Display string for a dynamic attribute value (bad data must not crash). */
+/**
+ * Display string for a dynamic attribute value (bad data must not crash, §57).
+ * SELECT / MULTI_SELECT option slugs are localized through the attribute
+ * dictionary so the right-hand column never leaks raw English.
+ */
 export function formatAttributeValue(attribute: PublicAttribute): string {
-  const { value } = attribute;
+  const { value, type } = attribute;
   if (value === null || value === undefined) return '';
   if (typeof value === 'boolean') return value ? 'بله' : 'نخیر';
   if (typeof value === 'number') return Number.isFinite(value) ? formatNumber(value) : '';
-  if (Array.isArray(value)) return value.map((item) => String(item)).join('، ');
-  return String(value);
+  if (Array.isArray(value)) {
+    return value.map((item) => translateAttributeValue(String(item), type)).join('، ');
+  }
+  return translateAttributeValue(String(value), type);
 }
 
 // --- Contact targets (§36: validate before turning a value into a URL) -------

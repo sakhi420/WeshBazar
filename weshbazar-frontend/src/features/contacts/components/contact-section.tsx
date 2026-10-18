@@ -6,6 +6,7 @@ import { Check, Copy, Loader2, MessageCircle, Phone, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ApiError, ApiErrorCode } from '@/lib/api';
+import { readReferral } from '@/features/attribution';
 import { CONTACT_METHODS, revealContact } from '@/features/contacts';
 import { buildContactHref, formatContactMethod } from '@/features/listings';
 import type {
@@ -59,7 +60,7 @@ export function ContactSection({ listingId, status, contact, className }: Contac
     setPending(method);
     setError(null);
     try {
-      const target = await revealContact(listingId, method);
+      const target = await revealContact(listingId, method, { referral: readReferral() ?? undefined });
       setRevealed((current) => ({ ...current, [method]: target }));
     } catch (caught) {
       if (caught instanceof ApiError) {

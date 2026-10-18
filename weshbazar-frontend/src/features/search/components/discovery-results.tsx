@@ -8,7 +8,7 @@
  * component with the resolved query, so a URL change starts a clean session.
  */
 
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Loader2, SearchX } from 'lucide-react';
 import { EmptyState } from '@/components/feedback/empty-state';
@@ -17,6 +17,7 @@ import { ListingGrid } from '@/components/listings/listing-grid';
 import { fetchListings } from '@/features/listings';
 import type { DiscoveryQuery, PublicListingSummary } from '@/features/listings';
 import { queryKeys, type CursorPage } from '@/lib/api';
+import { recordZeroResultSearch } from '../telemetry';
 
 interface DiscoveryResultsProps {
   /** Resolved API query without a cursor — doubles as the query-key identity. */
@@ -45,6 +46,23 @@ export function DiscoveryResults({
   });
 
   const listings = result.data.pages.flatMap((page) => page.items);
+
+  // D3: record a zero-result search intent exactly once per search session,
+  // and only when the visitor searched a keyword/category/province — a bare
+  // empty feed (or a filter-only sweep) carries no demand signal to log.
+  const hasSearchIntent = Boolean(query.q?.trim() || query.category || query.province);
+  const zeroResultReported = useRef(false);
+  useEffect(() => {
+    if (zeroResultReported.current) return;
+    if (listings.length === 0 && hasSearchIntent) {
+      zeroResultReported.current = true;
+      void recordZeroResultSearch({
+        q: query.q?.trim() || undefined,
+        category: query.category,
+        province: query.province,
+      });
+    }
+  }, [listings.length, hasSearchIntent, query.q, query.category, query.province]);
 
   if (listings.length === 0) {
     return (

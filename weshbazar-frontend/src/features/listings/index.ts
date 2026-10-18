@@ -6,6 +6,7 @@
  */
 export * from './types';
 export * from './api';
+export * from './attribute-translations';
 export * from './format';
 export * from './images';
 export * from './sell';

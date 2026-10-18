@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { formatAttributeValue } from '@/features/listings';
+import { formatAttributeValue, translateAttributeLabel } from '@/features/listings';
 import type { PublicAttribute } from '@/features/listings';
 
 interface AttributeListProps {
@@ -10,13 +10,15 @@ interface AttributeListProps {
 /**
  * Dynamic specifications table (master prompt §58 block 6). Rows without a
  * displayable value are omitted; bad attribute data never crashes the page
- * (§57). Values are bidi-isolated because they are often Latin/numeric.
+ * (§57). Labels and values are localized via the attribute dictionary so no
+ * raw English leaks through; values are bidi-isolated as they are often
+ * Latin/numeric.
  */
 export function AttributeList({ attributes, className }: AttributeListProps) {
   const rows = attributes
     .map((attribute) => ({
       key: attribute.key,
-      label: attribute.label,
+      label: translateAttributeLabel(attribute.key, attribute.label),
       value: formatAttributeValue(attribute),
     }))
     .filter((row) => row.value !== '');

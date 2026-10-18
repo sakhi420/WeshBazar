@@ -17,14 +17,17 @@ import { AdminAnalyticsController } from './admin-analytics.controller';
 import { AdminAnalyticsService } from './admin-analytics.service';
 import { ListingStatsService } from './listing-stats.service';
 import { MeAnalyticsController } from './me-analytics.controller';
+import { SearchTelemetryController } from './search-telemetry.controller';
+import { SearchTelemetryService } from './search-telemetry.service';
 import { SellerAnalyticsService } from './seller-analytics.service';
 import { ViewDedupeService } from './view-dedupe.service';
 
 @Module({
-  controllers: [AdminAnalyticsController, MeAnalyticsController],
+  controllers: [AdminAnalyticsController, MeAnalyticsController, SearchTelemetryController],
   providers: [
     AdminAnalyticsService,
     ListingStatsService,
+    SearchTelemetryService,
     SellerAnalyticsService,
     ViewDedupeService,
   ],

@@ -14,6 +14,9 @@ export interface RevealContactOptions {
   /** Reuse across retries of the same intent; generate a fresh one per intent. */
   idempotencyKey?: string;
   signal?: AbortSignal;
+  /** Referral source (?ref= / ?utm_source=) captured at entry; appended as
+   *  `?ref=` so the acquisition origin stays visible in server access logs. */
+  referral?: string;
 }
 
 /** Reveal one contact method's server-authoritative target for a listing. */
@@ -28,6 +31,7 @@ export function revealContact(
     {
       idempotencyKey: options.idempotencyKey ?? newIdempotencyKey(),
       signal: options.signal,
+      ...(options.referral ? { query: { ref: options.referral } } : {}),
     },
   );
 }

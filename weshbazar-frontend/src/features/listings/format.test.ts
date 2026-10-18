@@ -80,6 +80,20 @@ describe('formatAttributeValue', () => {
     expect(formatAttributeValue(make(null as unknown as string))).toBe('');
     expect(formatAttributeValue(make(undefined as unknown as string))).toBe('');
   });
+
+  it('localizes SELECT option values and passes free text through', () => {
+    const typed = (value: PublicAttribute['value'], type: string | null): PublicAttribute => ({
+      key: 'property_type',
+      label: 'Property type',
+      type,
+      value,
+    });
+    expect(formatAttributeValue(typed('house', 'SELECT'))).toBe('حویلی / خانه');
+    expect(formatAttributeValue(typed('apartment', 'SELECT'))).toBe('آپارتمان');
+    expect(formatAttributeValue(typed('yes', 'SELECT'))).toBe('بله');
+    expect(formatAttributeValue(typed('no', 'SELECT'))).toBe('نخیر');
+    expect(formatAttributeValue(typed('Toyota', 'TEXT'))).toBe('Toyota');
+  });
 });
 
 describe('buildContactHref (security boundary)', () => {

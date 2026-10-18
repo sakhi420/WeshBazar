@@ -61,4 +61,18 @@ describe('AttributeList', () => {
     );
     expect(container.firstChild).toBeNull();
   });
+
+  it('translates English labels and SELECT values to Dari', () => {
+    render(
+      <AttributeList
+        attributes={[
+          attr('property_type', 'Property type', 'house', 'SELECT'),
+          attr('area_sqm', 'Area', 120, 'DECIMAL'),
+        ]}
+      />,
+    );
+    expect(screen.getByText('نوع جایداد')).toBeInTheDocument();
+    expect(screen.getByText('حویلی / خانه')).toBeInTheDocument();
+    expect(screen.getByText('مساحت (متر مربع)')).toBeInTheDocument();
+  });
 });
