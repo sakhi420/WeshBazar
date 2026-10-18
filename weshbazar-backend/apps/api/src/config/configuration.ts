@@ -109,6 +109,16 @@ export function configuration(): AppConfig {
     },
     providers: {
       sms: env.SMS_PROVIDER,
+      smsHttp: {
+        gatewayUrl: env.SMS_GATEWAY_URL,
+        apiKey: env.SMS_GATEWAY_API_KEY,
+        apiKeyHeader: env.SMS_GATEWAY_API_KEY_HEADER,
+        apiKeyPrefix: env.SMS_GATEWAY_API_KEY_PREFIX,
+        sender: env.SMS_GATEWAY_SENDER,
+        timeoutMs: env.SMS_GATEWAY_TIMEOUT_MS,
+        maxRetries: env.SMS_GATEWAY_MAX_RETRIES,
+        messageTemplate: env.SMS_MESSAGE_TEMPLATE,
+      },
       moderation: env.MODERATION_PROVIDER,
     },
   };

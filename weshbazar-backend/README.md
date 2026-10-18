@@ -233,6 +233,28 @@ limits (11 surfaces), account lockout, storage/media limits, listing/marketplace
 limits, background-job tuning, and provider selection (`SMS_PROVIDER=mock`,
 `MODERATION_PROVIDER=noop`).
 
+### SMS provider (production)
+
+The OTP pipeline ships with a mock provider for local development. To enable
+real delivery, buy an aggregator, fill the `SMS_GATEWAY_*` variables, and set
+`SMS_PROVIDER=http` — **no code changes** required. In production the process
+refuses to start with `SMS_PROVIDER=mock`.
+
+| Variable | Meaning |
+| --- | --- |
+| `SMS_GATEWAY_URL` | absolute `http(s)` endpoint (required) |
+| `SMS_GATEWAY_API_KEY` | API key/secret (required) |
+| `SMS_GATEWAY_API_KEY_HEADER` | header carrying the key (default `X-Api-Key`) |
+| `SMS_GATEWAY_API_KEY_PREFIX` | optional prefix, e.g. `Bearer ` |
+| `SMS_GATEWAY_SENDER` | sender ID / short-code (optional) |
+| `SMS_GATEWAY_TIMEOUT_MS` | per-attempt timeout (default `10000`) |
+| `SMS_GATEWAY_MAX_RETRIES` | retries after a failed attempt (default `2`) |
+| `SMS_MESSAGE_TEMPLATE` | Dari text; `{code}` is replaced with the OTP |
+
+The provider POSTs JSON `{ to, message, sender }`. If the chosen vendor needs a
+different shape, add one provider class behind `SmsProvider` (see
+`apps/api/src/providers/sms/`); the auth flow is untouched.
+
 ---
 
 ## Deployment

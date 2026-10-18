@@ -145,6 +145,16 @@ export const envSchema = z
     SMS_PROVIDER: z.string().min(1).default('mock'),
     MODERATION_PROVIDER: z.string().min(1).default('noop'),
 
+    // SMS gateway (only required when SMS_PROVIDER=http)
+    SMS_GATEWAY_URL: optionalString,
+    SMS_GATEWAY_API_KEY: optionalString,
+    SMS_GATEWAY_API_KEY_HEADER: z.string().trim().min(1).default('X-Api-Key'),
+    SMS_GATEWAY_API_KEY_PREFIX: z.string().default(''),
+    SMS_GATEWAY_SENDER: optionalString,
+    SMS_GATEWAY_TIMEOUT_MS: intEnv(10_000).pipe(z.number().int().min(100).max(60_000)),
+    SMS_GATEWAY_MAX_RETRIES: intEnv(2).pipe(z.number().int().min(0).max(5)),
+    SMS_MESSAGE_TEMPLATE: z.string().min(1).default('وزبازار: کد تأیید شما {code} است'),
+
     // Logging / docs
     LOG_LEVEL: z
       .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
@@ -152,6 +162,41 @@ export const envSchema = z
     SWAGGER_ENABLED: boolEnv('true'),
   })
   .superRefine((env, ctx) => {
+    // The `http` provider has a real delivery dependency; refuse to boot on a
+    // half-configured gateway so a misconfiguration fails at startup, not on
+    // the first user's verification attempt.
+    if (env.SMS_PROVIDER === 'http') {
+      if (!env.SMS_GATEWAY_URL) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['SMS_GATEWAY_URL'],
+          message: 'SMS_GATEWAY_URL is required when SMS_PROVIDER=http',
+        });
+      } else {
+        let validUrl = false;
+        try {
+          const url = new URL(env.SMS_GATEWAY_URL);
+          validUrl = url.protocol === 'http:' || url.protocol === 'https:';
+        } catch {
+          validUrl = false;
+        }
+        if (!validUrl) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['SMS_GATEWAY_URL'],
+            message: 'SMS_GATEWAY_URL must be an absolute http(s) URL',
+          });
+        }
+      }
+      if (!env.SMS_GATEWAY_API_KEY) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['SMS_GATEWAY_API_KEY'],
+          message: 'SMS_GATEWAY_API_KEY is required when SMS_PROVIDER=http',
+        });
+      }
+    }
+
     if (env.NODE_ENV !== 'production') {
       return;
     }

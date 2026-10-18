@@ -113,6 +113,16 @@ export interface AppConfig {
   };
   providers: {
     sms: string;
+    smsHttp: {
+      gatewayUrl?: string;
+      apiKey?: string;
+      apiKeyHeader: string;
+      apiKeyPrefix: string;
+      sender?: string;
+      timeoutMs: number;
+      maxRetries: number;
+      messageTemplate: string;
+    };
     moderation: string;
   };
 }
