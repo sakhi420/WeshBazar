@@ -8,14 +8,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "summary": "Liveness probe",
@@ -31,14 +24,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "summary": "Readiness probe",
@@ -554,96 +540,54 @@
         ]
       }
     },
-    "/api/v1/admin/audit-logs": {
+    "/api/v1/sellers/{slug}/listings": {
       "get": {
-        "operationId": "admin_audit_list",
+        "operationId": "sellers_getPublicListings",
         "parameters": [
           {
-            "name": "action",
-            "required": false,
-            "in": "query",
+            "name": "slug",
+            "required": true,
+            "in": "path",
             "schema": {
-              "type": "string",
-              "enum": [
-                "USER_SUSPENDED",
-                "USER_BANNED",
-                "USER_RESTORED",
-                "USER_DEACTIVATED",
-                "LISTING_APPROVED",
-                "LISTING_REJECTED",
-                "LISTING_ARCHIVED_BY_ADMIN",
-                "LISTING_RESTORED_BY_ADMIN",
-                "REPORT_RESOLVED",
-                "REPORT_DISMISSED",
-                "CATEGORY_CREATED",
-                "CATEGORY_UPDATED",
-                "CATEGORY_ARCHIVED",
-                "CATEGORY_DELETED",
-                "ATTRIBUTE_CREATED",
-                "ATTRIBUTE_UPDATED",
-                "ATTRIBUTE_DELETED",
-                "ATTRIBUTE_OPTION_CREATED",
-                "ATTRIBUTE_OPTION_UPDATED",
-                "ATTRIBUTE_OPTION_DELETED",
-                "LOCATION_CREATED",
-                "LOCATION_UPDATED",
-                "LOCATION_DELETED",
-                "SECURITY_SESSION_REVOKED",
-                "SECURITY_REFRESH_REUSE_DETECTED",
-                "SECURITY_LOGOUT_ALL",
-                "AUTH_PASSWORD_CHANGED",
-                "AUTH_PASSWORD_RESET",
-                "AUTH_PHONE_CHANGED"
-              ]
-            }
-          },
-          {
-            "name": "entityType",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxLength": 50,
               "type": "string"
             }
           },
           {
-            "name": "entityId",
+            "name": "locale",
             "required": false,
             "in": "query",
+            "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 64,
+              "example": "fa-AF",
               "type": "string"
-            }
-          },
-          {
-            "name": "actorUserId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 100,
-              "type": "number"
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicListingSummaryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Public ACTIVE listings of a seller (cursor pagination)",
+        "tags": [
+          "sellers"
+        ]
+      }
+    },
+    "/api/v1/admin/audit-logs": {
+      "get": {
+        "operationId": "admin_audit_list",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "",
@@ -788,7 +732,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -825,7 +768,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -870,7 +812,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -938,7 +879,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -978,7 +918,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1035,7 +974,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1080,7 +1018,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1431,7 +1368,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1476,7 +1412,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1513,7 +1448,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1553,7 +1487,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1610,7 +1543,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1694,7 +1626,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1742,7 +1673,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1799,7 +1729,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -1875,128 +1804,8 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
-            }
-          },
-          {
-            "name": "q",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxLength": 120,
-              "type": "string"
-            }
-          },
-          {
-            "name": "category",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxLength": 80,
-              "type": "string"
-            }
-          },
-          {
-            "name": "province",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxLength": 80,
-              "type": "string"
-            }
-          },
-          {
-            "name": "city",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxLength": 80,
-              "type": "string"
-            }
-          },
-          {
-            "name": "minPrice",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 0,
-              "maximum": 999999999999.99,
-              "type": "number"
-            }
-          },
-          {
-            "name": "maxPrice",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 0,
-              "maximum": 999999999999.99,
-              "type": "number"
-            }
-          },
-          {
-            "name": "condition",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxItems": 4,
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "NEW",
-                  "LIKE_NEW",
-                  "GOOD",
-                  "FAIR"
-                ]
-              }
-            }
-          },
-          {
-            "name": "sort",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "newest",
-                "price_asc",
-                "price_desc",
-                "most_viewed"
-              ]
-            }
-          },
-          {
-            "name": "filter",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxLength": 200,
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxLength": 512,
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 60,
-              "type": "number"
             }
           }
         ],
@@ -2029,7 +1838,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2086,7 +1894,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2128,7 +1935,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2185,7 +1991,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2242,7 +2047,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2299,7 +2103,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2356,7 +2159,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2406,25 +2208,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxLength": 512,
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 100,
-              "type": "number"
-            }
           }
         ],
         "responses": {
@@ -2463,44 +2246,8 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
-            }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxLength": 512,
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 60,
-              "type": "number"
-            }
-          },
-          {
-            "name": "status",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "DRAFT",
-                "PENDING_REVIEW",
-                "ACTIVE",
-                "REJECTED",
-                "SOLD",
-                "ARCHIVED"
-              ]
             }
           }
         ],
@@ -2548,7 +2295,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2607,26 +2353,7 @@
     "/api/v1/admin/analytics/summary": {
       "get": {
         "operationId": "admin_analytics_summary",
-        "parameters": [
-          {
-            "name": "from",
-            "required": false,
-            "in": "query",
-            "description": "Inclusive start day; defaults to 29 days before `to`.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "to",
-            "required": false,
-            "in": "query",
-            "description": "Inclusive end day; defaults to today (UTC).",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "",
@@ -2653,26 +2380,7 @@
     "/api/v1/me/analytics/summary": {
       "get": {
         "operationId": "me_analytics_summary",
-        "parameters": [
-          {
-            "name": "from",
-            "required": false,
-            "in": "query",
-            "description": "Inclusive start day; defaults to 29 days before `to`.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "to",
-            "required": false,
-            "in": "query",
-            "description": "Inclusive end day; defaults to today (UTC).",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "",
@@ -2696,6 +2404,38 @@
         ]
       }
     },
+    "/api/v1/search/zero-results": {
+      "post": {
+        "operationId": "search_recordZeroResult",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchZeroResultDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchZeroResultResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Record a zero-result search intent (lightweight telemetry)",
+        "tags": [
+          "search-telemetry"
+        ]
+      }
+    },
     "/api/v1/listings/{id}/images": {
       "post": {
         "operationId": "listings_media_upload",
@@ -2714,7 +2454,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2788,7 +2527,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2843,7 +2581,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -2996,28 +2733,8 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
-            }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "maxLength": 512,
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 60,
-              "type": "number"
             }
           }
         ],
@@ -3096,64 +2813,7 @@
     "/api/v1/admin/users": {
       "get": {
         "operationId": "admin_users_list",
-        "parameters": [
-          {
-            "name": "q",
-            "required": false,
-            "in": "query",
-            "description": "Free-text search over phone, normalized phone and display name.",
-            "schema": {
-              "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
-            "name": "role",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "USER",
-                "MODERATOR",
-                "ADMIN"
-              ]
-            }
-          },
-          {
-            "name": "status",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "ACTIVE",
-                "SUSPENDED",
-                "BANNED",
-                "DEACTIVATED"
-              ]
-            }
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 100,
-              "type": "number"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "",
@@ -3354,93 +3014,8 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "DRAFT",
-                "PENDING_REVIEW",
-                "ACTIVE",
-                "REJECTED",
-                "SOLD",
-                "ARCHIVED"
-              ]
-            }
-          },
-          {
-            "name": "reported",
-            "required": false,
-            "in": "query",
-            "description": "Only listings with at least one OPEN/UNDER_REVIEW report (§59).",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "categoryId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "sellerAccountId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "q",
-            "required": false,
-            "in": "query",
-            "description": "Title substring search (case-insensitive).",
-            "schema": {
-              "maxLength": 100,
-              "type": "string"
-            }
-          },
-          {
-            "name": "sort",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "oldest",
-                "newest"
-              ]
-            }
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 100,
-              "type": "number"
             }
           }
         ],
@@ -3488,7 +3063,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -3535,7 +3109,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -3592,7 +3165,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -3649,7 +3221,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -3706,7 +3277,6 @@
             "in": "query",
             "description": "Preferred content locale; BCP-47 aliases such as fa-AF are accepted. Unknown values fall back to en.",
             "schema": {
-              "maxLength": 20,
               "example": "fa-AF",
               "type": "string"
             }
@@ -3748,78 +3318,7 @@
     "/api/v1/admin/reports": {
       "get": {
         "operationId": "admin_reports_queue",
-        "parameters": [
-          {
-            "name": "status",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "OPEN",
-                "UNDER_REVIEW",
-                "RESOLVED",
-                "DISMISSED"
-              ]
-            }
-          },
-          {
-            "name": "reason",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "SCAM",
-                "STOLEN",
-                "PROHIBITED_ITEM",
-                "SPAM",
-                "MISLEADING",
-                "DUPLICATE",
-                "OFFENSIVE",
-                "OTHER"
-              ]
-            }
-          },
-          {
-            "name": "reportedUserId",
-            "required": false,
-            "in": "query",
-            "description": "The suspicious-users workflow: all reports about one account (§59).",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "listingId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 100,
-              "type": "number"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "",
@@ -4009,22 +3508,22 @@
         "properties": {
           "phone": {
             "type": "string",
-            "maxLength": 32,
             "example": "0701234567",
+            "maxLength": 32,
             "description": "Phone number in local (0…) or international (+93…) format."
           },
           "password": {
             "type": "string",
-            "maxLength": 256,
             "example": "S3cure!Pass",
             "minLength": 8,
+            "maxLength": 256,
             "description": "Must satisfy the configured password policy."
           },
           "displayName": {
             "type": "string",
+            "example": "Ahmad",
             "minLength": 2,
-            "maxLength": 80,
-            "example": "Ahmad"
+            "maxLength": 80
           }
         },
         "required": [
@@ -4069,8 +3568,8 @@
           },
           "phoneVerifiedAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
@@ -4155,13 +3654,13 @@
         "properties": {
           "phone": {
             "type": "string",
-            "maxLength": 32,
-            "example": "0701234567"
+            "example": "0701234567",
+            "maxLength": 32
           },
           "password": {
             "type": "string",
-            "maxLength": 256,
-            "example": "S3cure!Pass"
+            "example": "S3cure!Pass",
+            "maxLength": 256
           }
         },
         "required": [
@@ -4208,8 +3707,8 @@
           },
           "lastUsedAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "ipAddress": {
             "type": "string",
@@ -4265,7 +3764,6 @@
         "properties": {
           "code": {
             "type": "string",
-            "pattern": "^\\d{4,10}$",
             "example": "483920",
             "description": "Numeric one-time code."
           }
@@ -4285,8 +3783,8 @@
           },
           "resendAvailableAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           }
         },
         "required": [
@@ -4299,13 +3797,13 @@
         "properties": {
           "currentPassword": {
             "type": "string",
-            "maxLength": 256,
-            "example": "S3cure!Pass"
+            "example": "S3cure!Pass",
+            "maxLength": 256
           },
           "newPassword": {
             "type": "string",
-            "maxLength": 256,
-            "example": "N3w!Passw0rd"
+            "example": "N3w!Passw0rd",
+            "maxLength": 256
           }
         },
         "required": [
@@ -4318,8 +3816,8 @@
         "properties": {
           "phone": {
             "type": "string",
-            "maxLength": 32,
-            "example": "0701234567"
+            "example": "0701234567",
+            "maxLength": 32
           }
         },
         "required": [
@@ -4342,19 +3840,18 @@
         "properties": {
           "phone": {
             "type": "string",
-            "maxLength": 32,
-            "example": "0701234567"
+            "example": "0701234567",
+            "maxLength": 32
           },
           "code": {
             "type": "string",
-            "pattern": "^\\d{4,10}$",
             "example": "483920",
             "description": "Code from the reset SMS."
           },
           "newPassword": {
             "type": "string",
-            "maxLength": 256,
-            "example": "N3w!Passw0rd"
+            "example": "N3w!Passw0rd",
+            "maxLength": 256
           }
         },
         "required": [
@@ -4368,14 +3865,14 @@
         "properties": {
           "password": {
             "type": "string",
-            "maxLength": 256,
             "example": "S3cure!Pass",
+            "maxLength": 256,
             "description": "Current account password."
           },
           "newPhone": {
             "type": "string",
-            "maxLength": 32,
             "example": "0707654321",
+            "maxLength": 32,
             "description": "New phone number to verify."
           }
         },
@@ -4417,7 +3914,7 @@
             "example": "Ahmad Wesh"
           },
           "bio": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
             "example": "Electronics seller based in Kabul."
           },
@@ -4435,7 +3932,7 @@
             "example": 4
           },
           "avatarUrl": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
             "description": "Public URL of the seller avatar image, null when none set."
           }
@@ -4448,6 +3945,140 @@
           "activeListingCount"
         ]
       },
+      "ListingRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string",
+            "example": "mobile-phones"
+          },
+          "name": {
+            "type": "string",
+            "example": "Mobile Phones"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name"
+        ]
+      },
+      "ListingImageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL of the stored original (re-encoded JPEG)."
+          },
+          "variants": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            },
+            "description": "Derived variants keyed by name (thumbnail / medium / large)."
+          },
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "isPrimary": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "variants",
+          "width",
+          "height",
+          "isPrimary",
+          "sortOrder"
+        ]
+      },
+      "PublicListingSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string",
+            "example": "iphone-13-pro-max-a83kd2"
+          },
+          "title": {
+            "type": "string"
+          },
+          "price": {
+            "type": "object",
+            "nullable": true,
+            "example": 45000
+          },
+          "currency": {
+            "type": "string",
+            "example": "AFN"
+          },
+          "pricingType": {
+            "type": "string",
+            "example": "PAID"
+          },
+          "negotiable": {
+            "type": "boolean"
+          },
+          "condition": {
+            "type": "string",
+            "example": "GOOD"
+          },
+          "category": {
+            "$ref": "#/components/schemas/ListingRefDto"
+          },
+          "province": {
+            "$ref": "#/components/schemas/ListingRefDto"
+          },
+          "city": {
+            "$ref": "#/components/schemas/ListingRefDto"
+          },
+          "primaryImage": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ListingImageDto"
+              }
+            ]
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "currency",
+          "pricingType",
+          "negotiable",
+          "condition",
+          "category",
+          "province",
+          "city"
+        ]
+      },
       "AuditLogDto": {
         "type": "object",
         "properties": {
@@ -4456,9 +4087,9 @@
             "format": "uuid"
           },
           "actorUserId": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
+            "type": "object",
+            "format": "uuid",
+            "nullable": true
           },
           "action": {
             "type": "string",
@@ -4469,19 +4100,18 @@
             "example": "Listing"
           },
           "entityId": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "metadata": {
-            "type": "object",
-            "additionalProperties": true
+            "type": "object"
           },
           "ipAddress": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "userAgent": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "createdAt": {
@@ -4505,10 +4135,10 @@
             "format": "uuid"
           },
           "type": {
+            "type": "string",
             "enum": [
               "INDIVIDUAL"
             ],
-            "type": "string",
             "example": "INDIVIDUAL"
           },
           "displayName": {
@@ -4520,16 +4150,16 @@
             "example": "ahmad-wesh"
           },
           "bio": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "SUSPENDED",
               "BANNED"
-            ],
-            "type": "string"
+            ]
           },
           "createdAt": {
             "type": "string",
@@ -4554,7 +4184,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
+            "type": "object",
             "format": "uuid"
           },
           "phone": {
@@ -4566,37 +4196,37 @@
             "example": "Ahmad Wesh"
           },
           "role": {
+            "type": "string",
             "enum": [
               "USER",
               "MODERATOR",
               "ADMIN"
-            ],
-            "type": "string"
+            ]
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "SUSPENDED",
               "BANNED",
               "DEACTIVATED"
-            ],
-            "type": "string"
+            ]
           },
           "phoneVerified": {
             "type": "boolean"
           },
           "phoneVerifiedAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "avatarKey": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
             "description": "Storage key of the avatar image."
           },
           "avatarUrl": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
             "description": "Public URL of the avatar image, null when none set."
           },
@@ -4619,37 +4249,9 @@
           "seller"
         ]
       },
-      "UpdateSellerProfileDto": {
-        "type": "object",
-        "properties": {
-          "displayName": {
-            "type": "string",
-            "minLength": 2,
-            "maxLength": 80
-          },
-          "bio": {
-            "type": "string",
-            "maxLength": 500
-          }
-        }
-      },
       "UpdateMeDto": {
         "type": "object",
-        "properties": {
-          "displayName": {
-            "type": "string",
-            "minLength": 2,
-            "maxLength": 80
-          },
-          "avatarKey": {
-            "type": "string",
-            "maxLength": 300,
-            "pattern": "^$|^[A-Za-z0-9][A-Za-z0-9/_\\-.]*$"
-          },
-          "seller": {
-            "$ref": "#/components/schemas/UpdateSellerProfileDto"
-          }
-        }
+        "properties": {}
       },
       "PublicCategorySummaryDto": {
         "type": "object",
@@ -4667,13 +4269,13 @@
             "example": "Mobile Phones"
           },
           "iconKey": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "parentId": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
+            "type": "object",
+            "format": "uuid",
+            "nullable": true
           },
           "sortOrder": {
             "type": "number"
@@ -4706,13 +4308,13 @@
             "example": "Mobile Phones"
           },
           "iconKey": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "parentId": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
+            "type": "object",
+            "format": "uuid",
+            "nullable": true
           },
           "sortOrder": {
             "type": "number"
@@ -4770,11 +4372,11 @@
             "type": "string"
           },
           "description": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "iconKey": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "parent": {
@@ -4837,11 +4439,11 @@
             "example": "SELECT"
           },
           "unit": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "placeholder": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "required": {
@@ -4857,23 +4459,23 @@
             }
           },
           "min": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "max": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "minLength": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "maxLength": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "pattern": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "operators": {
@@ -4909,7 +4511,7 @@
             "type": "string"
           },
           "description": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           }
         },
@@ -4929,31 +4531,31 @@
             "type": "string"
           },
           "parentId": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
+            "type": "object",
+            "format": "uuid",
+            "nullable": true
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "INACTIVE",
               "ARCHIVED"
-            ],
-            "type": "string"
+            ]
           },
           "sortOrder": {
             "type": "number"
           },
           "iconKey": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "moderationMode": {
+            "type": "string",
             "enum": [
               "REVIEW_REQUIRED",
               "AUTO_APPROVE"
-            ],
-            "type": "string"
+            ]
           },
           "name": {
             "type": "string",
@@ -4999,20 +4601,15 @@
         "properties": {
           "locale": {
             "type": "string",
-            "minLength": 2,
-            "maxLength": 20,
             "example": "fa-AF",
             "description": "Locale code; BCP-47 aliases are normalized to en/fa/ps."
           },
           "name": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 140,
             "example": "موبایل و تبلت"
           },
           "description": {
             "type": "string",
-            "maxLength": 300,
             "nullable": true,
             "example": "گوشی، تبلت و لوازم جانبی"
           }
@@ -5026,24 +4623,23 @@
         "type": "object",
         "properties": {
           "parentId": {
-            "type": "string",
-            "nullable": true,
+            "type": "object",
             "format": "uuid",
+            "nullable": true,
             "description": "Parent category; omit or null for a root category."
           },
           "slug": {
             "type": "string",
-            "maxLength": 140,
             "description": "Custom slug; generated from the English name when omitted.",
             "example": "mobile-phones"
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "INACTIVE",
               "ARCHIVED"
             ],
-            "type": "string",
             "default": "ACTIVE"
           },
           "sortOrder": {
@@ -5052,21 +4648,19 @@
             "default": 0
           },
           "iconKey": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
-            "maxLength": 80,
             "example": "mobile"
           },
           "moderationMode": {
+            "type": "string",
             "enum": [
               "REVIEW_REQUIRED",
               "AUTO_APPROVE"
             ],
-            "type": "string",
             "default": "REVIEW_REQUIRED"
           },
           "translations": {
-            "minItems": 1,
             "description": "At least one entry with locale \"en\".",
             "type": "array",
             "items": {
@@ -5082,39 +4676,37 @@
         "type": "object",
         "properties": {
           "parentId": {
-            "type": "string",
-            "nullable": true,
+            "type": "object",
             "format": "uuid",
+            "nullable": true,
             "description": "New parent; null moves the category to the root."
           },
           "slug": {
             "type": "string",
-            "maxLength": 140,
             "example": "mobile-phones"
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "INACTIVE",
               "ARCHIVED"
-            ],
-            "type": "string"
+            ]
           },
           "sortOrder": {
             "type": "number",
             "minimum": 0
           },
           "iconKey": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 80
+            "type": "object",
+            "nullable": true
           },
           "moderationMode": {
+            "type": "string",
             "enum": [
               "REVIEW_REQUIRED",
               "AUTO_APPROVE"
-            ],
-            "type": "string"
+            ]
           },
           "translations": {
             "description": "Entries are upserted per locale.",
@@ -5177,18 +4769,7 @@
             "type": "string"
           },
           "type": {
-            "enum": [
-              "TEXT",
-              "LONG_TEXT",
-              "INTEGER",
-              "DECIMAL",
-              "BOOLEAN",
-              "SELECT",
-              "MULTI_SELECT",
-              "YEAR",
-              "DATE"
-            ],
-            "type": "string",
+            "type": "object",
             "example": "SELECT"
           },
           "required": {
@@ -5201,31 +4782,31 @@
             "type": "boolean"
           },
           "unit": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "placeholder": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "minValue": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "maxValue": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "minLength": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "maxLength": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "pattern": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "sortOrder": {
@@ -5275,11 +4856,10 @@
           },
           "label": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 140,
             "example": "RAM"
           },
           "type": {
+            "type": "string",
             "enum": [
               "TEXT",
               "LONG_TEXT",
@@ -5290,8 +4870,7 @@
               "MULTI_SELECT",
               "YEAR",
               "DATE"
-            ],
-            "type": "string"
+            ]
           },
           "required": {
             "type": "boolean",
@@ -5306,43 +4885,40 @@
             "default": false
           },
           "unit": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
-            "maxLength": 20,
             "example": "GB"
           },
           "placeholder": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
-            "maxLength": 140,
             "example": "e.g. 128"
           },
           "minValue": {
-            "type": "number",
+            "type": "object",
             "nullable": true,
             "description": "Only for INTEGER, DECIMAL and YEAR."
           },
           "maxValue": {
-            "type": "number",
+            "type": "object",
             "nullable": true,
             "description": "Only for INTEGER, DECIMAL and YEAR."
           },
           "minLength": {
-            "type": "number",
+            "type": "object",
             "nullable": true,
             "minimum": 0,
             "description": "Only for TEXT and LONG_TEXT."
           },
           "maxLength": {
-            "type": "number",
+            "type": "object",
             "nullable": true,
             "minimum": 0,
             "description": "Only for TEXT and LONG_TEXT."
           },
           "pattern": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
-            "maxLength": 200,
             "description": "Only for TEXT and LONG_TEXT; must compile as a regex."
           },
           "sortOrder": {
@@ -5369,11 +4945,10 @@
             "example": "ram"
           },
           "label": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 140
+            "type": "string"
           },
           "type": {
+            "type": "string",
             "enum": [
               "TEXT",
               "LONG_TEXT",
@@ -5384,8 +4959,7 @@
               "MULTI_SELECT",
               "YEAR",
               "DATE"
-            ],
-            "type": "string"
+            ]
           },
           "required": {
             "type": "boolean"
@@ -5397,37 +4971,34 @@
             "type": "boolean"
           },
           "unit": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 20
+            "type": "object",
+            "nullable": true
           },
           "placeholder": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 140
+            "type": "object",
+            "nullable": true
           },
           "minValue": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "maxValue": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "minLength": {
-            "type": "number",
+            "type": "object",
             "nullable": true,
             "minimum": 0
           },
           "maxLength": {
-            "type": "number",
+            "type": "object",
             "nullable": true,
             "minimum": 0
           },
           "pattern": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 200
+            "type": "object",
+            "nullable": true
           },
           "sortOrder": {
             "type": "number",
@@ -5443,15 +5014,11 @@
         "properties": {
           "value": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 80,
             "example": "128",
             "description": "Machine value stored in listing attributes."
           },
           "label": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 140,
             "example": "۱۲۸ گیگابایت"
           },
           "sortOrder": {
@@ -5474,14 +5041,10 @@
         "properties": {
           "value": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 80,
             "example": "128"
           },
           "label": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 140
+            "type": "string"
           },
           "sortOrder": {
             "type": "number",
@@ -5581,11 +5144,11 @@
             "type": "string"
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "INACTIVE"
-            ],
-            "type": "string"
+            ]
           },
           "sortOrder": {
             "type": "number"
@@ -5630,15 +5193,11 @@
         "properties": {
           "locale": {
             "type": "string",
-            "minLength": 2,
-            "maxLength": 20,
             "example": "fa-AF",
             "description": "Locale code; BCP-47 aliases are normalized to en/fa/ps."
           },
           "name": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 140,
             "example": "کابل"
           }
         },
@@ -5657,15 +5216,14 @@
           },
           "slug": {
             "type": "string",
-            "maxLength": 140,
             "description": "Custom slug; generated from the English name when omitted."
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "INACTIVE"
             ],
-            "type": "string",
             "default": "ACTIVE"
           },
           "sortOrder": {
@@ -5674,7 +5232,6 @@
             "default": 0
           },
           "translations": {
-            "minItems": 1,
             "description": "At least one entry with locale \"en\".",
             "type": "array",
             "items": {
@@ -5695,15 +5252,14 @@
             "example": "AF-KAB"
           },
           "slug": {
-            "type": "string",
-            "maxLength": 140
+            "type": "string"
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "INACTIVE"
-            ],
-            "type": "string"
+            ]
           },
           "sortOrder": {
             "type": "number",
@@ -5733,11 +5289,11 @@
             "type": "string"
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "INACTIVE"
-            ],
-            "type": "string"
+            ]
           },
           "sortOrder": {
             "type": "number"
@@ -5778,15 +5334,14 @@
         "properties": {
           "slug": {
             "type": "string",
-            "maxLength": 140,
             "description": "Custom slug; generated from the English name when omitted."
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "INACTIVE"
             ],
-            "type": "string",
             "default": "ACTIVE"
           },
           "sortOrder": {
@@ -5795,7 +5350,6 @@
             "default": 0
           },
           "translations": {
-            "minItems": 1,
             "description": "At least one entry with locale \"en\".",
             "type": "array",
             "items": {
@@ -5811,15 +5365,14 @@
         "type": "object",
         "properties": {
           "slug": {
-            "type": "string",
-            "maxLength": 140
+            "type": "string"
           },
           "status": {
+            "type": "string",
             "enum": [
               "ACTIVE",
               "INACTIVE"
-            ],
-            "type": "string"
+            ]
           },
           "sortOrder": {
             "type": "number",
@@ -5834,140 +5387,6 @@
           }
         }
       },
-      "ListingRefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "slug": {
-            "type": "string",
-            "example": "mobile-phones"
-          },
-          "name": {
-            "type": "string",
-            "example": "Mobile Phones"
-          }
-        },
-        "required": [
-          "id",
-          "slug",
-          "name"
-        ]
-      },
-      "ListingImageDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL of the stored original (re-encoded JPEG)."
-          },
-          "variants": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            },
-            "description": "Derived variants keyed by name (thumbnail / medium / large)."
-          },
-          "width": {
-            "type": "number"
-          },
-          "height": {
-            "type": "number"
-          },
-          "isPrimary": {
-            "type": "boolean"
-          },
-          "sortOrder": {
-            "type": "number"
-          }
-        },
-        "required": [
-          "id",
-          "url",
-          "variants",
-          "width",
-          "height",
-          "isPrimary",
-          "sortOrder"
-        ]
-      },
-      "PublicListingSummaryDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "slug": {
-            "type": "string",
-            "example": "iphone-13-pro-max-a83kd2"
-          },
-          "title": {
-            "type": "string"
-          },
-          "price": {
-            "type": "number",
-            "nullable": true,
-            "example": 45000
-          },
-          "currency": {
-            "type": "string",
-            "example": "AFN"
-          },
-          "pricingType": {
-            "type": "string",
-            "example": "PAID"
-          },
-          "negotiable": {
-            "type": "boolean"
-          },
-          "condition": {
-            "type": "string",
-            "example": "GOOD"
-          },
-          "category": {
-            "$ref": "#/components/schemas/ListingRefDto"
-          },
-          "province": {
-            "$ref": "#/components/schemas/ListingRefDto"
-          },
-          "city": {
-            "$ref": "#/components/schemas/ListingRefDto"
-          },
-          "primaryImage": {
-            "nullable": true,
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ListingImageDto"
-              }
-            ]
-          },
-          "publishedAt": {
-            "type": "string",
-            "nullable": true,
-            "format": "date-time"
-          }
-        },
-        "required": [
-          "id",
-          "slug",
-          "title",
-          "currency",
-          "pricingType",
-          "negotiable",
-          "condition",
-          "category",
-          "province",
-          "city"
-        ]
-      },
       "PublicAttributeDto": {
         "type": "object",
         "properties": {
@@ -5980,7 +5399,7 @@
             "example": "Storage"
           },
           "type": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
             "example": "SELECT",
             "description": "Definition type; null when the attribute definition no longer exists."
@@ -6030,7 +5449,7 @@
             "type": "boolean"
           },
           "avatarUrl": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
             "description": "Public URL of the seller avatar, null when none set."
           }
@@ -6080,7 +5499,7 @@
             "type": "string"
           },
           "price": {
-            "type": "number",
+            "type": "object",
             "nullable": true,
             "example": 45000
           },
@@ -6119,8 +5538,8 @@
           },
           "publishedAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -6150,8 +5569,8 @@
           },
           "soldAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
@@ -6183,105 +5602,9 @@
           "updatedAt"
         ]
       },
-      "ContactMethodInputDto": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "enum": [
-              "PHONE",
-              "WHATSAPP",
-              "TELEGRAM"
-            ],
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "valueOverride": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 160
-          }
-        },
-        "required": [
-          "type"
-        ]
-      },
       "CreateListingDto": {
         "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 300
-          },
-          "description": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "categoryId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "provinceId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "cityId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "condition": {
-            "enum": [
-              "NEW",
-              "LIKE_NEW",
-              "GOOD",
-              "FAIR"
-            ],
-            "type": "string"
-          },
-          "pricingType": {
-            "enum": [
-              "PAID",
-              "FREE",
-              "CONTACT"
-            ],
-            "type": "string"
-          },
-          "price": {
-            "type": "number",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 999999999999.99
-          },
-          "currency": {
-            "type": "string"
-          },
-          "negotiable": {
-            "type": "boolean"
-          },
-          "attributes": {
-            "type": "object",
-            "additionalProperties": true
-          },
-          "contactMethods": {
-            "description": "Complete contact configuration (§53). Omitted on create → PHONE +\nWHATSAPP enabled; provided on update → replaces the stored set.",
-            "maxItems": 3,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ContactMethodInputDto"
-            }
-          }
-        },
-        "required": [
-          "title",
-          "description",
-          "categoryId",
-          "provinceId",
-          "cityId",
-          "condition"
-        ]
+        "properties": {}
       },
       "OwnerListingDto": {
         "type": "object",
@@ -6309,7 +5632,7 @@
             "type": "string"
           },
           "price": {
-            "type": "number",
+            "type": "object",
             "nullable": true,
             "example": 45000
           },
@@ -6355,30 +5678,30 @@
           },
           "publishedAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "soldAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "archivedAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "expiresAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "rejectedReason": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "rejectedNote": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "createdAt": {
@@ -6414,85 +5737,11 @@
       },
       "UpdateListingDto": {
         "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 300
-          },
-          "description": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "categoryId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "provinceId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "cityId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "condition": {
-            "enum": [
-              "NEW",
-              "LIKE_NEW",
-              "GOOD",
-              "FAIR"
-            ],
-            "type": "string"
-          },
-          "pricingType": {
-            "enum": [
-              "PAID",
-              "FREE",
-              "CONTACT"
-            ],
-            "type": "string"
-          },
-          "price": {
-            "type": "number",
-            "nullable": true,
-            "minimum": 0,
-            "maximum": 999999999999.99
-          },
-          "currency": {
-            "type": "string"
-          },
-          "negotiable": {
-            "type": "boolean"
-          },
-          "attributes": {
-            "type": "object",
-            "additionalProperties": true
-          },
-          "contactMethods": {
-            "description": "Complete contact configuration (§53); replaces the stored set when sent.",
-            "maxItems": 3,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ContactMethodInputDto"
-            }
-          },
-          "expectedVersion": {
-            "type": "number",
-            "description": "Optimistic concurrency guard (spec §43); stale values get 409.",
-            "minimum": 1
-          }
-        }
+        "properties": {}
       },
       "ListingCommandDto": {
         "type": "object",
-        "properties": {
-          "expectedVersion": {
-            "type": "number",
-            "minimum": 1
-          }
-        }
+        "properties": {}
       },
       "ListingRevisionDto": {
         "type": "object",
@@ -6521,9 +5770,9 @@
             "nullable": true
           },
           "createdByUserId": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
+            "type": "object",
+            "format": "uuid",
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
@@ -6560,7 +5809,7 @@
             "type": "string"
           },
           "price": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "currency": {
@@ -6592,8 +5841,8 @@
           },
           "expiresAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
@@ -6652,9 +5901,6 @@
         "properties": {
           "byStatus": {
             "type": "object",
-            "additionalProperties": {
-              "type": "number"
-            },
             "example": {
               "DRAFT": 3,
               "PENDING_REVIEW": 1,
@@ -6913,9 +6159,6 @@
         "properties": {
           "byStatus": {
             "type": "object",
-            "additionalProperties": {
-              "type": "number"
-            },
             "example": {
               "DRAFT": 1,
               "PENDING_REVIEW": 0,
@@ -7021,37 +6264,45 @@
           "topListings"
         ]
       },
-      "ReorderImageDto": {
+      "SearchZeroResultDto": {
         "type": "object",
         "properties": {
-          "sortOrder": {
-            "type": "number",
-            "description": "Target position among the active images (0-based, clamped).",
-            "minimum": 0,
-            "maximum": 100
+          "q": {
+            "type": "string",
+            "example": "iphone 13",
+            "description": "Keyword that returned no results."
           },
-          "isPrimary": {
-            "type": "boolean",
-            "description": "When true, this image becomes the listing's single primary image."
+          "category": {
+            "type": "string",
+            "example": "mobile-phones",
+            "description": "Category slug."
+          },
+          "province": {
+            "type": "string",
+            "example": "kabul",
+            "description": "Province slug."
           }
         }
       },
-      "ContactRequestDto": {
+      "SearchZeroResultResponseDto": {
         "type": "object",
         "properties": {
-          "method": {
-            "description": "Which enabled method to reveal (PHONE / WHATSAPP / TELEGRAM).",
-            "enum": [
-              "PHONE",
-              "WHATSAPP",
-              "TELEGRAM"
-            ],
-            "type": "string"
+          "recorded": {
+            "type": "boolean",
+            "example": true
           }
         },
         "required": [
-          "method"
+          "recorded"
         ]
+      },
+      "ReorderImageDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "ContactRequestDto": {
+        "type": "object",
+        "properties": {}
       },
       "ContactTargetDto": {
         "type": "object",
@@ -7103,7 +6354,7 @@
             "type": "string"
           },
           "price": {
-            "type": "number",
+            "type": "object",
             "nullable": true,
             "example": 45000
           },
@@ -7142,8 +6393,8 @@
           },
           "publishedAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -7183,29 +6434,7 @@
       },
       "SubmitReportDto": {
         "type": "object",
-        "properties": {
-          "reason": {
-            "enum": [
-              "SCAM",
-              "STOLEN",
-              "PROHIBITED_ITEM",
-              "SPAM",
-              "MISLEADING",
-              "DUPLICATE",
-              "OFFENSIVE",
-              "OTHER"
-            ],
-            "type": "string"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true,
-            "maxLength": 1000
-          }
-        },
-        "required": [
-          "reason"
-        ]
+        "properties": {}
       },
       "ReportDto": {
         "type": "object",
@@ -7215,21 +6444,21 @@
             "format": "uuid"
           },
           "listingId": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
+            "type": "object",
+            "format": "uuid",
+            "nullable": true
           },
           "reportedUserId": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
+            "type": "object",
+            "format": "uuid",
+            "nullable": true
           },
           "reason": {
             "type": "string",
             "example": "SCAM"
           },
           "description": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "status": {
@@ -7238,8 +6467,8 @@
           },
           "resolvedAt": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "createdAt": {
             "type": "string",
@@ -7330,17 +6559,17 @@
             ]
           },
           "phoneVerifiedAt": {
+            "type": "object",
             "format": "date-time",
-            "type": "string",
             "nullable": true
           },
           "suspensionReason": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "suspendedUntil": {
+            "type": "object",
             "format": "date-time",
-            "type": "string",
             "nullable": true
           },
           "createdAt": {
@@ -7403,17 +6632,17 @@
             ]
           },
           "phoneVerifiedAt": {
+            "type": "object",
             "format": "date-time",
-            "type": "string",
             "nullable": true
           },
           "suspensionReason": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "suspendedUntil": {
+            "type": "object",
             "format": "date-time",
-            "type": "string",
             "nullable": true
           },
           "createdAt": {
@@ -7431,9 +6660,6 @@
           },
           "listingsByStatus": {
             "type": "object",
-            "additionalProperties": {
-              "type": "number"
-            },
             "example": {
               "DRAFT": 0,
               "PENDING_REVIEW": 1,
@@ -7467,35 +6693,11 @@
       },
       "SuspendUserDto": {
         "type": "object",
-        "properties": {
-          "reason": {
-            "type": "string",
-            "description": "Operator-facing justification; stored and audited (§60).",
-            "minLength": 3,
-            "maxLength": 500
-          },
-          "until": {
-            "type": "string",
-            "description": "Optional temporary suspension end; omit for an indefinite suspension."
-          }
-        },
-        "required": [
-          "reason"
-        ]
+        "properties": {}
       },
       "BanUserDto": {
         "type": "object",
-        "properties": {
-          "reason": {
-            "type": "string",
-            "description": "Operator-facing justification; stored and audited (§60).",
-            "minLength": 3,
-            "maxLength": 500
-          }
-        },
-        "required": [
-          "reason"
-        ]
+        "properties": {}
       },
       "AdminListingSellerDto": {
         "type": "object",
@@ -7556,7 +6758,7 @@
             ]
           },
           "price": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "currency": {
@@ -7576,7 +6778,7 @@
             "$ref": "#/components/schemas/AdminListingSellerDto"
           },
           "thumbnailUrl": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
             "description": "Primary image URL, when the gallery has one."
           },
@@ -7597,7 +6799,7 @@
             "example": 2
           },
           "rejectedReason": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "createdAt": {
@@ -7609,13 +6811,13 @@
             "type": "string"
           },
           "publishedAt": {
+            "type": "object",
             "format": "date-time",
-            "type": "string",
             "nullable": true
           },
           "expiresAt": {
+            "type": "object",
             "format": "date-time",
-            "type": "string",
             "nullable": true
           },
           "permittedActions": {
@@ -7671,15 +6873,15 @@
             "format": "uuid"
           },
           "adminDisplayName": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "reason": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "note": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "createdAt": {
@@ -7719,7 +6921,7 @@
             ]
           },
           "price": {
-            "type": "number",
+            "type": "object",
             "nullable": true
           },
           "currency": {
@@ -7739,7 +6941,7 @@
             "$ref": "#/components/schemas/AdminListingSellerDto"
           },
           "thumbnailUrl": {
-            "type": "string",
+            "type": "object",
             "nullable": true,
             "description": "Primary image URL, when the gallery has one."
           },
@@ -7760,7 +6962,7 @@
             "example": 2
           },
           "rejectedReason": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "createdAt": {
@@ -7772,13 +6974,13 @@
             "type": "string"
           },
           "publishedAt": {
+            "type": "object",
             "format": "date-time",
-            "type": "string",
             "nullable": true
           },
           "expiresAt": {
+            "type": "object",
             "format": "date-time",
-            "type": "string",
             "nullable": true
           },
           "permittedActions": {
@@ -7884,29 +7086,11 @@
       },
       "ModerationNoteDto": {
         "type": "object",
-        "properties": {
-          "note": {
-            "type": "string",
-            "maxLength": 500
-          }
-        }
+        "properties": {}
       },
       "RejectListingDto": {
         "type": "object",
-        "properties": {
-          "reason": {
-            "type": "string",
-            "description": "Machine-readable rejection reason (spec §44 / §58).",
-            "maxLength": 64
-          },
-          "note": {
-            "type": "string",
-            "maxLength": 500
-          }
-        },
-        "required": [
-          "reason"
-        ]
+        "properties": {}
       },
       "AdminListingRefDto": {
         "type": "object",
@@ -7987,7 +7171,7 @@
             ]
           },
           "description": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "status": {
@@ -8034,12 +7218,12 @@
             }
           },
           "resolvedAt": {
+            "type": "object",
             "format": "date-time",
-            "type": "string",
             "nullable": true
           },
           "resolutionNote": {
-            "type": "string",
+            "type": "object",
             "nullable": true
           },
           "createdAt": {
@@ -8062,12 +7246,7 @@
       },
       "ResolveReportDto": {
         "type": "object",
-        "properties": {
-          "note": {
-            "type": "string",
-            "maxLength": 1000
-          }
-        }
+        "properties": {}
       }
     }
   }

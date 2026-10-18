@@ -60,7 +60,8 @@ describe('OpenAPI contract stability', () => {
   it('declares a unique operationId on every operation (no duplicates, no blanks)', () => {
     expect(summary.duplicateOperationIds).toEqual([]);
     expect(summary.operationIdsCount).toBeGreaterThanOrEqual(summary.paths);
-    expect(summary.operationIdsCount).toBe(84);
+    // 84 frozen operations + sellers_getPublicListings (D1) + search_recordZeroResult (D3).
+    expect(summary.operationIdsCount).toBe(86);
     // Spot-check the prefix groups exist
     const allIds = new Set<string>();
     for (const pathItem of Object.values(document.paths ?? {})) {
