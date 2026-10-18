@@ -32,6 +32,22 @@ const nextConfig = {
   images: {
     remotePatterns: [mediaRemotePattern()],
   },
+  async rewrites() {
+    // Reverse proxy for the frozen API: browser calls stay same-origin
+    // (`/api/v1/*`) and Next.js forwards them to the backend in the background,
+    // so CORS disappears permanently. Server Components still call the backend
+    // directly via API_SERVER_BASE_URL (src/lib/env.ts).
+    const backend =
+      process.env.API_SERVER_BASE_URL ||
+      process.env.NEXT_PUBLIC_API_BASE_URL ||
+      'http://localhost:3000';
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: `${backend}/api/v1/:path*`,
+      },
+    ];
+  },
   async headers() {
     return [
       {

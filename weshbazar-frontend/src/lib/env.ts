@@ -9,10 +9,18 @@ function str(value: string | undefined, fallback: string): string {
   return trimmed && trimmed.length > 0 ? trimmed : fallback;
 }
 
-/** Public API origin (no trailing slash, no /api/v1 prefix). */
-export const API_BASE_URL = str(
-  process.env.NEXT_PUBLIC_API_BASE_URL,
-  'http://localhost:3000',
+/**
+ * Public API origin for *browser* requests (no trailing slash, no /api/v1 prefix).
+ *
+ * An empty value means "same origin": Next.js `rewrites()` forwards `/api/v1/*`
+ * to the backend in the background (next.config.mjs), so browser calls never
+ * cross origins and CORS is eliminated permanently. The unset default remains
+ * `http://localhost:3000` for backwards compatibility.
+ */
+export const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_BASE_URL === undefined
+    ? 'http://localhost:3000'
+    : process.env.NEXT_PUBLIC_API_BASE_URL.trim()
 ).replace(/\/$/, '');
 
 /** Prefix applied to every route except /health/* (frontend-api-contract.md §1). */

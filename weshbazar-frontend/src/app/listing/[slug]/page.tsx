@@ -45,6 +45,18 @@ export async function generateMetadata({ params }: ListingPageProps): Promise<Me
         description,
         type: 'website',
         url: `${siteConfig.url}/listing/${detail.slug}`,
+        ...(detail.primaryImage
+          ? {
+              images: [
+                {
+                  url: detail.primaryImage.url,
+                  width: detail.primaryImage.width,
+                  height: detail.primaryImage.height,
+                  alt: detail.title,
+                },
+              ],
+            }
+          : {}),
       },
     };
   } catch {
@@ -84,9 +96,33 @@ export default async function ListingPage({ params }: ListingPageProps) {
   const isSold = detail.status === 'SOLD';
   const publishedLabel = formatRelativeTime(detail.publishedAt ?? detail.createdAt);
   const absoluteUrl = `${siteConfig.url}/listing/${detail.slug}`;
+  const itemCondition =
+    detail.condition === 'NEW'
+      ? 'https://schema.org/NewCondition'
+      : 'https://schema.org/UsedCondition';
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: detail.title,
+    description: detail.description,
+    url: absoluteUrl,
+    ...(detail.images.length > 0 ? { image: detail.images.map((image) => image.url) } : {}),
+    itemCondition,
+    offers: {
+      '@type': 'Offer',
+      url: absoluteUrl,
+      availability: isSold ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+      priceCurrency: detail.currency,
+      ...(detail.price != null ? { price: String(detail.price) } : {}),
+    },
+  };
 
   return (
     <PageContainer>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd).replace(/</g, '\\u003c') }}
+      />
       <Breadcrumbs
         items={[
           { label: 'خانه', href: '/' },
