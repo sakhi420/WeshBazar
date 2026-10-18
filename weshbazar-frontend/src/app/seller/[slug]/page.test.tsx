@@ -4,17 +4,23 @@
  * backend presenter + OpenAPI expose `slug`, never `sellerSlug`.
  */
 
+import type { PublicListingSummary } from '@/features/listings';
 import type { PublicSellerProfile } from '@/features/sellers';
+import type { CursorPage } from '@/lib/api';
 
 jest.mock('@/features/sellers', () => ({
   fetchSellerProfileServer: jest.fn(),
   fetchSellerProfile: jest.fn(),
+  fetchSellerListingsServer: jest.fn(),
 }));
 
 import { generateMetadata } from './page';
-import { fetchSellerProfileServer } from '@/features/sellers';
+import { fetchSellerListingsServer, fetchSellerProfileServer } from '@/features/sellers';
 
 const mockFetchSellerProfileServer = fetchSellerProfileServer as jest.Mock;
+const mockFetchSellerListingsServer = fetchSellerListingsServer as jest.Mock;
+
+const EMPTY_PAGE: CursorPage<PublicListingSummary> = { items: [], nextCursor: null, hasMore: false };
 
 const PROFILE: PublicSellerProfile = {
   slug: 'ahmad-wesh',
@@ -29,6 +35,7 @@ const PROFILE: PublicSellerProfile = {
 describe('SellerPage generateMetadata', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFetchSellerListingsServer.mockResolvedValue(EMPTY_PAGE);
   });
 
   it('builds the canonical URL from the runtime `slug` field', async () => {

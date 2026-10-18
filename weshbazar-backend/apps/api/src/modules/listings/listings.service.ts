@@ -56,6 +56,7 @@ import { STORAGE_PROVIDER, type StorageProvider } from '../../providers/storage/
 import { AuditService } from '../audit/audit.service';
 import { LocationsService } from '../locations/locations.service';
 import { SellerAccountsService } from '../sellers/seller-accounts.service';
+import { LISTING_ROW_INCLUDE } from './listing-row-include';
 import type { NormalizedAttributes } from '../taxonomy/attribute.types';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
 import {
@@ -117,18 +118,8 @@ const HTML_TAG = /<\s*\/?\s*[a-zA-Z][^>]*>/;
 // eslint-disable-next-line no-control-regex -- matching control characters is the point.
 const CONTROL_CHARS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/;
 
-/** Shared row shape: localized refs for presenters + ownership facts. */
-export const LISTING_ROW_INCLUDE = {
-  category: { include: { translations: true } },
-  province: { include: { translations: true } },
-  city: { include: { translations: true } },
-  sellerAccount: { select: { ownerUserId: true, status: true } },
-  contactMethods: { orderBy: { type: 'asc' } },
-  images: {
-    where: { deletedAt: null },
-    orderBy: [{ isPrimary: 'desc' }, { sortOrder: 'asc' }, { createdAt: 'asc' }],
-  },
-} satisfies Prisma.ListingInclude;
+/** Shared row shape — defined in `listing-row-include.ts` (cycle-free import). */
+export { LISTING_ROW_INCLUDE };
 
 type ListingRow = Prisma.ListingGetPayload<{ include: typeof LISTING_ROW_INCLUDE }>;
 

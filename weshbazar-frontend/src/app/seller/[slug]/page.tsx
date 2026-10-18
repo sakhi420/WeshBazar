@@ -1,14 +1,17 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { BadgeCheck, Package, SearchX } from 'lucide-react';
+import { BadgeCheck, SearchX } from 'lucide-react';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { Breadcrumbs } from '@/components/layout/breadcrumbs';
 import { PageContainer } from '@/components/layout/page-container';
+import { ListingGrid } from '@/components/listings/listing-grid';
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { siteConfig } from '@/config/site';
 import { formatMonthYear, formatNumber } from '@/features/listings';
-import { fetchSellerProfileServer } from '@/features/sellers';
+import type { PublicListingSummary } from '@/features/listings';
+import { fetchSellerListingsServer, fetchSellerProfileServer } from '@/features/sellers';
 import type { PublicSellerProfile } from '@/features/sellers';
 import { ApiError } from '@/lib/api';
 
@@ -19,13 +22,24 @@ interface SellerPageProps {
 export async function generateMetadata({ params }: SellerPageProps): Promise<Metadata> {
   const { slug } = await params;
   try {
-    const profile = await fetchSellerProfileServer(slug);
+    const [profile, listings] = await Promise.all([
+      fetchSellerProfileServer(slug),
+      fetchSellerListingsServer(slug, { limit: 12 }),
+    ]);
     const description =
       profile.bio ?? `پروفایل فروشنده ${profile.displayName} در ویش‌بازار.`;
+    const cover = listings.items[0]?.primaryImage?.url;
     return {
       title: profile.displayName,
       description: description.length > 160 ? `${description.slice(0, 157)}…` : description,
       alternates: { canonical: `/seller/${profile.slug}` },
+      openGraph: {
+        title: profile.displayName,
+        description,
+        type: 'website',
+        url: `${siteConfig.url}/seller/${profile.slug}`,
+        ...(cover ? { images: [{ url: cover, alt: profile.displayName }] } : {}),
+      },
     };
   } catch {
     return { title: 'پروفایل فروشنده', alternates: { canonical: `/seller/${slug}` } };
@@ -49,6 +63,16 @@ export default async function SellerPage({ params }: SellerPageProps) {
       notFound();
     }
     throw error;
+  }
+
+  // The seller's live ACTIVE listings (first page). Degrades to an empty grid
+  // on a backend failure — never fabricated.
+  let listings: PublicListingSummary[] = [];
+  try {
+    const page = await fetchSellerListingsServer(slug);
+    listings = page.items;
+  } catch {
+    listings = [];
   }
 
   const memberSinceLabel = formatMonthYear(profile.memberSince);
@@ -105,20 +129,8 @@ export default async function SellerPage({ params }: SellerPageProps) {
         >
           آگهی‌های فروشنده
         </h2>
-        {hasActiveListings ? (
-          <div className="mt-4 flex flex-col items-start gap-3 rounded-card border border-primary/20 bg-primary-soft/40 p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
-                <Package className="size-5" aria-hidden />
-              </span>
-              <p className="text-ui text-foreground">
-                این فروشنده <span className="font-semibold">{formatNumber(profile.activeListingCount)}</span> آگهی فعال دارد.
-              </p>
-            </div>
-            <Button asChild>
-              <Link href="/search">جست‌وجوی آگهی‌ها</Link>
-            </Button>
-          </div>
+        {listings.length > 0 ? (
+          <ListingGrid listings={listings} className="mt-4" />
         ) : (
           <EmptyState
             className="mt-4"

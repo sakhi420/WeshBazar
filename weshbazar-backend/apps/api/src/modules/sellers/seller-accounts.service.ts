@@ -9,25 +9,62 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { AppException } from '../../common/errors/app.exception';
 import { isUniqueViolation } from '../../common/errors/prisma-errors';
 import {
+  clampLimit,
+  cursorPage,
+  decodeCursor,
+  encodeCursor,
+  type CursorPaginated,
+} from '../../common/http/pagination';
+import { type MediaUrlResolver } from '../../common/presenters/listing.presenter';
+import {
+  toPublicListingSummary,
+  type PublicListingSummary,
+} from '../../common/presenters/public-listing.presenter';
+import {
   toMySellerAccount,
   toPublicSellerProfile,
   type MySellerAccount,
   type PublicSellerProfile,
 } from '../../common/presenters/seller.presenter';
+import { type Locale } from '../../common/utils/locale.utils';
 import { isValidSlugFormat, slugSuffix, slugify } from '../../common/utils/slug.utils';
+import { isUuid } from '../../common/utils/uuid.utils';
 import { PrismaService } from '../../database/prisma.service';
 import { Prisma, type SellerAccount, type User } from '../../generated/prisma/client';
 import { STORAGE_PROVIDER, type StorageProvider } from '../../providers/storage/storage.provider';
 import { publiclyVisibleActiveListingWhere } from '../listings/listing-visibility';
+import { LISTING_ROW_INCLUDE } from '../listings/listing-row-include';
+import { type SellerListingsQueryDto } from './dto/seller-listings-query.dto';
 
 /** Fields accepted when creating an individual seller account. */
 type OwnerIdentity = Pick<User, 'id' | 'displayName'>;
 
 const MAX_SLUG_ATTEMPTS = 6;
 
+/** Decode the seller-listings cursor; malformed cursors fail as VALIDATION_ERROR. */
+function decodeSellerListingsCursor(
+  cursor: string | undefined,
+): { createdAt: Date; id: string } | null {
+  if (!cursor) {
+    return null;
+  }
+  const parsed = decodeCursor(cursor);
+  const createdAtValue = parsed?.createdAt;
+  const createdAt = typeof createdAtValue === 'string' ? new Date(createdAtValue) : null;
+  const id = typeof parsed?.id === 'string' && isUuid(parsed.id) ? parsed.id : null;
+  if (createdAt === null || Number.isNaN(createdAt.getTime()) || id === null) {
+    throw new AppException('VALIDATION_ERROR', {
+      details: { errors: [{ field: 'cursor', messages: ['The pagination cursor is invalid.'] }] },
+    });
+  }
+  return { createdAt, id };
+}
+
 @Injectable()
 export class SellerAccountsService {
   private readonly logger = new Logger(SellerAccountsService.name);
+  private readonly mediaUrl: MediaUrlResolver = (storageKey: string) =>
+    this.storage.getPublicUrl(storageKey);
 
   constructor(
     private readonly prisma: PrismaService,
@@ -181,5 +218,76 @@ export class SellerAccountsService {
     });
     const avatarUrl = seller.owner.avatarKey ? this.storage.getPublicUrl(seller.owner.avatarKey) : null;
     return toPublicSellerProfile(seller, seller.owner, activeListingCount, avatarUrl);
+  }
+
+  /**
+   * Public ACTIVE listings of an ACTIVE seller (owner decision D1),
+   * cursor-paginated newest-first. Moderated or deactivated sellers are
+   * indistinguishable from missing ones (404) — moderation state never leaks.
+   * Expired ACTIVE rows are hidden immediately (§70) via the shared
+   * visibility predicate.
+   */
+  async getPublicListingsBySlug(
+    slug: string,
+    query: SellerListingsQueryDto,
+    locale: Locale,
+  ): Promise<CursorPaginated<PublicListingSummary>> {
+    if (!isValidSlugFormat(slug)) {
+      throw new AppException('SELLER_ACCOUNT_NOT_FOUND');
+    }
+
+    const seller = await this.prisma.sellerAccount.findUnique({
+      where: { slug },
+      include: { owner: { select: { status: true, deletedAt: true } } },
+    });
+    if (
+      !seller ||
+      seller.status !== 'ACTIVE' ||
+      seller.owner.status !== 'ACTIVE' ||
+      seller.owner.deletedAt !== null
+    ) {
+      throw new AppException('SELLER_ACCOUNT_NOT_FOUND');
+    }
+
+    const limit = clampLimit(query.limit, 24, 60);
+    const cursor = decodeSellerListingsCursor(query.cursor);
+
+    const where: Prisma.ListingWhereInput = {
+      sellerAccountId: seller.id,
+      deletedAt: null,
+      AND: [
+        publiclyVisibleActiveListingWhere(new Date()),
+        ...(cursor
+          ? [
+              {
+                OR: [
+                  { createdAt: { lt: cursor.createdAt } },
+                  { createdAt: cursor.createdAt, id: { lt: cursor.id } },
+                ],
+              },
+            ]
+          : []),
+      ],
+    };
+
+    const rows = await this.prisma.listing.findMany({
+      where,
+      include: LISTING_ROW_INCLUDE,
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      take: limit + 1,
+    });
+
+    const page = rows.slice(0, limit);
+    const hasMore = rows.length > limit;
+    const last = page.at(-1);
+    return cursorPage(
+      page.map((row) => toPublicListingSummary(row, locale, this.mediaUrl)),
+      {
+        nextCursor:
+          hasMore && last ? encodeCursor({ createdAt: last.createdAt, id: last.id }) : null,
+        hasMore,
+        limit,
+      },
+    );
   }
 }
