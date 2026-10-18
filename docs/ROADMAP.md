@@ -120,15 +120,15 @@
 
 **هدف:** تحویلِ «سبز و مطمئن» به بازار‌یاب‌ها.
 
-**وضعیت:** ✅ بخش اصلی انجام شد (تست سبز + Runbook + مستند smoke/مانیتورینگ)؛ integration/e2e و `next build` منتظر CI/Postgres.
+**وضعیت:** ✅ بخش اصلی انجام شد (تست سبز + Runbook + مستند smoke/مانیتورینگ)؛ integration/e2e سبز با Postgres روشن؛ فقط `next build` باقی است.
 
 - [x] سبزکردن `jest` فرانت‌اند (۲۷۳/۲۷۳) + تست واحد بک‌اند (۲۰۸/۲۰۸) + lint سبز
-- [ ] اجرای کامل unit/integration/e2e بک‌اند با Postgres روشن (unit سبز؛ integration/e2e منتظر DB)
+- [x] اجرای کامل unit/integration/e2e بک‌اند با Postgres روشن (unit ۲۰۸ + integration ۷ + e2e ۲۵۰ — همه سبز)
 - [x] **smoke test مرورگر** روی ۶ سفر حیاتی — مستند شد (در `docs/RUNBOOK.md`)
 - [x] مانیتورینگ/هشدار (pino + `/health`) + داشبورد ادمین — موجود و مستند شد (بدون endpoint جدید)
 - [x] **Runbook تحویل به بازار‌یاب** (`docs/RUNBOOK.md`): نقشهٔ مسیرها، نمودار funnel، تعریف شاخص‌ها
 
-**معیار خروج:** CI سبز (unit) + مستند تحویل؛ smoke/integration/e2e/`next build` باقی‌مانده در CI.
+**معیار خروج:** CI سبز (unit) + مستند تحویل؛ integration/e2e سبز؛ فقط smoke دستی و `next build` باقی‌مانده در CI.
 
 ## ۷. خط زمانی و وابستگی‌ها
 
@@ -163,8 +163,8 @@
 | ۱۸ اکتبر ۲۰۲۶ | فاز ۳ (سنجش، D3) | ✅ | انتساب ref/utm + لاگ صفر-نتیجه + واژه‌نامه دری |
 | — | فاز ۳ (باقی: درخواست-کالا / funnel / A-B) | ⏳ | به تعویق |
 | — | D2 / فاز ۴ (اعلان) | ⛔ | مسدود تا D2 |
-| ۱۸ اکتبر ۲۰۲۶ | فاز ۵ (QA و تحویل) | ✅/⏳ | تست سبز + Runbook؛ integration/e2e/build در CI |
+| ۱۸ اکتبر ۲۰۲۶ | فاز ۵ (QA و تحویل) | ✅ | تست سبز + Runbook؛ integration ۷ + e2e ۲۵۰ سبز؛ فقط `next build` |
 
 ---
 
-*سند پیگیری زنده. فازهای ۰–۳، پراکسی CORS و بخش اصلی فاز ۵ (Runbook / تست / مانیتورینگ) انجام شد؛ فاز ۴ (D2) و integration/e2e/`next build` باقی است.*
+*سند پیگیری زنده. فازهای ۰–۳، پراکسی CORS و فاز ۵ (Runbook / تست / مانیتورینگ + integration/e2e سبز) انجام شد؛ فاز ۴ (D2) و `next build` باقی است.*
