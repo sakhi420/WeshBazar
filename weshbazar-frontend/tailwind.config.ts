@@ -63,6 +63,7 @@ const config: Config = {
         danger: 'hsl(var(--danger) / <alpha-value>)',
         warning: 'hsl(var(--warning) / <alpha-value>)',
         info: 'hsl(var(--info) / <alpha-value>)',
+        whatsapp: 'hsl(var(--whatsapp) / <alpha-value>)',
       },
       borderRadius: {
         // §11 radii: controls 8–10, cards 12, grouped surfaces/dialogs 16.

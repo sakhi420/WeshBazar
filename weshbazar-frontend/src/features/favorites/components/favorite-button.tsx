@@ -127,7 +127,7 @@ export function FavoriteButton({ listingId, variant = 'overlay', className }: Fa
         className={cn(
           isOverlay
             ? 'rounded-full border-border bg-surface/90 shadow-sm backdrop-blur'
-            : 'min-h-11',
+            : 'min-h-11 border-danger/40 text-danger hover:bg-danger/5 hover:border-danger',
           failed && 'border-danger/50 text-danger',
           className,
         )}

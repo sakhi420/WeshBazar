@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { CheckCircle2, Flag, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ApiError, ApiErrorCode } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { formatNumber } from '@/features/listings';
 import { REPORT_REASON_OPTIONS, submitListingReport } from '@/features/reports';
 import type { ReportReason } from '@/features/reports';
@@ -87,7 +88,12 @@ export function ReportDialog({ listingId, className }: ReportDialogProps) {
 
   return (
     <>
-      <Button type="button" variant="outline" onClick={openDialog} className={className}>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={openDialog}
+        className={cn('border-danger/40 text-danger hover:bg-danger/5 hover:border-danger', className)}
+      >
         <Flag aria-hidden />
         گزارش آگهی
       </Button>

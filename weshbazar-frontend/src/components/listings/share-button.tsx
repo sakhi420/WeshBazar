@@ -56,9 +56,9 @@ export function ShareButton({ title, url, className }: ShareButtonProps) {
   return (
     <Button
       type="button"
-      variant="outline"
+      variant="accent"
       onClick={() => void handleShare()}
-      className={cn('min-h-11', className)}
+      className={cn('min-h-11 bg-accent text-accent-foreground hover:bg-accent/90', className)}
     >
       {state === 'copied' ? (
         <Check aria-hidden />

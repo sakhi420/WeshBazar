@@ -222,7 +222,7 @@ export const CATEGORIES: CategorySeed[] = [
       {
         slug: 'bicycles',
         iconKey: 'bicycle',
-        names: { en: 'Bicycles', fa: 'دوچرخه', ps: 'بایسکل' },
+        names: { en: 'Bicycles', fa: 'بایسکل', ps: 'بایسکل' },
         attributes: [
           {
             key: 'bike_type',

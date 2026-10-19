@@ -29,6 +29,13 @@ const METHOD_ICONS: Record<ContactMethodType, typeof Phone> = {
   TELEGRAM: Send,
 };
 
+/** Semantic action colors per contact method (brand-recognizable, token-based). */
+const METHOD_BUTTON_CLASSES: Record<ContactMethodType, string> = {
+  PHONE: 'bg-primary text-primary-foreground hover:bg-primary/90',
+  WHATSAPP: 'bg-whatsapp text-foreground hover:bg-whatsapp/90',
+  TELEGRAM: 'bg-info text-white hover:bg-info/90',
+};
+
 /**
  * Contact reveal flow (master prompt §23 block 9, §36; frontend-api-contract
  * §8). Values are never embedded in the page — each method is revealed on
@@ -147,7 +154,12 @@ export function ContactSection({ listingId, status, contact, className }: Contac
                 {isCopied ? 'کپی شد' : 'کپی'}
               </Button>
               {href ? (
-                <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button
+                  asChild
+                  size="sm"
+                  className={cn(METHOD_BUTTON_CLASSES[method])}
+                  aria-label={`${method === 'PHONE' ? 'تماس' : method === 'WHATSAPP' ? 'باز کردن واتساپ' : 'باز کردن تلگرام'} ${formatContactMethod(method)}`}
+                >
                   <a href={href} target="_blank" rel="noopener noreferrer">
                     <Icon aria-hidden />
                     {method === 'PHONE' ? 'تماس' : method === 'WHATSAPP' ? 'واتساپ' : 'تلگرام'}

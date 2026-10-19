@@ -36,6 +36,9 @@
     --danger: 0 72% 51%; /* #DC2626 */
     --warning: 26 90% 37%; /* #B45309 */
     --info: 201 96% 32%; /* #0369A1 */
+
+    /* Brand channels */
+    --whatsapp: 142 70% 49%; /* #25D366 WhatsApp brand green */
   }
 
   * {
