@@ -71,7 +71,7 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
             </span>
           )}
           {sold ? (
-            <span className="absolute bottom-2 start-2 rounded-control bg-danger/90 px-2.5 py-1 text-caption font-semibold text-white shadow-sm">
+            <span className="absolute bottom-2 start-2 rounded-control bg-foreground/80 px-2.5 py-1 text-caption font-semibold text-surface shadow-sm">
               فروخته شد
             </span>
           ) : null}
@@ -85,13 +85,13 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
           </h3>
           
           {/* Price — Significantly larger and bold for visual impact */}
-          <p className="truncate text-[1.25rem] font-bold leading-tight text-primary">
+          <p className="truncate text-section font-bold text-primary">
             {priceLabel}
           </p>
           
           {/* Negotiable badge */}
           {listing.negotiable && listing.pricingType === 'PAID' ? (
-            <span className="inline-flex w-fit items-center rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-medium text-primary">
+            <span className="inline-flex w-fit items-center rounded-full bg-primary-soft px-2 py-0.5 text-caption font-medium text-primary">
               قابل مذاکره
             </span>
           ) : null}

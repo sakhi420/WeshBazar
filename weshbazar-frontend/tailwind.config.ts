@@ -115,7 +115,7 @@ const config: Config = {
         dialog: '200ms',
       },
       fontFamily: {
-        sans: ['var(--font-vazirmatn)', 'Vazirmatn', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-vazir)', 'Vazir', 'system-ui', 'sans-serif'],
       },
       keyframes: {
         'accordion-down': {

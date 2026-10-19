@@ -27,7 +27,7 @@ export function MobileHeader() {
               <Search aria-hidden />
             </Link>
           </Button>
-          <Button asChild variant="accent" size="icon" className="hidden xs:inline-flex">
+          <Button asChild variant="accent" size="icon" aria-label="ثبت آگهی">
             <Link href="/sell">
               <Plus aria-hidden />
             </Link>

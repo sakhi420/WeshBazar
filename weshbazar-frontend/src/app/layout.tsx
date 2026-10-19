@@ -22,7 +22,7 @@ const vazir = localFont({
     { path: './fonts/Vazir-Medium.woff2', weight: '500', style: 'normal' },
     { path: './fonts/Vazir-Bold.woff2', weight: '700', style: 'normal' },
   ],
-  variable: '--font-vazirmatn',
+  variable: '--font-vazir',
   display: 'swap',
   preload: true,
 });

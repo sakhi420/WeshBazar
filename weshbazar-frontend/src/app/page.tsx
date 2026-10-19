@@ -75,24 +75,18 @@ export default async function HomePage() {
 
   return (
     <PageContainer className="space-y-8">
-      {/* Search-first opening viewport (§16, §55). Enhanced with stronger gradient and visual hierarchy. */}
-      <section className="animate-fade-up relative rounded-surface border border-primary/20 bg-gradient-to-br from-primary-soft/70 via-primary-soft/30 to-surface p-6 shadow-card sm:p-10">
-        {/* Decorative gradient orbs, clipped to the rounded card via an inner
-            layer so the search/location dropdowns can overflow unclipped. */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-surface">
-          <div className="absolute -end-16 -top-16 size-56 rounded-full bg-accent/15 blur-3xl" />
-          <div className="absolute -start-16 -bottom-16 size-48 rounded-full bg-primary/10 blur-3xl" />
-        </div>
+      {/* Search-first opening viewport (§16, §55): compact strip, no decorative chrome (audit F-06/F-30). */}
+      <section className="space-y-3 pt-1">
         
-        <h1 className="relative text-3xl font-extrabold leading-tight text-foreground sm:text-4xl lg:text-[2.5rem]">
+        <h1 className="text-heading font-bold text-foreground">
           بازار خرید و فروش در افغانستان
         </h1>
-        <p className="relative mt-4 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-          اجناس نو و دست‌دوم را در شهر خود جست‌وجو کنید، یا آگهی خود را رایگان ثبت کنید و مستقیم با فروشنده در تماس باشید.
+        <p className="text-body text-muted-foreground">
+          اجناس نو و دست‌دوم را جست‌وجو کنید یا آگهی خود را رایگان ثبت کنید.
         </p>
 
         <Suspense fallback={null}>
-          <div className="relative mt-6 flex flex-col gap-3 md:flex-row md:items-center">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center">
             <SearchField className="min-w-0 flex-1" redirectToSearch />
             <LocationPicker className="shrink-0" redirectToSearch />
           </div>
@@ -157,9 +151,6 @@ export default async function HomePage() {
 
       {/* Sell CTA — Enhanced with gradient background and stronger visual presence */}
       <section className="relative overflow-hidden rounded-surface border border-accent/20 bg-gradient-to-br from-accent/10 via-accent/5 to-surface p-6 text-center shadow-card sm:p-8">
-        {/* Decorative accent gradient */}
-        <div aria-hidden className="pointer-events-none absolute -end-8 -top-8 size-32 rounded-full bg-accent/20 blur-2xl" />
-        
         <h2 className="relative text-xl font-bold text-foreground sm:text-2xl">
           کالایی برای فروش دارید؟
         </h2>
