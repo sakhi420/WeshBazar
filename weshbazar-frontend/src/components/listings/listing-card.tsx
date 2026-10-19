@@ -67,7 +67,7 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
                   <path d="M9 35l10-10 7 7 7-7 9 9" />
                 </svg>
               </span>
-              <span className="text-caption font-medium text-muted-foreground">بدون تصویر</span>
+              <span className="text-ui font-medium text-muted-foreground">بدون تصویر</span>
             </span>
           )}
           {sold ? (
