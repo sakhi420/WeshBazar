@@ -80,7 +80,9 @@ export class SearchEventDto {
   @IsOptional()
   @Transform(trim)
   @IsString()
-  @MaxLength(80)
+  // Bounded to the discovery filter-expression cap (200 chars) so a joined
+  // MULTI_SELECT value never drops a legitimate event.
+  @MaxLength(200)
   filterValue?: string;
 
   @ApiPropertyOptional({ example: 12, description: 'Result count (search_results_viewed).' })

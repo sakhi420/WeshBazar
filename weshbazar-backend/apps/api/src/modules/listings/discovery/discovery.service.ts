@@ -261,7 +261,7 @@ export class DiscoveryService {
     clientIp: string,
     query: ListingDiscoveryQueryDto,
   ): Promise<Record<string, FacetCount[]>> {
-    this.rateLimitService.enforce('search:list:ip', clientIp, this.rateLimit.searchPerWindow);
+    this.rateLimitService.enforce('search:facets:ip', clientIp, this.rateLimit.searchPerWindow);
 
     const resolved = await this.resolveCriteria(query);
     if (resolved === null) {

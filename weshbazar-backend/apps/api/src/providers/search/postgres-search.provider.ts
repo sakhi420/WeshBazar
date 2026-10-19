@@ -189,7 +189,7 @@ export class PostgresSearchProvider implements SearchProvider {
       // jsonb arrays expand one row per element; non-array/null values become
       // an empty array so `jsonb_array_elements_text` never raises on them.
       return this.prisma.$queryRaw<FacetCount[]>(Prisma.sql`
-        SELECT e.value AS "value", COUNT(*)::int AS "count"
+        SELECT e.value AS "value", COUNT(DISTINCT l."id")::int AS "count"
         FROM "Listing" l
         CROSS JOIN LATERAL jsonb_array_elements_text(
           CASE
