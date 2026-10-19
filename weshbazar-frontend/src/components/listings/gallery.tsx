@@ -42,7 +42,7 @@ export function ListingGallery({ images, title, sold = false, className }: Listi
               priority
               src={mainVariant.url}
               alt={title}
-              sizes="(max-width: 1024px) 100vw, 60vw"
+              sizes="(max-width: 768px) 100vw, 60vw"
               className="object-cover"
             />
           ) : (

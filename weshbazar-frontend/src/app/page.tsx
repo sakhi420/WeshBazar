@@ -75,10 +75,10 @@ export default async function HomePage() {
 
   return (
     <PageContainer className="space-y-8">
-      {/* Search-first opening viewport (§16, §55): compact strip, no decorative chrome (audit F-06/F-30). */}
-      <section className="space-y-3 pt-1">
+      {/* Search-first opening viewport (§16, §55): balanced compact fold with gentle brand atmosphere. */}
+      <section className="space-y-4 pt-4">
         
-        <h1 className="text-heading font-bold text-foreground">
+        <h1 className="text-display-mobile font-bold text-foreground sm:text-display">
           بازار خرید و فروش در افغانستان
         </h1>
         <p className="text-body text-muted-foreground">
