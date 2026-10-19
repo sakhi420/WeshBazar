@@ -457,7 +457,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                           e.stopPropagation();
                           openCategoryEdit(c);
                         }}
-                        className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                        className="flex size-11 items-center justify-center rounded-control text-muted-foreground hover:bg-muted hover:text-foreground"
                       >
                         <Pencil className="size-3.5" />
                       </button>
@@ -468,7 +468,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                           e.stopPropagation();
                           setDeleteTarget({ kind: 'category', id: c.id, label: c.name });
                         }}
-                        className="hover:bg-danger/10 hover:text-danger rounded p-1 text-muted-foreground"
+                        className="flex size-11 items-center justify-center rounded-control text-muted-foreground hover:bg-danger/10 hover:text-danger"
                       >
                         <Trash2 className="size-3.5" />
                       </button>
@@ -622,7 +622,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                               type="button"
                               aria-label="ویرایش ویژگی"
                               onClick={() => openAttributeEdit(a)}
-                              className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                              className="flex size-11 items-center justify-center rounded-control text-muted-foreground hover:bg-muted hover:text-foreground"
                             >
                               <Pencil className="size-3.5" />
                             </button>
@@ -632,7 +632,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                               onClick={() =>
                                 setDeleteTarget({ kind: 'attribute', id: a.id, label: a.label })
                               }
-                              className="hover:bg-danger/10 hover:text-danger rounded p-1 text-muted-foreground"
+                              className="flex size-11 items-center justify-center rounded-control text-muted-foreground hover:bg-danger/10 hover:text-danger"
                             >
                               <Trash2 className="size-3.5" />
                             </button>
@@ -641,7 +641,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                         {/* Options expandable panel for SELECT/MULTI_SELECT */}
                         {selectedAttribute?.id === a.id &&
                           (a.type === 'SELECT' || a.type === 'MULTI_SELECT') && (
-                            <div className="mr-4 mt-1 space-y-2 rounded-control border border-border bg-muted/20 p-3">
+                            <div className="me-4 mt-1 space-y-2 rounded-control border border-border bg-muted/20 p-3">
                               <div className="flex items-center justify-between">
                                 <h4 className="flex items-center gap-2 text-caption font-semibold text-muted-foreground">
                                   <ClipboardList className="size-3.5" aria-hidden /> گزینه‌ها
@@ -718,7 +718,7 @@ export function AdminTaxonomyView({ className }: { className?: string }) {
                                         </span>{' '}
                                         <span className="text-muted-foreground">←</span> {o.label}
                                         {!o.isActive && (
-                                          <span className="text-danger ml-1">(غیرفعال)</span>
+                                          <span className="text-danger ms-1">(غیرفعال)</span>
                                         )}
                                       </span>
                                       <span className="flex gap-1">

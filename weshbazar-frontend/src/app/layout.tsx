@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <a
             href="#main"
-            className="sr-only fixed right-4 top-4 z-[70] rounded-control bg-surface px-4 py-3 text-ui font-medium text-foreground shadow-lg focus-visible:not-sr-only focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            className="sr-only fixed end-4 top-4 z-[70] rounded-control bg-surface px-4 py-3 text-ui font-medium text-foreground shadow-lg focus-visible:not-sr-only focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
             رفتن به محتوای اصلی
           </a>

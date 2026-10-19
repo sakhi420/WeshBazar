@@ -25,15 +25,14 @@ export function AdminNav() {
 
   return (
     <nav className="mb-6 overflow-x-auto" aria-label="پنل مدیریت">
-      <ul className="flex gap-1 border-b border-border" role="tablist">
+      <ul className="flex gap-1 border-b border-border">
         {TABS.map((tab) => {
           const active = pathname === tab.href || (tab.href !== '/admin' && pathname.startsWith(tab.href));
           return (
-            <li key={tab.href} role="presentation">
+            <li key={tab.href}>
               <Link
                 href={tab.href}
-                role="tab"
-                aria-selected={active}
+                aria-current={active ? 'page' : undefined}
                 className={cn(
                   'block whitespace-nowrap rounded-t-control px-4 py-2.5 text-ui font-medium transition-colors',
                   active

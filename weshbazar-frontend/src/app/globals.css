@@ -26,7 +26,7 @@
     --muted: 215 20% 65%; /* #94A3B8 Muted */
     --muted-foreground: 215 16% 47%;
     --border: 214 32% 91%; /* #E2E8F0 Border */
-    --input: 214 32% 91%;
+    --input: 215 16% 47%; /* #64748B Input — ≥3:1 non-text contrast (F-20) */
     --background: 210 40% 98%; /* #F8FAFC Background */
     --surface: 0 0% 100%; /* #FFFFFF Surface */
     --ring: 175 77% 26%;

@@ -30,7 +30,7 @@ export function ActiveFilterChips({ chips, className, onClearAll }: ActiveFilter
           <button
             type="button"
             onClick={chip.onRemove}
-            className="ml-0.5 rounded-full p-0.5 hover:bg-primary/20 transition-colors"
+            className="ms-0.5 rounded-full p-0.5 hover:bg-primary/20 transition-colors"
             aria-label={`حذف فیلتر ${chip.label}`}
           >
             <X className="size-3" />

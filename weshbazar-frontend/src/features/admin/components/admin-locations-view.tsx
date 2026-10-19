@@ -306,8 +306,8 @@ export function AdminLocationsView({ className }: { className?: string }) {
                     >
                       <div className="min-w-0">
                         <span className="text-ui font-medium">{p.name}</span>
-                        <span className="ml-2 text-caption text-muted-foreground">{p.code}</span>
-                        <span className="ml-1 text-caption text-muted-foreground">
+                        <span className="ms-2 text-caption text-muted-foreground">{p.code}</span>
+                        <span className="ms-1 text-caption text-muted-foreground">
                           ({p.cityCount} شهر)
                         </span>
                       </div>
@@ -321,7 +321,7 @@ export function AdminLocationsView({ className }: { className?: string }) {
                             setProvinceForm(provinceToFormData(p));
                             setShowProvinceAdd(false);
                           }}
-                          className="rounded p-1 text-muted-foreground hover:text-foreground"
+                          className="flex size-11 items-center justify-center rounded-control text-muted-foreground hover:text-foreground"
                           title="ویرایش"
                         >
                           <Pencil className="size-3.5" />
@@ -333,7 +333,7 @@ export function AdminLocationsView({ className }: { className?: string }) {
                             e.stopPropagation();
                             setDeleteTarget({ type: 'province', id: p.id });
                           }}
-                          className="rounded p-1 text-danger hover:bg-danger/10"
+                          className="flex size-11 items-center justify-center rounded-control text-danger hover:bg-danger/10"
                           title="حذف"
                         >
                           <Trash2 className="size-3.5" />
@@ -426,7 +426,7 @@ export function AdminLocationsView({ className }: { className?: string }) {
                             setEditingCityId(c.id);
                             setCityForm(cityToFormData(c));
                           }}
-                          className="rounded p-1 text-muted-foreground hover:text-foreground"
+                          className="flex size-11 items-center justify-center rounded-control text-muted-foreground hover:text-foreground"
                           title="ویرایش"
                         >
                           <Pencil className="size-3.5" />
@@ -435,7 +435,7 @@ export function AdminLocationsView({ className }: { className?: string }) {
                           type="button"
                           disabled={isBusy}
                           onClick={() => setDeleteTarget({ type: 'city', id: c.id })}
-                          className="rounded p-1 text-danger hover:bg-danger/10"
+                          className="flex size-11 items-center justify-center rounded-control text-danger hover:bg-danger/10"
                           title="حذف"
                         >
                           <Trash2 className="size-3.5" />
