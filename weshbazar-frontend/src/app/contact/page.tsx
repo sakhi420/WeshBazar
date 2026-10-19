@@ -7,14 +7,14 @@ import { PageHeading } from '@/components/layout/page-heading';
 export const metadata: Metadata = {
   title: 'تماس با ما',
   description:
-    'راه‌های تماس با وش‌بازار: ایمیل و شمارهٔ پشتیبانی، گزارش آگهی متقلبانه و مرکز راهنمایی.',
+    'راه‌های تماس با ویش‌بازار: ایمیل و شمارهٔ پشتیبانی، گزارش آگهی متقلبانه و مرکز راهنمایی.',
   alternates: { canonical: '/contact' },
   openGraph: {
     title: 'تماس با ما',
-    description: 'راه‌های تماس با وش‌بازار.',
+    description: 'راه‌های تماس با ویش‌بازار.',
     type: 'website',
     locale: 'fa_AF',
-    siteName: 'وش‌بازار',
+    siteName: 'ویش‌بازار',
   },
 };
 
@@ -25,7 +25,7 @@ const supportPhone = '0701063679';
 export default function ContactPage() {
   return (
     <PageContainer>
-      <PageHeading title="تماس با ما" description="راه‌های تماس با تیم وش‌بازار و دریافت پشتیبانی." />
+      <PageHeading title="تماس با ما" description="راه‌های تماس با تیم ویش‌بازار و دریافت پشتیبانی." />
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         <section className="rounded-surface border border-border bg-surface p-4">
           <Mail className="size-6 text-primary" aria-hidden />

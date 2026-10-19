@@ -27,7 +27,7 @@ const HOME_ORDER: readonly string[] = [
  * Return the top-level categories ordered for the home carousel.
  *
  * `GET /categories` returns a *flat* list (roots + children), so child nodes
- * (e.g. "دوچرخه") are dropped here — only `parentId === null` roots surface.
+ * (e.g. "بایسکل") are dropped here — only `parentId === null` roots surface.
  * Unknown slugs (newly added by admin) keep their received order and land after
  * the pinned list.
  */

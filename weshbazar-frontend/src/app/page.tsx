@@ -150,14 +150,16 @@ export default async function HomePage() {
       </section>
 
       {/* Sell CTA — Enhanced with gradient background and stronger visual presence */}
-      <section className="relative overflow-hidden rounded-surface border border-accent/20 bg-gradient-to-br from-accent/10 via-accent/5 to-surface p-6 text-center shadow-card sm:p-8">
+      <section className="relative overflow-hidden rounded-surface border border-accent/30 bg-gradient-to-br from-accent/15 via-accent/8 to-surface p-6 text-center shadow-card sm:p-8">
+        {/* Decorative brand atmosphere */}
+        <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full bg-accent/10 blur-3xl" aria-hidden />
         <h2 className="relative text-xl font-bold text-foreground sm:text-2xl">
           کالایی برای فروش دارید؟
         </h2>
         <p className="relative mx-auto mt-2 max-w-prose text-body text-muted-foreground sm:text-lg">
           آگهی خود را رایگان ثبت کنید و مستقیماً با خریداران در تماس باشید.
         </p>
-        <Button asChild variant="accent" size="lg" className="relative mt-5 shadow-md hover:shadow-lg">
+        <Button asChild variant="accent" size="lg" className="relative mt-5 shadow-md hover:shadow-lg transition-transform hover:-translate-y-0.5">
           <Link href="/sell">
             <Plus aria-hidden />
             <span className="font-semibold">ثبت آگهی رایگان</span>
@@ -174,7 +176,7 @@ export default async function HomePage() {
             <ul className="mt-2 space-y-1 text-ui text-muted-foreground">
               <li>· قبل از پرداخت، کالا را از نزدیک بررسی کنید.</li>
               <li>· در مکان عمومی و امن معامله کنید.</li>
-              <li>· از واریز بیعانه خودداری کنید.</li>
+              <li>· از واریز پیش پرداخت خودداری کنید.</li>
               <li>· در صورت مشاهده تخلف، آگهی را گزارش دهید.</li>
             </ul>
           </div>

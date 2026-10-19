@@ -5,7 +5,7 @@ import { SITE_URL } from '@/lib/env';
  * product default. Keep brand-safe: never redraw or approximate the logo here.
  */
 export const siteConfig = {
-  name: 'وش‌بازار',
+  name: 'ویش‌بازار',
   nameLatin: 'WeshBazar',
   description:
     'بازار آنلاین خرید و فروش اجناس نو و دست‌دوم در افغانستان. جست‌وجو، ثبت آگهی رایگان و تماس مستقیم با فروشنده.',

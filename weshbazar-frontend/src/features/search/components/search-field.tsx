@@ -40,7 +40,7 @@ interface SearchFieldProps {
 
 export function SearchField({
   className,
-  placeholder = 'جست‌وجو در وش‌بازار…',
+  placeholder = 'جست‌وجو در ویش‌بازار…',
   redirectToSearch = false,
 }: SearchFieldProps) {
   const router = useRouter();

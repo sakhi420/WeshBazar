@@ -141,12 +141,13 @@ export function ContactSection({ listingId, status, contact, className }: Contac
                 size="sm"
                 variant="outline"
                 onClick={() => void handleCopy(method, target.value)}
+                aria-label={`کپی ${formatContactMethod(method)}`}
               >
                 {isCopied ? <Check aria-hidden /> : <Copy aria-hidden />}
                 {isCopied ? 'کپی شد' : 'کپی'}
               </Button>
               {href ? (
-                <Button asChild size="sm">
+                <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
                   <a href={href} target="_blank" rel="noopener noreferrer">
                     <Icon aria-hidden />
                     {method === 'PHONE' ? 'تماس' : method === 'WHATSAPP' ? 'واتساپ' : 'تلگرام'}

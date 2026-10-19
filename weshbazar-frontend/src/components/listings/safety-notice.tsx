@@ -19,8 +19,8 @@ export function SafetyNotice({ className }: SafetyNoticeProps) {
         </h2>
         <ul className="list-disc space-y-1 ps-4 text-meta text-muted-foreground">
           <li>پیش از پرداخت، کالا را از نزدیک ببینید.</li>
-          <li>از واریز بیعانه به افراد ناشناس خودداری کنید.</li>
-          <li>وش‌بازار در انجام معامله واسطه نیست؛ بررسی کالا با خریدار است.</li>
+          <li>از واریز پیش پرداخت به افراد ناشناس خودداری کنید.</li>
+          <li>ویش‌بازار در انجام معامله واسطه نیست؛ بررسی کالا با خریدار است.</li>
         </ul>
       </div>
     </section>

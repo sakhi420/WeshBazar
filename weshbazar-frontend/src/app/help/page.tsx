@@ -7,14 +7,14 @@ import { PageHeading } from '@/components/layout/page-heading';
 export const metadata: Metadata = {
   title: 'مرکز راهنمایی',
   description:
-    'راهنمای استفاده از وش‌بازار: جست‌وجو، بررسی آگهی، تماس با فروشنده، ثبت آگهی و مدیریت حساب.',
+    'راهنمای استفاده از ویش‌بازار: جست‌وجو، بررسی آگهی، تماس با فروشنده، ثبت آگهی و مدیریت حساب.',
   alternates: { canonical: '/help' },
   openGraph: {
     title: 'مرکز راهنمایی',
-    description: 'راهنمای استفاده از وش‌بازار.',
+    description: 'راهنمای استفاده از ویش‌بازار.',
     type: 'website',
     locale: 'fa_AF',
-    siteName: 'وش‌بازار',
+    siteName: 'ویش‌بازار',
   },
 };
 
@@ -52,7 +52,7 @@ const topics = [
 export default function HelpPage() {
   return (
     <PageContainer>
-      <PageHeading title="مرکز راهنمایی" description="پاسخ پرسش‌های رایج و راهنمای استفاده از وش‌بازار." />
+      <PageHeading title="مرکز راهنمایی" description="پاسخ پرسش‌های رایج و راهنمای استفاده از ویش‌بازار." />
 
       <section aria-labelledby="quick-start" className="mt-6">
         <h2 id="quick-start" className="text-section font-semibold text-foreground">

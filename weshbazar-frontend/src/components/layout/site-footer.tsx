@@ -30,7 +30,7 @@ export function SiteFooter() {
         <div className="space-y-4">
           <Link
             href="/"
-            aria-label="وش‌بازار — صفحه اصلی"
+            aria-label="ویش‌بازار — صفحه اصلی"
             className="inline-flex rounded-control focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
           >
             <BrandLogo variant="white" height={32} />
@@ -96,7 +96,7 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="container flex flex-col gap-2 py-4 text-ui text-white/70 sm:flex-row sm:items-center sm:justify-between">
           <p translate="no">WeshBazar</p>
-          <p>© {persianYear} همه حقوق برای وش‌بازار محفوظ است.</p>
+          <p>© {persianYear} همه حقوق برای ویش‌بازار محفوظ است.</p>
         </div>
       </div>
     </footer>

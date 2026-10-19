@@ -15,7 +15,7 @@ export function MobileHeader() {
       <div className="flex h-header items-center justify-between px-4">
         <Link
           href="/"
-          aria-label="وش‌بازار — صفحه اصلی"
+          aria-label="ویش‌بازار — صفحه اصلی"
           className="flex shrink-0 items-center rounded-control focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >
           <BrandLogo height={28} priority />

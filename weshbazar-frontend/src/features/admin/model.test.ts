@@ -153,7 +153,7 @@ describe('toAdminListingsQuery', () => {
     expect(
       toAdminListingsQuery({
         view: 'pending',
-        q: '  دوچرخه ',
+        q: '  بایسکل ',
         sort: 'newest',
         page: 3,
         seller: 'seller-uuid',
@@ -161,7 +161,7 @@ describe('toAdminListingsQuery', () => {
     ).toEqual({
       limit: ADMIN_QUEUE_PAGE_LIMIT,
       sort: 'newest',
-      q: 'دوچرخه',
+      q: 'بایسکل',
       sellerAccountId: 'seller-uuid',
       page: 3,
     });

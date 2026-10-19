@@ -18,7 +18,7 @@ export function DesktopHeader() {
       <div className="container flex h-[4rem] items-center gap-3">
         <Link
           href="/"
-          aria-label="وش‌بازار — صفحه اصلی"
+          aria-label="ویش‌بازار — صفحه اصلی"
           className="me-4 flex shrink-0 items-center rounded-control focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >
           <BrandLogo height={34} priority />

@@ -7,14 +7,14 @@ import { PageHeading } from '@/components/layout/page-heading';
 export const metadata: Metadata = {
   title: 'درباره ما',
   description:
-    'وش‌بازار بازارگاه آنلاین خرید و فروش اجناس نو و دست‌دوم در افغانستان است؛ ثبت آگهی رایگان و تماس مستقیم با فروشنده، بدون واسطه‌گری مالی.',
+    'ویش‌بازار بازارگاه آنلاین خرید و فروش اجناس نو و دست‌دوم در افغانستان است؛ ثبت آگهی رایگان و تماس مستقیم با فروشنده، بدون واسطه‌گری مالی.',
   alternates: { canonical: '/about' },
   openGraph: {
-    title: 'دربارهٔ وش‌بازار',
+    title: 'دربارهٔ ویش‌بازار',
     description: 'بازارگاه آنلاین خرید و فروش در افغانستان.',
     type: 'website',
     locale: 'fa_AF',
-    siteName: 'وش‌بازار',
+    siteName: 'ویش‌بازار',
   },
 };
 
@@ -26,7 +26,7 @@ export default function AboutPage() {
   return (
     <PageContainer>
       <PageHeading
-        title="دربارهٔ وش‌بازار"
+        title="دربارهٔ ویش‌بازار"
         description="بازارگاه آنلاین خرید و فروش اجناس نو و دست‌دوم در افغانستان."
       />
 
@@ -48,23 +48,23 @@ export default function AboutPage() {
         <div className="rounded-surface border border-border bg-surface p-4">
           <ShieldCheck className="size-6 text-primary" aria-hidden />
           <h2 className="mt-2 text-card-title font-semibold text-foreground">ثبت رایگان</h2>
-          <p className="mt-1 text-ui text-muted-foreground">آگهی‌گذاری در وش‌بازار رایگان است.</p>
+          <p className="mt-1 text-ui text-muted-foreground">آگهی‌گذاری در ویش‌بازار رایگان است.</p>
         </div>
       </div>
 
       <div className="mt-6 max-w-3xl space-y-4 text-body text-foreground">
         <p>
-          وش‌بازار برای ساده‌کردن خرید و فروش در سراسر افغانستان ساخته شده است. هدف ما این است که هر
+          ویش‌بازار برای ساده‌کردن خرید و فروش در سراسر افغانستان ساخته شده است. هدف ما این است که هر
           کسی بتواند بدون واسطه، رایگان و به‌سادگی آگهی بگذارد، کالا یا خدمت موردنیازش را پیدا کند و
           مستقیم با طرف مقابل تماس بگیرد.
         </p>
 
         <div className="rounded-surface border border-border bg-surface p-4">
           <h2 className="text-section font-semibold text-foreground">
-            وش‌بازار چه کاری انجام نمی‌دهد؟
+            ویش‌بازار چه کاری انجام نمی‌دهد؟
           </h2>
           <p className="mt-2 text-ui text-muted-foreground">
-            وش‌بازار یک بازارگاه است، نه واسطهٔ مالی. ما نگهداری پول، پرداخت داخلی، ارسال کالا،
+            ویش‌بازار یک بازارگاه است، نه واسطهٔ مالی. ما نگهداری پول، پرداخت داخلی، ارسال کالا،
             امانت‌داری مالی یا حل اختلاف را انجام نمی‌دهیم؛ پرداخت و تحویل به‌صورت مستقیم میان خریدار و
             فروشنده انجام می‌شود.
           </p>
@@ -80,7 +80,7 @@ export default function AboutPage() {
         <div className="rounded-surface border border-border bg-surface p-4">
           <h2 className="text-section font-semibold text-foreground">بنیان‌گذار</h2>
           <p className="mt-2 text-ui text-muted-foreground">
-            وش‌بازار توسط نثار احمد سخی نژاد بنیان‌گذاری شده است.
+            ویش‌بازار توسط نثار احمد سخی نژاد بنیان‌گذاری شده است.
           </p>
         </div>
       </div>
