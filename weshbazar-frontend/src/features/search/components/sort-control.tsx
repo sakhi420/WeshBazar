@@ -22,7 +22,7 @@ const SORT_LABELS: Record<SortOption, string> = {
 export function SortControl({ className }: { className?: string }) {
   const [sort, setSort] = useQueryState(
     'sort',
-    discoveryParamsParsers.sort.withOptions({ history: 'push', shallow: false }),
+    discoveryParamsParsers.sort.withOptions({ history: 'replace', shallow: false }),
   );
 
   return (

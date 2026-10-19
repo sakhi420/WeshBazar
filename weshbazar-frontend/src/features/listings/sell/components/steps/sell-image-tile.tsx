@@ -112,7 +112,7 @@ function IconButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'flex size-9 items-center justify-center rounded-control outline-none transition-colors duration-small focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40',
+        'flex size-11 items-center justify-center rounded-control outline-none transition-colors duration-small focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40',
         danger ? 'text-danger hover:bg-danger/10' : 'text-muted-foreground hover:bg-muted',
       )}
     >

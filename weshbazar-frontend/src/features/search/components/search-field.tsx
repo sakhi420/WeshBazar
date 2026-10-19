@@ -18,7 +18,7 @@ import {
   type ReactNode,
 } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Clock, Search, X } from 'lucide-react';
+import { Clock, Loader2, Search, X } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -183,7 +183,8 @@ export function SearchField({
     } else if (trimmed.length >= 2) {
       if (loading) {
         dropdown = (
-          <p id={listboxId} className="px-3 py-2 text-ui text-muted-foreground">
+          <p id={listboxId} className="flex items-center gap-2 px-3 py-2.5 text-ui text-muted-foreground">
+            <Loader2 aria-hidden className="size-4 animate-spin text-primary" />
             در حال جست‌وجو…
           </p>
         );

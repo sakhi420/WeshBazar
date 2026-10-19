@@ -69,7 +69,7 @@ interface FilterFieldsProps {
 
 function FilterFields({ provinces, categories, filterSchema, idPrefix }: FilterFieldsProps) {
   const [params, setParams] = useQueryStates(discoveryParamsParsers, {
-    history: 'push',
+    history: 'replace',
     // Shallow must be off: filters drive the SSR discovery query, so the URL
     // change has to re-render the Server Component and fetch fresh results.
     shallow: false,
@@ -252,7 +252,7 @@ function FilterFields({ provinces, categories, filterSchema, idPrefix }: FilterF
 }
 
 function ClearFiltersButton({ className }: { className?: string }) {
-  const [params, setParams] = useQueryStates(discoveryParamsParsers, { history: 'push', shallow: false });
+  const [params, setParams] = useQueryStates(discoveryParamsParsers, { history: 'replace', shallow: false });
   return (
     <Button
       type="button"
@@ -293,7 +293,7 @@ export function FilterPanelDesktop({ provinces, categories, filterSchema, classN
 /** Mobile trigger + full-height sheet (hidden at lg+). */
 export function MobileFilterSheet({ provinces, categories, filterSchema, className }: FilterPanelProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [params] = useQueryStates(discoveryParamsParsers, { history: 'push' });
+  const [params] = useQueryStates(discoveryParamsParsers, { history: 'replace' });
   const activeCount = countActiveFilters(params);
 
   function close() {

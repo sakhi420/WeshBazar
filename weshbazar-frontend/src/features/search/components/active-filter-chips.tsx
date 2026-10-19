@@ -69,7 +69,7 @@ export function ActiveFilterChips({
   filterSchema,
   className,
 }: ActiveFilterChipsProps) {
-  const [params, setParams] = useQueryStates(discoveryParamsParsers, { history: 'push', shallow: false });
+  const [params, setParams] = useQueryStates(discoveryParamsParsers, { history: 'replace', shallow: false });
 
   const provinceSlug = params.province ?? '';
   const provinceObj = provinces.find((item) => item.slug === provinceSlug) ?? null;

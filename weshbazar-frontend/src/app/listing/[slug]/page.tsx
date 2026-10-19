@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { Breadcrumbs } from '@/components/layout/breadcrumbs';
 import { PageContainer } from '@/components/layout/page-container';
 import { AttributeList } from '@/components/listings/attribute-list';
@@ -141,14 +140,6 @@ export default async function ListingPage({ params }: ListingPageProps) {
           { label: detail.title },
         ]}
       />
-
-      <Link
-        href={`/category/${detail.category.slug}`}
-        className="mt-2 inline-flex items-center gap-1 text-ui text-muted-foreground hover:text-primary transition-colors duration-small"
-      >
-        <ArrowLeft className="size-3.5" aria-hidden />
-        همهٔ آگهی‌های {detail.category.name}
-      </Link>
 
       <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-start">
         <div className="min-w-0 space-y-6">
