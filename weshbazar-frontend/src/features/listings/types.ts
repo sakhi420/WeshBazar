@@ -39,6 +39,12 @@ export type PricingType = 'PAID' | 'FREE' | 'CONTACT';
 /** Publicly reachable listing states (PublicListingSummaryDto.status). */
 export type PublicListingStatus = 'ACTIVE' | 'SOLD';
 
+/** `FacetCountDto` — one filter facet value with its match count. */
+export interface FacetCount {
+  value: string;
+  count: number;
+}
+
 /** `PublicListingSummaryDto` — discovery list item. */
 export interface PublicListingSummary {
   id: string;

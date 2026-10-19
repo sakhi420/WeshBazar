@@ -96,8 +96,26 @@ export interface SearchPage {
   hasMore: boolean;
   /** Anchor for the next page; null when this page is the last. */
   nextCursor: SearchCursor | null;
+  /** Exact total matches for the criteria (ignores cursor/limit). */
+  total: number;
 }
+
+export interface FacetCount {
+  value: string;
+  count: number;
+}
+
+/** Criteria without ordering/pagination — the WHERE/facet surface. */
+export type SearchFacetCriteria = Omit<SearchCriteria, 'sort' | 'cursor' | 'limit'>;
 
 export interface SearchProvider {
   search(criteria: SearchCriteria): Promise<SearchPage>;
+  /** Facet counts for the public listing `condition` (own filter excluded). */
+  countConditionFacets(criteria: SearchFacetCriteria): Promise<FacetCount[]>;
+  /** Facet counts for one category attribute (own filter excluded). */
+  countAttributeFacets(
+    criteria: SearchFacetCriteria,
+    field: string,
+    kind: 'SELECT' | 'MULTI_SELECT',
+  ): Promise<FacetCount[]>;
 }

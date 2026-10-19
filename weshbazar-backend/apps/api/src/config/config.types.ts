@@ -67,6 +67,8 @@ export interface AppConfig {
     contactPerWindow: number;
     imageUploadPerWindow: number;
     searchPerWindow: number;
+    /** Cap on search-interaction telemetry events per client per window. */
+    searchEventsPerWindow: number;
     /** Cap on *counted* listing views per client per dedupe window (§73). */
     listingViewPerWindow: number;
   };

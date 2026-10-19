@@ -7,6 +7,7 @@ import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
 import { Public } from '../../common/decorators/public.decorator';
 import { SearchTelemetryService } from './search-telemetry.service';
+import { SearchEventDto, SearchEventResponseDto } from './dto/search-event.dto';
 import { SearchZeroResultDto, SearchZeroResultResponseDto } from './dto/zero-result.dto';
 
 @ApiTags('search-telemetry')
@@ -26,6 +27,21 @@ export class SearchTelemetryController {
     @Body() dto: SearchZeroResultDto,
   ): SearchZeroResultResponseDto {
     this.telemetry.recordZeroResult(dto, request.ip);
+    return { recorded: true };
+  }
+
+  @Public()
+  @Post('events')
+  @ApiOperation({
+    summary: 'Record a search interaction event (lightweight telemetry)',
+    operationId: 'search_recordEvent',
+  })
+  @ApiCreatedResponse({ type: SearchEventResponseDto })
+  recordEvent(
+    @Req() request: FastifyRequest,
+    @Body() dto: SearchEventDto,
+  ): SearchEventResponseDto {
+    this.telemetry.recordEvent(dto, request.ip);
     return { recorded: true };
   }
 }

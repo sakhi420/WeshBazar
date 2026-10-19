@@ -7,7 +7,7 @@
  * with public slugs.
  */
 import { Controller, Get, Param, Query, Req } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiExtraModels, ApiOkResponse, ApiOperation, ApiTags, getSchemaPath } from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
 import { Public } from '../../common/decorators/public.decorator';
 import { LocaleQueryDto } from '../../common/dto/locale-query.dto';
@@ -17,11 +17,17 @@ import type {
   PublicListingSummary,
 } from '../../common/presenters/public-listing.presenter';
 import { resolveLocale } from '../../common/utils/locale.utils';
+import type { FacetCount } from '../../providers/search/search.provider';
 import { DiscoveryService } from './discovery/discovery.service';
-import { PublicListingDetailDto, PublicListingSummaryDto } from './dto/discovery-responses.dto';
+import {
+  FacetCountDto,
+  PublicListingDetailDto,
+  PublicListingSummaryDto,
+} from './dto/discovery-responses.dto';
 import { ListingDiscoveryQueryDto } from './dto/discovery.dto';
 
 @ApiTags('listings')
+@ApiExtraModels(FacetCountDto)
 @Controller('listings')
 export class DiscoveryController {
   constructor(private readonly discovery: DiscoveryService) {}
@@ -39,6 +45,28 @@ export class DiscoveryController {
     @Query() query: ListingDiscoveryQueryDto,
   ): Promise<CursorPaginated<PublicListingSummary>> {
     return this.discovery.search(request.ip, query, resolveLocale(query.locale));
+  }
+
+  @Public()
+  @Get('facets')
+  @ApiOperation({
+    summary: 'Facet counts for the current discovery query (condition + attribute facets)',
+    operationId: 'listings_discovery_facets',
+  })
+  @ApiOkResponse({
+    schema: {
+      type: 'object',
+      additionalProperties: {
+        type: 'array',
+        items: { $ref: getSchemaPath(FacetCountDto) },
+      },
+    },
+  })
+  facets(
+    @Req() request: FastifyRequest,
+    @Query() query: ListingDiscoveryQueryDto,
+  ): Promise<Record<string, FacetCount[]>> {
+    return this.discovery.facets(request.ip, query);
   }
 
   @Public()

@@ -10,6 +10,7 @@ import { useQueryState } from 'nuqs';
 import { cn } from '@/lib/utils';
 import type { SortOption } from '@/features/search';
 import { discoveryParamsParsers } from '@/features/search/parsers';
+import { recordSearchEvent } from '../telemetry';
 
 const SORT_LABELS: Record<SortOption, string> = {
   newest: 'تازه‌ترین',
@@ -21,7 +22,7 @@ const SORT_LABELS: Record<SortOption, string> = {
 export function SortControl({ className }: { className?: string }) {
   const [sort, setSort] = useQueryState(
     'sort',
-    discoveryParamsParsers.sort.withOptions({ history: 'push' }),
+    discoveryParamsParsers.sort.withOptions({ history: 'push', shallow: false }),
   );
 
   return (
@@ -36,6 +37,7 @@ export function SortControl({ className }: { className?: string }) {
         onChange={(event) => {
           const next = event.target.value as SortOption;
           void setSort(next === 'newest' ? null : next);
+          void recordSearchEvent({ type: 'sort_changed', sort: next });
         }}
         className="h-control w-full appearance-none rounded-control border border-input bg-background ps-9 pe-3 text-ui text-foreground outline-none transition-colors duration-small focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >

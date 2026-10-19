@@ -106,7 +106,7 @@ export function LocationPicker({ className, redirectToSearch = false }: Location
         aria-expanded={open}
         aria-label={`موقعیت: ${label}`}
         className={cn(
-          'inline-flex h-control items-center gap-2 rounded-card border bg-surface px-3 text-ui font-medium transition-colors duration-small',
+          'inline-flex h-control-lg w-full items-center gap-2 rounded-card border bg-surface px-3 text-ui font-medium transition-colors duration-small md:w-auto',
           'hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           open ? 'border-primary text-primary' : 'border-border text-foreground',
         )}
@@ -119,7 +119,7 @@ export function LocationPicker({ className, redirectToSearch = false }: Location
         />
       </button>
       {open ? (
-        <div className="absolute start-0 top-full z-drawer mt-1 min-w-56 overflow-hidden rounded-surface border border-border bg-surface shadow-lg">
+        <div className="absolute end-0 top-full z-drawer mt-1 min-w-56 overflow-hidden rounded-surface border border-border bg-surface shadow-lg">
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] divide-x divide-border">
             <ul className="max-h-64 overflow-y-auto py-1">
               {provinces.map((p) => (
@@ -136,7 +136,7 @@ export function LocationPicker({ className, redirectToSearch = false }: Location
                         : 'text-foreground hover:bg-primary-soft/50',
                     )}
                   >
-                    {p.name}
+                    <span className="block truncate">{p.name}</span>
                   </button>
                 </li>
               ))}
@@ -173,7 +173,7 @@ export function LocationPicker({ className, redirectToSearch = false }: Location
                           : 'text-foreground hover:bg-primary-soft/50',
                       )}
                     >
-                      {c.name}
+                      <span className="block truncate">{c.name}</span>
                     </button>
                   </li>
                 ))

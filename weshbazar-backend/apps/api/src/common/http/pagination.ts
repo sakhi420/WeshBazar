@@ -14,6 +14,8 @@ export interface CursorPageMeta {
   nextCursor: string | null;
   hasMore: boolean;
   limit: number;
+  /** Exact match count for the criteria (ignores cursor/limit); discovery feeds provide it. */
+  total?: number;
 }
 
 export interface PageMeta {

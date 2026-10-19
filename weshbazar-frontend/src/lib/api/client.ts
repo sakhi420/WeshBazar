@@ -299,6 +299,7 @@ export async function getCursorPage<TItem>(
     items,
     nextCursor: env.meta?.nextCursor ?? null,
     hasMore: env.meta?.hasMore ?? false,
+    total: env.meta?.total,
   };
 }
 

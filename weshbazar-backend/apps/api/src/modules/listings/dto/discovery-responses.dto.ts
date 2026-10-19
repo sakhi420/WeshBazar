@@ -7,6 +7,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ListingImageDto, ListingRefDto } from './listing-responses.dto';
 
+export class FacetCountDto {
+  @ApiProperty({ example: 'NEW' })
+  value!: string;
+
+  @ApiProperty({ example: 12 })
+  count!: number;
+}
+
 export class PublicAttributeDto {
   @ApiProperty({ example: 'storage' })
   key!: string;

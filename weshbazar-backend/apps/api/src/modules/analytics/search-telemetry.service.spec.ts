@@ -55,4 +55,35 @@ describe('SearchTelemetryService', () => {
     });
     expect(logArgs[1]).toBe('ZeroResultSearch');
   });
+
+  it('rate-limits and logs a sort_changed interaction event', () => {
+    const { service, enforce } = makeService();
+
+    service.recordEvent({ type: 'sort_changed', sort: 'price_asc' }, '1.2.3.4');
+
+    expect(enforce).toHaveBeenCalledWith('search:events:ip', '1.2.3.4', 30);
+
+    const logArgs = logSpy.mock.calls[0] as [Record<string, unknown>, string];
+    expect(logArgs[0]).toMatchObject({
+      event: 'search.event',
+      type: 'sort_changed',
+      sort: 'price_asc',
+    });
+    expect(logArgs[1]).toBe('SearchEvent');
+  });
+
+  it('omits empty optional fields from the interaction event log', () => {
+    const { service } = makeService();
+
+    service.recordEvent({ type: 'listing_card_opened', listingId: 'toyota-corolla' }, '1.2.3.4');
+
+    const logArgs = logSpy.mock.calls[0] as [Record<string, unknown>, string];
+    expect(logArgs[0]).toMatchObject({
+      event: 'search.event',
+      type: 'listing_card_opened',
+      listingId: 'toyota-corolla',
+    });
+    expect(logArgs[0]).not.toHaveProperty('q');
+    expect(logArgs[0]).not.toHaveProperty('sort');
+  });
 });

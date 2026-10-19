@@ -20,8 +20,10 @@ import { PrismaService } from '../../database/prisma.service';
 import { Prisma } from '../../generated/prisma/client';
 import type {
   AttributeCriterion,
+  FacetCount,
   SearchCriteria,
   SearchCursor,
+  SearchFacetCriteria,
   SearchPage,
   SearchProvider,
   SearchSort,
@@ -56,17 +58,50 @@ export class PostgresSearchProvider implements SearchProvider {
       criteria.categoryIds?.length === 0
     ) {
       // No visible statuses / sellers / empty category subtree — nothing matches.
-      return { ids: [], hasMore: false, nextCursor: null };
+      return { ids: [], hasMore: false, nextCursor: null, total: 0 };
     }
 
+    const conditions = this.whereConditions(criteria);
+    const total = await this.countMatching(conditions);
+
+    const cursor = this.cursorCondition(criteria);
+    if (cursor !== null) {
+      conditions.push(cursor);
+    }
+
+    const rows = await this.prisma.$queryRaw<SearchRow[]>(Prisma.sql`
+      SELECT l."id", l."createdAt", l."price"::text AS "price", l."views"
+      FROM "Listing" l
+      WHERE ${Prisma.join(conditions, ' AND ')}
+      ORDER BY ${ORDER_BY[criteria.sort]}
+      LIMIT ${criteria.limit + 1}
+    `);
+
+    const page = rows.slice(0, criteria.limit);
+    const hasMore = rows.length > criteria.limit;
+    const last = page.at(-1);
+    return {
+      ids: page.map((row) => row.id),
+      hasMore,
+      nextCursor: hasMore && last !== undefined ? nextCursorFor(criteria.sort, last) : null,
+      total,
+    };
+  }
+
+  /**
+   * Shared WHERE clause for the feed, facet and count queries. One place for
+   * the visibility policy so facet counts never disagree with the feed.
+   */
+  private whereConditions(
+    criteria: SearchFacetCriteria,
+    opts: { skipCondition?: boolean; skipAttributeKey?: string } = {},
+  ): Prisma.Sql[] {
     const conditions: Prisma.Sql[] = [
       Prisma.sql`l."deletedAt" IS NULL`,
       Prisma.sql`l."status" IN (${Prisma.join([...criteria.statuses])})`,
     ];
 
     if (criteria.sellerStatuses !== null) {
-      // Seller eligibility belongs in the query: re-checking only after the
-      // fact lets hidden listings consume pagination slots (short pages).
       conditions.push(
         Prisma.sql`EXISTS (SELECT 1 FROM "SellerAccount" sa
             WHERE sa."id" = l."sellerAccountId"
@@ -75,9 +110,6 @@ export class PostgresSearchProvider implements SearchProvider {
     }
 
     if (criteria.excludeExpiredActive) {
-      // §70/§164: an ACTIVE listing past its runway disappears from the feed
-      // immediately; the expiration job only reconciles the row later. The
-      // cutoff is parameterized like every other value — never string-built.
       const now = new Date();
       conditions.push(
         Prisma.sql`(l."status" <> 'ACTIVE' OR l."expiresAt" IS NULL OR l."expiresAt" > CAST(${now.toISOString()} AS timestamptz))`,
@@ -99,40 +131,101 @@ export class PostgresSearchProvider implements SearchProvider {
     if (criteria.maxPrice !== null) {
       conditions.push(Prisma.sql`l."price" <= CAST(${String(criteria.maxPrice)} AS numeric)`);
     }
-    if (criteria.conditions !== null && criteria.conditions.length > 0) {
+    if (!opts.skipCondition && criteria.conditions !== null && criteria.conditions.length > 0) {
       conditions.push(Prisma.sql`l."condition" IN (${Prisma.join([...criteria.conditions])})`);
     }
     for (const term of criteria.terms) {
-      // Every term must match (AND); pg_trgm's GIN index backs the LIKE scan.
       conditions.push(Prisma.sql`l."searchText" LIKE ${`%${escapeLike(term)}%`}`);
     }
     for (const attribute of criteria.attributes) {
+      if (opts.skipAttributeKey !== undefined && attribute.key === opts.skipAttributeKey) {
+        continue;
+      }
       const condition = attributeCondition(attribute);
       if (condition !== null) {
         conditions.push(condition);
       }
     }
-    const cursor = this.cursorCondition(criteria);
-    if (cursor !== null) {
-      conditions.push(cursor);
-    }
+    return conditions;
+  }
 
-    const rows = await this.prisma.$queryRaw<SearchRow[]>(Prisma.sql`
-      SELECT l."id", l."createdAt", l."price"::text AS "price", l."views"
+  async countConditionFacets(criteria: SearchFacetCriteria): Promise<FacetCount[]> {
+    if (
+      criteria.statuses.length === 0 ||
+      criteria.sellerStatuses?.length === 0 ||
+      criteria.categoryIds?.length === 0
+    ) {
+      return [];
+    }
+    const conditions = this.whereConditions(criteria, { skipCondition: true });
+    return this.prisma.$queryRaw<FacetCount[]>(Prisma.sql`
+      SELECT l."condition"::text AS "value", COUNT(*)::int AS "count"
       FROM "Listing" l
       WHERE ${Prisma.join(conditions, ' AND ')}
-      ORDER BY ${ORDER_BY[criteria.sort]}
-      LIMIT ${criteria.limit + 1}
+      GROUP BY 1
+      ORDER BY 2 DESC, 1 ASC
     `);
+  }
 
-    const page = rows.slice(0, criteria.limit);
-    const hasMore = rows.length > criteria.limit;
-    const last = page.at(-1);
-    return {
-      ids: page.map((row) => row.id),
-      hasMore,
-      nextCursor: hasMore && last !== undefined ? nextCursorFor(criteria.sort, last) : null,
-    };
+  async countAttributeFacets(
+    criteria: SearchFacetCriteria,
+    field: string,
+    kind: 'SELECT' | 'MULTI_SELECT',
+  ): Promise<FacetCount[]> {
+    if (
+      criteria.statuses.length === 0 ||
+      criteria.sellerStatuses?.length === 0 ||
+      criteria.categoryIds?.length === 0
+    ) {
+      return [];
+    }
+    const conditions = this.whereConditions(criteria, { skipAttributeKey: field });
+    // Inline the DB-owned attribute key as a typed literal: the polymorphic
+    // `->`/`->>` operators can't infer an untyped parameter's type in
+    // SELECT / GROUP BY / HAVING, which PostgreSQL rejects.
+    const key = attributeKeyLiteral(field);
+
+    if (kind === 'MULTI_SELECT') {
+      // jsonb arrays expand one row per element; non-array/null values become
+      // an empty array so `jsonb_array_elements_text` never raises on them.
+      return this.prisma.$queryRaw<FacetCount[]>(Prisma.sql`
+        SELECT e.value AS "value", COUNT(*)::int AS "count"
+        FROM "Listing" l
+        CROSS JOIN LATERAL jsonb_array_elements_text(
+          CASE
+            WHEN jsonb_typeof(l."attributes" -> ${key}) = 'array'
+              THEN l."attributes" -> ${key}
+            ELSE '[]'::jsonb
+          END
+        ) AS e(value)
+        WHERE ${Prisma.join(conditions, ' AND ')}
+        GROUP BY 1
+        ORDER BY 2 DESC, 1 ASC
+      `);
+    }
+
+    return this.prisma.$queryRaw<FacetCount[]>(Prisma.sql`
+      SELECT l."attributes" ->> ${key} AS "value", COUNT(*)::int AS "count"
+      FROM "Listing" l
+      WHERE ${Prisma.join(conditions, ' AND ')}
+      GROUP BY 1
+      HAVING l."attributes" ->> ${key} IS NOT NULL AND l."attributes" ->> ${key} <> ''
+      ORDER BY 2 DESC, 1 ASC
+    `);
+  }
+
+  /**
+   * Exact match count for the current criteria (ignores cursor and limit).
+   * One extra COUNT query per discovery request — accepted at the current
+   * scale so the UI can show a true total instead of a page-length guess.
+   */
+  private async countMatching(where: Prisma.Sql[]): Promise<number> {
+    const rows = await this.prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
+      SELECT COUNT(*)::int AS "count"
+      FROM "Listing" l
+      WHERE ${Prisma.join(where, ' AND ')}
+    `);
+    return rows[0]?.count ?? 0;
   }
 
   /**
@@ -198,6 +291,15 @@ function nextCursorFor(sort: SearchSort, row: SearchRow): SearchCursor {
     case 'most_viewed':
       return { sort, id: row.id, views: row.views };
   }
+}
+
+/**
+ * Inline an attribute key as a single-quoted SQL literal. Keys are DB-owned
+ * (`CategoryAttribute.key`, `[a-z0-9_]`) so this is safe; the literal avoids
+ * the polymorphic `->`/`->>` operators having to infer an untyped parameter.
+ */
+function attributeKeyLiteral(key: string): Prisma.Sql {
+  return Prisma.raw(`'${key.replace(/'/g, "''")}'`);
 }
 
 /**

@@ -9,6 +9,7 @@ import { fetchListingsServer } from '@/features/listings';
 import type { PublicListingSummary } from '@/features/listings';
 import { fetchProvincesServer } from '@/features/locations';
 import { parseDiscoverySearchParams, toDiscoveryQuery, discoveryKey } from '@/features/search';
+import { buildZeroResultRecovery, formatResultCount } from '@/features/search/zero-result';
 import { ActiveFilterChips } from '@/features/search/components/active-filter-chips';
 import { DiscoveryResults } from '@/features/search/components/discovery-results';
 import {
@@ -22,6 +23,7 @@ import { ApiError, type CursorPage } from '@/lib/api';
 export const metadata: Metadata = {
   title: 'جست‌وجو',
   alternates: { canonical: '/search' },
+  robots: { index: false, follow: true },
 };
 
 interface SearchPageProps {
@@ -66,6 +68,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     fetchProvincesServer().catch(() => []),
   ]);
 
+  const recovery =
+    listings.page && listings.page.items.length === 0
+      ? buildZeroResultRecovery(query, { basePath: '/search', categoryOwnedByRoute: false })
+      : [];
+
   return (
     <PageContainer>
       <h1 className="text-heading font-bold text-foreground">جست‌وجو</h1>
@@ -100,7 +107,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
           {listings.page && listings.page.items.length > 0 ? (
             <p className="mt-4 text-ui text-muted-foreground">
-              {listings.page.items.length} آگهی پیدا شد
+              {formatResultCount(listings.page.items.length, listings.page.hasMore, listings.page.total)}
             </p>
           ) : null}
 
@@ -111,9 +118,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 query={query}
                 initialPage={listings.page}
                 emptyAction={
-                  <Button asChild variant="outline">
-                    <Link href="/search">پاک کردن فیلترها</Link>
-                  </Button>
+                  recovery.length > 0 ? (
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      {recovery.map((action, index) => (
+                        <Button
+                          key={action.href}
+                          asChild
+                          variant={index === recovery.length - 1 ? 'default' : 'outline'}
+                        >
+                          <Link href={action.href}>{action.label}</Link>
+                        </Button>
+                      ))}
+                    </div>
+                  ) : undefined
                 }
               />
             ) : (

@@ -354,12 +354,13 @@ node dist/scripts/generate-openapi.js # writes docs/openapi.json
 ### 6.1 Cursor pagination (public discovery)
 
 ```json
-{ "data": [ ], "meta": { "nextCursor": "eyJ...", "hasMore": true, "limit": 24 }, "requestId": "..." }
+{ "data": [ ], "meta": { "nextCursor": "eyJ...", "hasMore": true, "limit": 24, "total": 137 }, "requestId": "..." }
 ```
 
 - `nextCursor` is **opaque** base64url - treat as a black box; pass it back unchanged as `?cursor=`.
 - If `nextCursor` is `null` (and `hasMore=false`), there are no more pages.
 - `limit` 1-60, default 24.
+- `total` is the exact number of listings matching the query (ignores `cursor`/`limit`). Presence: discovery feeds provide it; non-discovery cursor feeds omit it.
 - Stable under inserts/edits (keyset, not offset).
 
 ### 6.2 Page pagination (admin queues)

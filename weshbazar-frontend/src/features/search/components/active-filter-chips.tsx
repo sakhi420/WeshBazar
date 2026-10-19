@@ -14,6 +14,7 @@ import { fetchCities, type Province } from '@/features/locations';
 import { formatCurrency, formatCondition, formatNumber } from '@/features/listings';
 import { parseFilterExpression, type FilterExpression } from '@/features/search';
 import { discoveryParamsParsers } from '@/features/search/parsers';
+import { recordSearchEvent } from '@/features/search/telemetry';
 import { queryKeys } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +29,18 @@ interface Chip {
   key: string;
   label: string;
   remove: () => void;
+}
+
+/**
+ * Reduce a chip key to its telemetry facet key: `condition-NEW` → `condition`,
+ * `filter-year:gte:2020` → `year`; everything else passes through unchanged.
+ */
+function cleanTelemKey(chipKey: string): string {
+  if (chipKey.startsWith('condition-')) return 'condition';
+  if (chipKey.startsWith('filter-')) {
+    return parseFilterExpression(chipKey.slice('filter-'.length))?.key ?? 'filter';
+  }
+  return chipKey;
 }
 
 function formatExpressionValue(
@@ -56,7 +69,7 @@ export function ActiveFilterChips({
   filterSchema,
   className,
 }: ActiveFilterChipsProps) {
-  const [params, setParams] = useQueryStates(discoveryParamsParsers, { history: 'push' });
+  const [params, setParams] = useQueryStates(discoveryParamsParsers, { history: 'push', shallow: false });
 
   const provinceSlug = params.province ?? '';
   const provinceObj = provinces.find((item) => item.slug === provinceSlug) ?? null;
@@ -157,7 +170,10 @@ export function ActiveFilterChips({
         <button
           key={chip.key}
           type="button"
-          onClick={chip.remove}
+          onClick={() => {
+            chip.remove();
+            void recordSearchEvent({ type: 'filter_removed', filterKey: cleanTelemKey(chip.key) });
+          }}
           aria-label={`حذف فیلتر ${chip.label}`}
           className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-surface px-3.5 text-ui text-foreground transition-colors duration-small hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background lg:min-h-9"
         >
@@ -167,17 +183,20 @@ export function ActiveFilterChips({
       ))}
       <button
         type="button"
-        onClick={() =>
+        onClick={() => {
           void setParams({
+            q: null,
             category: null,
             province: null,
             city: null,
             minPrice: null,
             maxPrice: null,
             condition: null,
+            sort: null,
             filter: null,
-          })
-        }
+          });
+          void recordSearchEvent({ type: 'filter_cleared' });
+        }}
         className="min-h-11 px-2 text-ui text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:min-h-9"
       >
         پاک کردن همه

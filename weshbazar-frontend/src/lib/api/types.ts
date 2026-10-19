@@ -39,6 +39,8 @@ export interface CursorMeta {
   nextCursor: string | null;
   hasMore: boolean;
   limit: number;
+  /** Exact match count (discovery feeds); absent on non-discovery cursors. */
+  total?: number;
 }
 
 /** Page pagination (admin queues) — frontend-api-contract.md §6.2. */
@@ -54,6 +56,8 @@ export interface CursorPage<T> {
   items: T[];
   nextCursor: string | null;
   hasMore: boolean;
+  /** Exact match count when the server provides one (discovery feeds). */
+  total?: number;
 }
 
 /** Normalized offset page consumed by the UI. */

@@ -46,6 +46,8 @@ import { ViewDedupeService } from '../../analytics/view-dedupe.service';
 import {
   SEARCH_PROVIDER,
   type AttributeCriterion,
+  type FacetCount,
+  type SearchCriteria,
   type SearchCursor,
   type SearchProvider,
   type SearchSort,
@@ -91,6 +93,12 @@ export interface ViewClient {
 type FeedRow = Prisma.ListingGetPayload<{ include: typeof LISTING_ROW_INCLUDE }>;
 type DetailRow = Prisma.ListingGetPayload<{ include: typeof DETAIL_ROW_INCLUDE }>;
 
+/** A discovery query resolved onto provider criteria (no ordering/pagination). */
+interface ResolvedCriteria {
+  categoryId: string | null;
+  criteria: Omit<SearchCriteria, 'sort' | 'cursor' | 'limit'>;
+}
+
 @Injectable()
 export class DiscoveryService {
   private readonly limits: AppConfig['listing'];
@@ -129,6 +137,42 @@ export class DiscoveryService {
     const sort = query.sort ?? 'newest';
     const cursor = this.decodeSearchCursor(query.cursor, sort);
 
+    const resolved = await this.resolveCriteria(query);
+    if (resolved === null) {
+      return emptyFeed(limit);
+    }
+
+    const page = await this.searchProvider.search({
+      ...resolved.criteria,
+      sort,
+      cursor,
+      limit,
+    });
+
+    const rows = page.ids.length === 0 ? [] : await this.loadFeedRows(page.ids);
+    const byId = new Map(rows.map((row) => [row.id, row]));
+    const items = page.ids
+      .map((id) => byId.get(id))
+      .filter((row): row is FeedRow => row !== undefined)
+      .map((row) => toPublicListingSummary(row, locale, this.mediaUrl));
+
+    return cursorPage(items, {
+      nextCursor:
+        page.hasMore && page.nextCursor !== null ? this.encodeSearchCursor(page.nextCursor) : null,
+      hasMore: page.hasMore,
+      limit,
+      total: page.total,
+    });
+  }
+
+  /**
+   * Resolve a discovery query onto provider criteria (everything except
+   * ordering/pagination). Returns null when a category/province/city slug is
+   * unknown (the caller maps that to its own empty result); throws for invalid
+   * input (minPrice > maxPrice, filter without category, city without province,
+   * or an attribute reference the category does not allow).
+   */
+  private async resolveCriteria(query: ListingDiscoveryQueryDto): Promise<ResolvedCriteria | null> {
     if (
       query.minPrice !== undefined &&
       query.maxPrice !== undefined &&
@@ -142,7 +186,7 @@ export class DiscoveryService {
     if (query.category !== undefined) {
       const resolved = await this.taxonomy.resolveVisibleSubtreeBySlug(query.category);
       if (resolved === null) {
-        return emptyFeed(limit);
+        return null;
       }
       categoryId = resolved.id;
       categoryIds = resolved.subtreeIds;
@@ -172,7 +216,7 @@ export class DiscoveryService {
     if (query.province !== undefined) {
       const province = await this.locations.resolveProvinceBySlug(query.province);
       if (province === null) {
-        return emptyFeed(limit);
+        return null;
       }
       provinceId = province.id;
     }
@@ -183,44 +227,68 @@ export class DiscoveryService {
       }
       const city = await this.locations.resolveCityBySlug(query.city, provinceId);
       if (city === null) {
-        return emptyFeed(limit);
+        return null;
       }
       cityId = city.id;
     }
 
-    const page = await this.searchProvider.search({
-      statuses: ['ACTIVE'],
-      sellerStatuses: ['ACTIVE'],
-      // §70/§164: expired ACTIVE listings must never reach the feed, even
-      // before the expiration job reconciles their status.
-      excludeExpiredActive: true,
-      categoryIds,
-      provinceId,
-      cityId,
-      minPrice: query.minPrice ?? null,
-      maxPrice: query.maxPrice ?? null,
-      conditions:
-        query.condition !== undefined && query.condition.length > 0 ? query.condition : null,
-      attributes,
-      terms: searchTerms(query.q),
-      sort,
-      cursor,
-      limit,
-    });
+    return {
+      categoryId,
+      criteria: {
+        statuses: ['ACTIVE'],
+        sellerStatuses: ['ACTIVE'],
+        excludeExpiredActive: true,
+        categoryIds,
+        provinceId,
+        cityId,
+        minPrice: query.minPrice ?? null,
+        maxPrice: query.maxPrice ?? null,
+        conditions:
+          query.condition !== undefined && query.condition.length > 0 ? query.condition : null,
+        attributes,
+        terms: searchTerms(query.q),
+      },
+    };
+  }
 
-    const rows = page.ids.length === 0 ? [] : await this.loadFeedRows(page.ids);
-    const byId = new Map(rows.map((row) => [row.id, row]));
-    const items = page.ids
-      .map((id) => byId.get(id))
-      .filter((row): row is FeedRow => row !== undefined)
-      .map((row) => toPublicListingSummary(row, locale, this.mediaUrl));
+  /**
+   * Facet counts for the filter panel (FILT-018): the static `condition` facet
+   * plus every SELECT/MULTI_SELECT attribute of the selected category, each
+   * counted with its own filter removed so users can see what selecting an
+   * option would leave. Capped at `maxFilters` attribute facets per request.
+   */
+  async facets(
+    clientIp: string,
+    query: ListingDiscoveryQueryDto,
+  ): Promise<Record<string, FacetCount[]>> {
+    this.rateLimitService.enforce('search:list:ip', clientIp, this.rateLimit.searchPerWindow);
 
-    return cursorPage(items, {
-      nextCursor:
-        page.hasMore && page.nextCursor !== null ? this.encodeSearchCursor(page.nextCursor) : null,
-      hasMore: page.hasMore,
-      limit,
-    });
+    const resolved = await this.resolveCriteria(query);
+    if (resolved === null) {
+      return {};
+    }
+
+    const result: Record<string, FacetCount[]> = {};
+    result.condition = await this.searchProvider.countConditionFacets(resolved.criteria);
+
+    if (resolved.categoryId !== null) {
+      const effective = await this.taxonomy.resolveEffectiveAttributes(resolved.categoryId);
+      const facetFields = effective.filter(
+        (attribute) =>
+          attribute.isActive &&
+          attribute.filterable &&
+          (attribute.type === 'SELECT' || attribute.type === 'MULTI_SELECT'),
+      );
+      for (const field of facetFields.slice(0, this.limits.maxFilters)) {
+        result[field.key] = await this.searchProvider.countAttributeFacets(
+          resolved.criteria,
+          field.key,
+          field.type === 'MULTI_SELECT' ? 'MULTI_SELECT' : 'SELECT',
+        );
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -444,7 +512,7 @@ function searchTerms(raw: string | undefined): string[] {
 }
 
 function emptyFeed(limit: number): CursorPaginated<PublicListingSummary> {
-  return cursorPage([], { nextCursor: null, hasMore: false, limit });
+  return cursorPage([], { nextCursor: null, hasMore: false, limit, total: 0 });
 }
 
 function invalidQuery(field: string, message: string): AppException {

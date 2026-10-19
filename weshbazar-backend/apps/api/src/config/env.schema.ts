@@ -102,6 +102,7 @@ export const envSchema = z
     MAX_CONTACT_PER_WINDOW: intEnv(30),
     MAX_IMAGE_UPLOAD_PER_WINDOW: intEnv(60),
     MAX_SEARCH_PER_WINDOW: intEnv(120),
+    MAX_SEARCH_EVENTS_PER_WINDOW: intEnv(500),
     MAX_LISTING_VIEWS_PER_WINDOW: intEnv(200),
 
     // Account lockout

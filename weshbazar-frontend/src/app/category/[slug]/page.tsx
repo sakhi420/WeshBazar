@@ -11,6 +11,7 @@ import { fetchListingsServer } from '@/features/listings';
 import type { PublicListingSummary } from '@/features/listings';
 import { fetchProvincesServer } from '@/features/locations';
 import { parseDiscoverySearchParams, toDiscoveryQuery, discoveryKey } from '@/features/search';
+import { buildZeroResultRecovery, formatResultCount } from '@/features/search/zero-result';
 import { ActiveFilterChips } from '@/features/search/components/active-filter-chips';
 import { DiscoveryResults } from '@/features/search/components/discovery-results';
 import {
@@ -25,14 +26,19 @@ interface CategoryPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
+  const raw = await searchParams;
+  const hasFacetParams = Object.keys(raw ?? {}).length > 0;
   try {
     const detail = await fetchCategoryDetailServer(slug);
     return {
       title: detail.name,
       description: detail.description ?? undefined,
       alternates: { canonical: `/category/${slug}` },
+      // Faceted category URLs are crawl-noise: keep the canonical clean and the
+      // facet variants out of the index (URL-003).
+      robots: hasFacetParams ? { index: false, follow: true } : undefined,
     };
   } catch {
     return { title: 'دسته‌بندی' };
@@ -85,6 +91,14 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     fetchProvincesServer().catch(() => []),
     fetchFilterSchemaServer(detail.id).catch(() => []),
   ]);
+
+  const recovery =
+    listings.page && listings.page.items.length === 0
+      ? buildZeroResultRecovery(query, {
+          basePath: `/category/${slug}`,
+          categoryOwnedByRoute: true,
+        })
+      : [];
 
   const breadcrumbItems = [
     { label: 'خانه', href: '/' },
@@ -149,7 +163,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
           {listings.page && listings.page.items.length > 0 ? (
             <p className="mt-4 text-ui text-muted-foreground">
-              {listings.page.items.length} آگهی پیدا شد
+              {formatResultCount(listings.page.items.length, listings.page.hasMore, listings.page.total)}
             </p>
           ) : null}
 
@@ -162,9 +176,19 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 emptyTitle="آگهی‌ای در این دسته پیدا نشد"
                 emptyDescription="فیلترها را تغییر دهید یا دستهٔ دیگری را ببینید."
                 emptyAction={
-                  <Button asChild variant="outline">
-                    <Link href={`/category/${slug}`}>پاک کردن فیلترها</Link>
-                  </Button>
+                  recovery.length > 0 ? (
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      {recovery.map((action, index) => (
+                        <Button
+                          key={action.href}
+                          asChild
+                          variant={index === recovery.length - 1 ? 'default' : 'outline'}
+                        >
+                          <Link href={action.href}>{action.label}</Link>
+                        </Button>
+                      ))}
+                    </div>
+                  ) : undefined
                 }
               />
             ) : (

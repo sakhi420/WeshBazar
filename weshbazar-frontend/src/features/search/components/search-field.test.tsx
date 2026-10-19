@@ -33,7 +33,7 @@ jest.mock('next/navigation', () => ({
 import { SearchField } from './search-field';
 
 function submit(query: string) {
-  if (query) fireEvent.change(screen.getByRole('searchbox'), { target: { value: query } });
+  if (query) fireEvent.change(screen.getByRole('combobox'), { target: { value: query } });
   fireEvent.submit(screen.getByRole('search'));
 }
 

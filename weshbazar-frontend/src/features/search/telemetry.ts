@@ -19,3 +19,33 @@ export function recordZeroResultSearch(payload: SearchZeroResultPayload): Promis
     .then(() => undefined)
     .catch(() => undefined);
 }
+
+/** Valid interaction event kinds (ANALYTICS-001/003/004/005). */
+export const SEARCH_EVENT_TYPES = [
+  'search_submitted',
+  'search_results_viewed',
+  'filter_applied',
+  'filter_removed',
+  'filter_cleared',
+  'sort_changed',
+  'listing_card_opened',
+] as const;
+export type SearchEventType = (typeof SEARCH_EVENT_TYPES)[number];
+
+export interface SearchEventPayload {
+  type: SearchEventType;
+  q?: string;
+  category?: string;
+  province?: string;
+  sort?: string;
+  filterKey?: string;
+  filterValue?: string;
+  count?: number;
+  listingId?: string;
+}
+
+export function recordSearchEvent(payload: SearchEventPayload): Promise<void> {
+  return post<{ recorded: boolean }>('/search/events', payload, { auth: false })
+    .then(() => undefined)
+    .catch(() => undefined);
+}

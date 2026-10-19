@@ -18,12 +18,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useQueryStates } from 'nuqs';
 import type { CategorySummary, FilterSchemaField } from '@/features/categories';
 import { fetchCities, type Province } from '@/features/locations';
-import { CONDITION_OPTIONS, countActiveFilters } from '@/features/search';
+import { CONDITION_OPTIONS, countActiveFilters, discoveryKey, toDiscoveryQuery } from '@/features/search';
 import { discoveryParamsParsers } from '@/features/search/parsers';
-import { formatCondition, formatNumber } from '@/features/listings';
+import { fetchListingFacets, formatCondition, formatNumber } from '@/features/listings';
 import { queryKeys, type ListingCondition } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { recordSearchEvent } from '../telemetry';
 import { AttributeFilters } from './attribute-filters';
 import { NumberInput, SelectInput } from './field-inputs';
 
@@ -37,12 +38,14 @@ export interface FilterPanelProps {
 }
 
 const CLEARED_FILTERS = {
+  q: null,
   category: null,
   province: null,
   city: null,
   minPrice: null,
   maxPrice: null,
   condition: null,
+  sort: null,
   filter: null,
 } as const;
 
@@ -65,7 +68,12 @@ interface FilterFieldsProps {
 }
 
 function FilterFields({ provinces, categories, filterSchema, idPrefix }: FilterFieldsProps) {
-  const [params, setParams] = useQueryStates(discoveryParamsParsers, { history: 'push' });
+  const [params, setParams] = useQueryStates(discoveryParamsParsers, {
+    history: 'push',
+    // Shallow must be off: filters drive the SSR discovery query, so the URL
+    // change has to re-render the Server Component and fetch fresh results.
+    shallow: false,
+  });
 
   const province = params.province ?? '';
   const city = params.city ?? '';
@@ -77,6 +85,23 @@ function FilterFields({ provinces, categories, filterSchema, idPrefix }: FilterF
     queryFn: () => fetchCities(provinceObj!.id),
     enabled: provinceObj !== null,
     staleTime: 60 * 60 * 1000,
+  });
+
+  const facetsQuery = toDiscoveryQuery({
+    q: params.q,
+    category: params.category,
+    province: params.province,
+    city: params.city,
+    minPrice: params.minPrice,
+    maxPrice: params.maxPrice,
+    condition: params.condition,
+    sort: params.sort,
+    filter: params.filter,
+  });
+  const { data: facetCounts } = useQuery({
+    queryKey: ['listings', 'facets', discoveryKey(facetsQuery)],
+    queryFn: () => fetchListingFacets(facetsQuery),
+    staleTime: 30_000,
   });
 
   const urlMin = params.minPrice ?? null;
@@ -108,6 +133,14 @@ function FilterFields({ provinces, categories, filterSchema, idPrefix }: FilterF
       : condition.filter((item) => item !== value);
     void setParams({ condition: next.length > 0 ? next : null });
   }
+
+  const priceMin = parsePriceInput(minPrice);
+  const priceMax = parsePriceInput(maxPrice);
+  const priceError =
+    priceMin !== null && priceMax !== null && priceMin > priceMax
+      ? 'حداقل قیمت نمی‌تواند از حداکثر بزرگ‌تر باشد.'
+      : null;
+  const priceErrorId = `${idPrefix}-price-error`;
 
   return (
     <div className="space-y-5">
@@ -166,6 +199,8 @@ function FilterFields({ provinces, categories, filterSchema, idPrefix }: FilterF
             onChange={setMinPrice}
             onCommit={(value) => commitPrice('minPrice', value)}
             placeholder="حداقل"
+            invalid={priceError !== null}
+            describedBy={priceError ? priceErrorId : undefined}
           />
           <NumberInput
             id={`${idPrefix}-max-price`}
@@ -174,43 +209,60 @@ function FilterFields({ provinces, categories, filterSchema, idPrefix }: FilterF
             onChange={setMaxPrice}
             onCommit={(value) => commitPrice('maxPrice', value)}
             placeholder="حداکثر"
+            invalid={priceError !== null}
+            describedBy={priceError ? priceErrorId : undefined}
           />
         </div>
+        {priceError ? (
+          <p id={priceErrorId} role="alert" className="text-caption text-danger">
+            {priceError}
+          </p>
+        ) : null}
       </div>
 
       <fieldset className="space-y-2">
         <legend className="text-ui font-medium text-foreground">وضعیت کالا</legend>
-        {CONDITION_OPTIONS.map((value) => (
-          <label
-            key={value}
-            className="flex min-h-11 cursor-pointer items-center gap-2.5 text-body text-foreground"
-          >
-            <input
-              type="checkbox"
-              checked={condition.includes(value)}
-              onChange={(event) => toggleCondition(value, event.target.checked)}
-              className="size-5 shrink-0 accent-primary"
-            />
-            {formatCondition(value)}
-          </label>
-        ))}
+        {CONDITION_OPTIONS.map((value) => {
+          const countEntry = facetCounts?.condition?.find((item) => item.value === value);
+          return (
+            <label
+              key={value}
+              className="flex min-h-11 cursor-pointer items-center gap-2.5 text-body text-foreground"
+            >
+              <input
+                type="checkbox"
+                checked={condition.includes(value)}
+                onChange={(event) => toggleCondition(value, event.target.checked)}
+                className="size-5 shrink-0 accent-primary"
+              />
+              {formatCondition(value)}
+              {countEntry ? (
+                <span className="text-caption text-muted-foreground">({countEntry.count})</span>
+              ) : null}
+            </label>
+          );
+        })}
       </fieldset>
 
       {filterSchema && filterSchema.length > 0 ? (
-        <AttributeFilters fields={filterSchema} idPrefix={idPrefix} />
+        <AttributeFilters fields={filterSchema} idPrefix={idPrefix} facetCounts={facetCounts} />
       ) : null}
     </div>
   );
 }
 
 function ClearFiltersButton({ className }: { className?: string }) {
-  const [, setParams] = useQueryStates(discoveryParamsParsers, { history: 'push' });
+  const [params, setParams] = useQueryStates(discoveryParamsParsers, { history: 'push', shallow: false });
   return (
     <Button
       type="button"
       variant="ghost"
       className={className}
-      onClick={() => void setParams(CLEARED_FILTERS)}
+      onClick={() => {
+        const hadFilters = countActiveFilters(params) > 0;
+        void setParams(CLEARED_FILTERS);
+        if (hadFilters) void recordSearchEvent({ type: 'filter_cleared' });
+      }}
     >
       پاک کردن همه
     </Button>

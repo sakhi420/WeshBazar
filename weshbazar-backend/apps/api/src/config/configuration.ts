@@ -72,6 +72,7 @@ export function configuration(): AppConfig {
       contactPerWindow: env.MAX_CONTACT_PER_WINDOW,
       imageUploadPerWindow: env.MAX_IMAGE_UPLOAD_PER_WINDOW,
       searchPerWindow: env.MAX_SEARCH_PER_WINDOW,
+      searchEventsPerWindow: env.MAX_SEARCH_EVENTS_PER_WINDOW,
       listingViewPerWindow: env.MAX_LISTING_VIEWS_PER_WINDOW,
     },
     storage: {

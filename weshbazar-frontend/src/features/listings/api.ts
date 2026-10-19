@@ -11,6 +11,7 @@ import type { CursorPage, Query } from '@/lib/api';
 import type {
   CreateListingPayload,
   DiscoveryQuery,
+  FacetCount,
   OwnerListing,
   OwnerListingStatus,
   OwnerListingSummary,
@@ -57,9 +58,22 @@ export function fetchListingsServer(
 /** Browser: one page of a discovery query (first page + `load more` cursor). */
 export function fetchListings(
   query: DiscoveryQuery = {},
+  signal?: AbortSignal,
 ): Promise<CursorPage<PublicListingSummary>> {
   return getCursorPage<PublicListingSummary>('/listings', {
     query: discoveryParams(query),
+    signal,
+  });
+}
+
+/** Browser: facet counts for the filter panel (`GET /listings/facets`). */
+export function fetchListingFacets(
+  query: DiscoveryQuery = {},
+  signal?: AbortSignal,
+): Promise<Record<string, FacetCount[]>> {
+  return get<Record<string, FacetCount[]>>('/listings/facets', {
+    query: discoveryParams(query),
+    signal,
   });
 }
 

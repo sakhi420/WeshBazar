@@ -78,10 +78,13 @@ export default async function HomePage() {
   return (
     <PageContainer className="space-y-8">
       {/* Search-first opening viewport (§16, §55). Enhanced with stronger gradient and visual hierarchy. */}
-      <section className="animate-fade-up relative overflow-hidden rounded-surface border border-primary/20 bg-gradient-to-br from-primary-soft/70 via-primary-soft/30 to-surface p-6 shadow-card sm:p-10">
-        {/* Decorative gradient orbs — enhanced visibility */}
-        <div aria-hidden className="pointer-events-none absolute -end-16 -top-16 size-56 rounded-full bg-accent/15 blur-3xl" />
-        <div aria-hidden className="pointer-events-none absolute -start-16 -bottom-16 size-48 rounded-full bg-primary/10 blur-3xl" />
+      <section className="animate-fade-up relative rounded-surface border border-primary/20 bg-gradient-to-br from-primary-soft/70 via-primary-soft/30 to-surface p-6 shadow-card sm:p-10">
+        {/* Decorative gradient orbs, clipped to the rounded card via an inner
+            layer so the search/location dropdowns can overflow unclipped. */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-surface">
+          <div className="absolute -end-16 -top-16 size-56 rounded-full bg-accent/15 blur-3xl" />
+          <div className="absolute -start-16 -bottom-16 size-48 rounded-full bg-primary/10 blur-3xl" />
+        </div>
         
         <h1 className="relative text-3xl font-extrabold leading-tight text-foreground sm:text-4xl lg:text-[2.5rem]">
           بازار خرید و فروش در افغانستان
@@ -91,8 +94,10 @@ export default async function HomePage() {
         </p>
 
         <Suspense fallback={null}>
-          <SearchField className="relative mt-6 w-full" redirectToSearch />
-          <LocationPicker className="relative mt-3 sm:absolute sm:end-8 sm:top-auto sm:mt-0" redirectToSearch />
+          <div className="relative mt-6 flex flex-col gap-3 md:flex-row md:items-center">
+            <SearchField className="min-w-0 flex-1" redirectToSearch />
+            <LocationPicker className="shrink-0" redirectToSearch />
+          </div>
         </Suspense>
       </section>
 

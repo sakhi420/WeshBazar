@@ -92,6 +92,9 @@ interface NumberInputProps {
   onCommit: (value: string) => void;
   min?: number;
   placeholder?: string;
+  /** Marks the control invalid and links it to the shared error message. */
+  invalid?: boolean;
+  describedBy?: string;
 }
 
 export function NumberInput({
@@ -102,6 +105,8 @@ export function NumberInput({
   onCommit,
   min = 0,
   placeholder,
+  invalid = false,
+  describedBy,
 }: NumberInputProps) {
   return (
     <FieldShell id={id} label={label}>
@@ -118,7 +123,9 @@ export function NumberInput({
           if (event.key === 'Enter') (event.target as HTMLInputElement).blur();
         }}
         placeholder={placeholder}
-        className={INPUT_CLASS}
+        aria-invalid={invalid || undefined}
+        aria-describedby={describedBy}
+        className={cn(INPUT_CLASS, invalid && 'border-danger focus-visible:ring-danger')}
       />
     </FieldShell>
   );

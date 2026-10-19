@@ -40,6 +40,8 @@ export async function generateMetadata({ params }: ListingPageProps): Promise<Me
       title: detail.title,
       description,
       alternates: { canonical: `/listing/${detail.slug}` },
+      // Sold listings should not draw search traffic as if they were buyable.
+      robots: detail.status === 'SOLD' ? { index: false, follow: true } : undefined,
       openGraph: {
         title: detail.title,
         description,
@@ -106,14 +108,23 @@ export default async function ListingPage({ params }: ListingPageProps) {
     name: detail.title,
     description: detail.description,
     url: absoluteUrl,
+    category: detail.category.name,
     ...(detail.images.length > 0 ? { image: detail.images.map((image) => image.url) } : {}),
     itemCondition,
     offers: {
       '@type': 'Offer',
       url: absoluteUrl,
-      availability: isSold ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
-      priceCurrency: detail.currency,
-      ...(detail.price != null ? { price: String(detail.price) } : {}),
+      seller: { '@type': 'Person', name: detail.seller.displayName },
+      itemCondition,
+      // Only assert availability when it is honestly known: a sold one-off is
+      // out of stock; an active one-off keeps no stock claim (SEO-007 — no
+      // fabricated live inventory).
+      ...(isSold ? { availability: 'https://schema.org/OutOfStock' } : {}),
+      // State a price/currency only for listings that are actually priced
+      // (PAID). FREE / CONTACT listings carry no price claim.
+      ...(detail.pricingType === 'PAID' && detail.price != null && detail.price > 0
+        ? { price: String(detail.price), priceCurrency: detail.currency }
+        : {}),
     },
   };
 

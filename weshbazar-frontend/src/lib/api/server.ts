@@ -143,5 +143,6 @@ export async function serverGetCursorPage<TItem>(
     items,
     nextCursor: envelope.meta?.nextCursor ?? null,
     hasMore: envelope.meta?.hasMore ?? false,
+    total: envelope.meta?.total,
   };
 }
