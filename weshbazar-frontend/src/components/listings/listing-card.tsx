@@ -1,9 +1,9 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { formatCondition, formatPrice, formatRelativeTime, pickImageVariant } from '@/features/listings';
 import type { PublicListingSummary } from '@/features/listings';
+import { ListingCardLink } from './listing-card-link';
 
 interface ListingCardProps {
   listing: PublicListingSummary;
@@ -29,13 +29,9 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
 
   return (
     <div className={cn('group relative h-full', className)}>
-      <Link
+      <ListingCardLink
         href={`/listing/${listing.slug}`}
-        onClick={() => {
-          void import('@/features/search/telemetry').then(({ recordSearchEvent }) =>
-            recordSearchEvent({ type: 'listing_card_opened', listingId: listing.slug }),
-          );
-        }}
+        listingId={listing.slug}
         className="flex h-full flex-col overflow-hidden rounded-card border border-border bg-surface shadow-soft transition-all duration-small hover:-translate-y-1 hover:border-primary/30 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         {/* Image Section — Enhanced with gradient overlay for no-image state */}
@@ -113,7 +109,7 @@ export function ListingCard({ listing, action, sold = false, className }: Listin
             ) : null}
           </p>
         </div>
-      </Link>
+      </ListingCardLink>
 
       {/* Action button (Favorite) — Floating at top corner */}
       {action ? <div className="absolute end-2 top-2 z-10">{action}</div> : null}

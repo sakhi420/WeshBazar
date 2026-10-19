@@ -52,7 +52,7 @@ describe('MobileBottomNav', () => {
     expect(screen.getByRole('link', { name: 'دسته‌ها' })).toHaveAttribute('href', '/categories');
     expect(screen.getByRole('link', { name: 'خانه' })).toHaveAttribute('href', '/');
     expect(screen.getByRole('link', { name: 'جستجو' })).toHaveAttribute('href', '/search');
-    expect(screen.getByRole('link', { name: 'نشان‌ها' })).toHaveAttribute('href', '/favorites');
+    expect(screen.getByRole('link', { name: 'علاقه‌مندی‌ها' })).toHaveAttribute('href', '/favorites');
   });
 
   it('account tab → /auth/login for a guest', () => {

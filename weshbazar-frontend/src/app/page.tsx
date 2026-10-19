@@ -45,9 +45,8 @@ async function loadCategories(): Promise<CategoriesResult> {
     if (!Array.isArray(categories) || categories.length === 0) return { status: 'empty' };
     return { status: 'ok', categories };
   } catch (error) {
-    // Offline/unreachable backend under SSR: degrade to an empty feed instead
-    // of letting the node thread hang. Real API failures stay honest.
-    if (error instanceof ApiError && error.isNetworkError) return { status: 'empty' };
+    // Any failure (network or API) is an error state — never masquerade a
+    // broken backend as "no categories yet" (audit F-02).
     return {
       status: 'error',
       requestId: error instanceof ApiError ? error.requestId : undefined,
@@ -61,9 +60,8 @@ async function loadLatestListings(): Promise<ListingsResult> {
     if (!page.items || page.items.length === 0) return { status: 'empty' };
     return { status: 'ok', listings: page.items };
   } catch (error) {
-    // Offline/unreachable backend under SSR: degrade to an empty feed instead
-    // of letting the node thread hang. Real API failures stay honest.
-    if (error instanceof ApiError && error.isNetworkError) return { status: 'empty' };
+    // Any failure (network or API) is an error state — never masquerade a
+    // broken backend as "no listings yet" (audit F-02).
     return {
       status: 'error',
       requestId: error instanceof ApiError ? error.requestId : undefined,

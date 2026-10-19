@@ -16,7 +16,6 @@ import {
   FilterPanelDesktop,
   MobileFilterSheet,
 } from '@/features/search/components/filter-panel';
-import { SearchField } from '@/features/search/components/search-field';
 import { SortControl } from '@/features/search/components/sort-control';
 import { ApiError, type CursorPage } from '@/lib/api';
 
@@ -76,9 +75,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <PageContainer>
       <h1 className="text-heading font-bold text-foreground">جست‌وجو</h1>
-      <Suspense fallback={null}>
-        <SearchField className="mt-4 max-w-2xl" />
-      </Suspense>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,17.5rem)_minmax(0,1fr)]">
         <Suspense fallback={null}>

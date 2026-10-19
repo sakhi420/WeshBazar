@@ -47,10 +47,10 @@ export async function generateMetadata({ params }: SellerPageProps): Promise<Met
 }
 
 /**
- * Seller profile contract (master prompt §24). The frozen v1.0.0 contract
- * exposes only GET /sellers/{slug} — no seller-listings read — so this page
- * renders the profile honestly and routes browsing to discovery instead of
- * fabricating a listing grid (AGENTS.md: never invent unsupported features).
+ * Seller profile + ACTIVE listings (master prompt §24). `GET /sellers/{slug}`
+ * returns the profile; `GET /sellers/{slug}/listings` returns the first page of
+ * the seller's live listings. The grid degrades to EmptyState on failure and is
+ * never fabricated (AGENTS.md: never invent unsupported features).
  */
 export default async function SellerPage({ params }: SellerPageProps) {
   const { slug } = await params;

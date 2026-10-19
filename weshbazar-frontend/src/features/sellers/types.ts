@@ -2,8 +2,8 @@
  * Sellers feature — view models (master prompt §24).
  * Mirror of PublicSellerProfileDto (docs/openapi.json). Do not invent fields.
  *
- * Contract note: the frozen v1.0.0 API exposes no seller-listings endpoint, so
- * the seller page renders profile data only — never a fabricated grid.
+ * Contract note: `GET /sellers/{slug}` returns the profile; the seller's live
+ * ACTIVE listings come from `GET /sellers/{slug}/listings` (cursor-paginated).
  */
 
 /** `PublicSellerProfileDto` — public seller profile. */

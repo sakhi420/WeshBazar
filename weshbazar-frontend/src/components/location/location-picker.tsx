@@ -26,7 +26,11 @@ export function LocationPicker({ className, redirectToSearch = false }: Location
   const [pickedProvince, setPickedProvince] = useState<Province | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { data: provinces = [] } = useQuery({
+  const {
+    data: provinces = [],
+    isError: provincesFailed,
+    refetch: refetchProvinces,
+  } = useQuery({
     queryKey: queryKeys.locations.provinces,
     queryFn: () => fetchProvinces(),
     staleTime: 60 * 60_000,
@@ -35,9 +39,15 @@ export function LocationPicker({ className, redirectToSearch = false }: Location
   const urlProvince = provinces.find((p) => p.slug === provinceParam) ?? null;
   const activeProvince = redirectToSearch ? pickedProvince : urlProvince;
 
-  const { data: cities = [] } = useQuery({
-    queryKey: queryKeys.locations.cities(activeProvince?.id ?? ''),
-    queryFn: () => fetchCities(activeProvince!.id),
+  const {
+    data: cities = [],
+    isError: citiesFailed,
+    refetch: refetchCities,
+  } = useQuery({
+    queryKey: queryKeys.locations.cities(activeProvince?.id ?? 'none'),
+    // Guard the enabled-gap race (audit F-04): resolve an empty list when there
+    // is no active province instead of dereferencing `activeProvince!`.
+    queryFn: () => (activeProvince ? fetchCities(activeProvince.id) : Promise.resolve([])),
     enabled: !!activeProvince,
     staleTime: 60 * 60_000,
   });
@@ -122,7 +132,18 @@ export function LocationPicker({ className, redirectToSearch = false }: Location
         <div className="absolute end-0 top-full z-drawer mt-1 min-w-56 overflow-hidden rounded-surface border border-border bg-surface shadow-lg">
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] divide-x divide-border">
             <ul className="max-h-64 overflow-y-auto py-1">
-              {provinces.map((p) => (
+              {provincesFailed ? (
+                <li className="px-4 py-6 text-center text-caption text-muted-foreground">
+                  بارگذاری ولایت‌ها ناموفق بود
+                  <button
+                    type="button"
+                    onClick={() => void refetchProvinces()}
+                    className="mt-2 block text-primary underline"
+                  >
+                    تلاش دوباره
+                  </button>
+                </li>
+              ) : provinces.map((p) => (
                 <li key={p.id}>
                   <button
                     type="button"
@@ -159,24 +180,37 @@ export function LocationPicker({ className, redirectToSearch = false }: Location
                 </button>
               </li>
               {activeProvince ? (
-                cities.map((c) => (
-                  <li key={c.id}>
+                citiesFailed ? (
+                  <li className="px-4 py-6 text-center text-caption text-muted-foreground">
+                    بارگذاری شهرها ناموفق بود
                     <button
                       type="button"
-                      role="option"
-                      aria-selected={c.slug === cityParam}
-                      onClick={() => selectCity(c)}
-                      className={cn(
-                        'w-full px-4 py-2.5 text-start text-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                        c.slug === cityParam
-                          ? 'bg-primary-soft font-medium text-primary'
-                          : 'text-foreground hover:bg-primary-soft/50',
-                      )}
+                      onClick={() => void refetchCities()}
+                      className="mt-2 block text-primary underline"
                     >
-                      <span className="block truncate">{c.name}</span>
+                      تلاش دوباره
                     </button>
                   </li>
-                ))
+                ) : (
+                  cities.map((c) => (
+                    <li key={c.id}>
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={c.slug === cityParam}
+                        onClick={() => selectCity(c)}
+                        className={cn(
+                          'w-full px-4 py-2.5 text-start text-ui focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                          c.slug === cityParam
+                            ? 'bg-primary-soft font-medium text-primary'
+                            : 'text-foreground hover:bg-primary-soft/50',
+                        )}
+                      >
+                        <span className="block truncate">{c.name}</span>
+                      </button>
+                    </li>
+                  ))
+                )
               ) : provinces.length > 0 ? (
                 <li className="px-4 py-6 text-center text-caption text-muted-foreground">
                   یک ولایت انتخاب کنید

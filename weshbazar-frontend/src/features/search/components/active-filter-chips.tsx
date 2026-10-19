@@ -74,8 +74,8 @@ export function ActiveFilterChips({
   const provinceSlug = params.province ?? '';
   const provinceObj = provinces.find((item) => item.slug === provinceSlug) ?? null;
   const { data: cities = [] } = useQuery({
-    queryKey: queryKeys.locations.cities(provinceObj?.id ?? ''),
-    queryFn: () => fetchCities(provinceObj!.id),
+    queryKey: queryKeys.locations.cities(provinceObj?.id ?? 'none'),
+    queryFn: () => (provinceObj ? fetchCities(provinceObj.id) : Promise.resolve([])),
     enabled: provinceObj !== null,
     staleTime: 60 * 60 * 1000,
   });

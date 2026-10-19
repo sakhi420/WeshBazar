@@ -10,7 +10,7 @@ const links = [
   { href: '/', label: 'خانه', icon: Home },
   { href: '/search', label: 'جستجو', icon: Search },
   { href: '/categories', label: 'دسته‌ها', icon: Grid3X3 },
-  { href: '/favorites', label: 'نشان‌ها', icon: Heart },
+  { href: '/favorites', label: 'علاقه‌مندی‌ها', icon: Heart },
 ] as const;
 
 /**
