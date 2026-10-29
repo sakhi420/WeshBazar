@@ -18,6 +18,7 @@ import { PrismaClient } from '../apps/api/src/generated/prisma/client';
 import { PROVINCES } from './seed/locations.data';
 import { CATEGORIES } from './seed/taxonomy.data';
 import type { CategorySeed } from './seed/types';
+import { seedExhibitionData } from './seed/exhibition/seed-exhibition';
 
 const LOCALES = ['en', 'fa', 'ps'] as const;
 const LISTING_EXPIRES_AFTER_DAYS = 30;
@@ -541,6 +542,10 @@ async function main(): Promise<void> {
 
     if (process.env.SEED_SAMPLE_DATA === 'true') {
       await seedSampleData(prisma);
+    }
+
+    if (process.env.SEED_EXHIBITION_DATA === 'true') {
+      await seedExhibitionData(prisma);
     }
 
     console.log('✔ Seed completed.');
