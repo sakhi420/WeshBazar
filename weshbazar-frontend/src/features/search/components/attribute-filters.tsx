@@ -12,7 +12,12 @@
 import { useEffect, useState } from 'react';
 import { useQueryStates } from 'nuqs';
 import type { FilterSchemaField } from '@/features/categories';
-import type { FacetCount } from '@/features/listings';
+import {
+  translateAttributeLabel,
+  translateAttributeUnit,
+  translateAttributeValue,
+  type FacetCount,
+} from '@/features/listings';
 import {
   MAX_FILTER_EXPRESSIONS,
   parseFilterExpression,
@@ -94,7 +99,15 @@ function useFieldExpressions(fieldKey: string) {
 }
 
 function fieldLabel(field: FilterSchemaField): string {
-  return field.unit ? `${field.label} (${field.unit})` : field.label;
+  const label = translateAttributeLabel(field.field, field.label);
+  const unit = translateAttributeUnit(field.unit);
+  return unit ? `${label} (${unit})` : label;
+}
+
+/** Selectable option display text — stored slug translated, raw label as fallback. */
+function optionText(option: { value: string; label: string }, type: string): string {
+  const translated = translateAttributeValue(option.value, type);
+  return translated === option.value ? option.label : translated;
 }
 
 /** Resolve a single option's match count from the facet payload (null if absent). */
@@ -194,9 +207,10 @@ function SelectFilter({
       <option value="">همه</option>
       {field.options.map((option) => {
         const count = facetCountFor(counts, field.field, option.value);
+        const text = optionText(option, field.type);
         return (
           <option key={option.value} value={option.value}>
-            {count === null ? option.label : `${option.label} (${count})`}
+            {count === null ? text : `${text} (${count})`}
           </option>
         );
       })}
@@ -254,7 +268,7 @@ function MultiSelectFilter({
                 onChange={(event) => toggle(option.value, event.target.checked)}
                 className="size-5 shrink-0 accent-primary"
               />
-              {option.label}
+              {optionText(option, field.type)}
               {count !== null ? (
                 <span className="text-caption text-muted-foreground">({count})</span>
               ) : null}

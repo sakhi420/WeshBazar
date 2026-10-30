@@ -343,3 +343,22 @@ export function translateAttributeValue(value: string, type: string | null): str
   if (type !== 'SELECT' && type !== 'MULTI_SELECT') return value;
   return VALUE_TRANSLATIONS[raw] ?? VALUE_TRANSLATIONS[lower] ?? value;
 }
+
+/** Attribute unit abbreviation → Dari label (known seed units only). */
+const UNIT_TRANSLATIONS: Record<string, string> = {
+  km: 'کیلومتر',
+  cc: 'سی‌سی',
+  'm²': 'متر مربع',
+  inch: 'اینچ',
+  years: 'سال',
+  months: 'ماه',
+  gb: 'گیگابایت',
+};
+
+/** Localize an attribute unit for the registration form hint; unknown units pass through. */
+export function translateAttributeUnit(unit: string | null): string {
+  if (!unit) return '';
+  const raw = unit.trim();
+  if (raw === '') return '';
+  return UNIT_TRANSLATIONS[raw] ?? UNIT_TRANSLATIONS[raw.toLowerCase()] ?? unit;
+}

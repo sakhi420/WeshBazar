@@ -11,7 +11,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useQueryStates } from 'nuqs';
 import type { CategorySummary, FilterSchemaField } from '@/features/categories';
 import { fetchCities, type Province } from '@/features/locations';
-import { formatCurrency, formatCondition, formatNumber } from '@/features/listings';
+import {
+  formatCondition,
+  formatCurrency,
+  formatNumber,
+  translateAttributeLabel,
+  translateAttributeValue,
+} from '@/features/listings';
 import { parseFilterExpression, type FilterExpression } from '@/features/search';
 import { discoveryParamsParsers } from '@/features/search/parsers';
 import { recordSearchEvent } from '@/features/search/telemetry';
@@ -50,7 +56,12 @@ function formatExpressionValue(
   let display = expression.value;
   const options = field?.options ?? [];
   if (options.length > 0) {
-    const map = new Map(options.map((option) => [option.value, option.label]));
+    const map = new Map(
+      options.map((option) => {
+        const translated = translateAttributeValue(option.value, field?.type ?? null);
+        return [option.value, translated === option.value ? option.label : translated];
+      }),
+    );
     display = expression.value
       .split(',')
       .map((part) => map.get(part) ?? part)
@@ -148,9 +159,12 @@ export function ActiveFilterChips({
     const expression = parseFilterExpression(raw);
     if (!expression) continue;
     const field = filterSchema?.find((item) => item.field === expression.key);
+    const fieldLabelText = field
+      ? translateAttributeLabel(field.field, field.label)
+      : expression.key;
     chips.push({
       key: `filter-${raw}`,
-      label: `${field?.label ?? expression.key}: ${formatExpressionValue(expression, field)}`,
+      label: `${fieldLabelText}: ${formatExpressionValue(expression, field)}`,
       remove: () => {
         const next = rawFilters.filter((item) => item !== raw);
         void setParams({ filter: next.length > 0 ? next : null });

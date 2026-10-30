@@ -38,7 +38,11 @@ export function PasswordField({
   const [visible, setVisible] = useState(false);
 
   return (
-    <div className="relative">
+    // The wrapper is LTR to match the forced-LTR password entry below: this
+    // makes the logical `end-0` (inset-inline-end) and the input's `pe-11`
+    // (padding-inline-end) both resolve to the physical *right* side, so the
+    // eye toggle sits where the text reserves space instead of the RTL left.
+    <div className="relative" dir="ltr">
       <input
         id={id}
         type={visible ? 'text' : 'password'}

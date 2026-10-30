@@ -13,9 +13,14 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { FormField, INPUT_CLASS, fieldMessageId } from '@/features/auth/components';
-import { formatNumber } from '@/features/listings';
+import {
+  formatNumber,
+  translateAttributeLabel,
+  translateAttributeUnit,
+  translateAttributeValue,
+} from '@/features/listings';
 import type { AttributeValue } from '@/features/listings';
-import type { FilterSchemaField } from '@/features/categories';
+import type { FilterSchemaField, FilterSchemaOption } from '@/features/categories';
 
 interface AttributeFieldProps {
   field: FilterSchemaField;
@@ -26,13 +31,14 @@ interface AttributeFieldProps {
 
 export function AttributeField({ field, value, error, onChange }: AttributeFieldProps) {
   const id = `attr-${field.field}`;
+  const label = translateAttributeLabel(field.field, field.label);
   const hint = buildHint(field);
   const describedBy = fieldMessageId(id, error, hint);
 
   switch (field.type) {
     case 'LONG_TEXT':
       return (
-        <FormField id={id} label={field.label} hint={hint} error={error}>
+        <FormField id={id} label={label} hint={hint} error={error}>
           <textarea
             id={id}
             rows={4}
@@ -49,7 +55,7 @@ export function AttributeField({ field, value, error, onChange }: AttributeField
     case 'YEAR':
     case 'DECIMAL':
       return (
-        <FormField id={id} label={field.label} hint={hint} error={error}>
+        <FormField id={id} label={label} hint={hint} error={error}>
           <input
             id={id}
             type="text"
@@ -66,7 +72,7 @@ export function AttributeField({ field, value, error, onChange }: AttributeField
       );
     case 'DATE':
       return (
-        <FormField id={id} label={field.label} hint={hint} error={error}>
+        <FormField id={id} label={label} hint={hint} error={error}>
           <input
             id={id}
             type="date"
@@ -81,7 +87,7 @@ export function AttributeField({ field, value, error, onChange }: AttributeField
       );
     case 'BOOLEAN':
       return (
-        <GroupField id={id} label={field.label} hint={hint} error={error}>
+        <GroupField id={id} label={label} hint={hint} error={error}>
           <ChoiceButton
             active={value === true}
             onClick={() => onChange(value === true ? undefined : true)}
@@ -98,7 +104,7 @@ export function AttributeField({ field, value, error, onChange }: AttributeField
       );
     case 'SELECT':
       return (
-        <FormField id={id} label={field.label} hint={hint} error={error}>
+        <FormField id={id} label={label} hint={hint} error={error}>
           <select
             id={id}
             value={asText(value)}
@@ -110,7 +116,7 @@ export function AttributeField({ field, value, error, onChange }: AttributeField
             <option value="">انتخاب کنید…</option>
             {field.options.map((option) => (
               <option key={option.value} value={option.value}>
-                {option.label}
+                {localizeOption(option, field.type)}
               </option>
             ))}
           </select>
@@ -119,14 +125,14 @@ export function AttributeField({ field, value, error, onChange }: AttributeField
     case 'MULTI_SELECT': {
       const selected = Array.isArray(value) ? value : [];
       return (
-        <GroupField id={id} label={field.label} hint={hint} error={error}>
+        <GroupField id={id} label={label} hint={hint} error={error}>
           {field.options.map((option) => (
             <ChoiceButton
               key={option.value}
               active={selected.includes(option.value)}
               onClick={() => onChange(toggleOption(selected, option.value))}
             >
-              {option.label}
+              {localizeOption(option, field.type)}
             </ChoiceButton>
           ))}
         </GroupField>
@@ -136,7 +142,7 @@ export function AttributeField({ field, value, error, onChange }: AttributeField
       // Unknown schema types degrade to plain text so nothing is silently
       // hidden; the server engine remains the source of truth.
       return (
-        <FormField id={id} label={field.label} hint={hint} error={error}>
+        <FormField id={id} label={label} hint={hint} error={error}>
           <input
             id={id}
             type="text"
@@ -158,6 +164,12 @@ function asText(value: AttributeValue | undefined): string {
   return '';
 }
 
+/** Option display text — the stored slug translated, falling back to its raw label. */
+function localizeOption(option: FilterSchemaOption, type: string): string {
+  const translated = translateAttributeValue(option.value, type);
+  return translated === option.value ? option.label : translated;
+}
+
 function emptyToUndefined(raw: string): AttributeValue | undefined {
   return raw.trim().length === 0 ? undefined : raw;
 }
@@ -173,7 +185,10 @@ function toggleOption(selected: string[], option: string): AttributeValue | unde
 function buildHint(field: FilterSchemaField): string | undefined {
   const parts: string[] = [];
   if (field.required) parts.push('الزامی');
-  if (field.unit !== null) parts.push(`واحد: ${field.unit}`);
+  if (field.unit) {
+    const unit = translateAttributeUnit(field.unit);
+    if (unit) parts.push(`واحد: ${unit}`);
+  }
   if (field.min !== null || field.max !== null) {
     const min = field.min !== null ? formatNumber(field.min) : '—';
     const max = field.max !== null ? formatNumber(field.max) : '—';

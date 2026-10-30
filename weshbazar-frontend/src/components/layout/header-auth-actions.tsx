@@ -44,8 +44,8 @@ export function HeaderAuthActions() {
       <Button asChild variant="ghost" size="sm">
         <Link href="/auth/login">ورود</Link>
       </Button>
-      <Button asChild variant="default" size="sm">
-        <Link href="/auth/register">ثبت‌نام</Link>
+      <Button asChild variant="default" size="sm" >
+        <Link href="/auth/register" className='text-white'>ثبت‌نام</Link>
       </Button>
     </div>
   );
