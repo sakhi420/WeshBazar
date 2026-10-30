@@ -14,9 +14,8 @@ apps/api/src/generated/
 .env.local
 .env.*.local
 
-# Local storage for uploaded media (development only)
+# Local storage for uploaded media (development only); runtime data lives under var/.
 var/
-storage/
 
 # Logs
 *.log

@@ -171,7 +171,7 @@ export function ListingManageCard({
               <p className="w-full text-ui text-foreground sm:w-auto">
                 {confirming === 'mark-sold'
                   ? 'آگهی «فروخته شد» علامت بخورد؟ این کار قابل برگشت نیست.'
-                  : 'آگهی بایگانی شود؟ بعداً می‌توانید بازنشرش کنید.'}
+                  : 'آگهی بایگانی شود؟ تصاویر آن پس از پایان مهلت نگهداری حذف می‌شوند و برای انتشار دوباره باید دوباره بارگذاری شوند.'}
               </p>
               <Button
                 size="sm"

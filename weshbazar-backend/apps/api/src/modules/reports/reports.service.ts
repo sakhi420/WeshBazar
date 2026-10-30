@@ -52,33 +52,39 @@ export class ReportsService {
       throw new AppException('PHONE_NOT_VERIFIED');
     }
 
-    const listing = await this.prisma.listing.findUnique({
-      where: { id: listingId },
-      select: {
-        id: true,
-        status: true,
-        deletedAt: true,
-        sellerAccount: { select: { status: true, ownerUserId: true } },
-      },
-    });
-    if (!listing || listing.deletedAt !== null) {
-      throw new AppException('LISTING_NOT_FOUND');
-    }
-    // Reviewing your own content is moderation's job, not a report.
-    if (listing.sellerAccount.ownerUserId === userId) {
-      throw new AppException('CANNOT_REPORT_OWN_LISTING');
-    }
-    // Only states the reporter could see publicly are reportable (§110);
-    // moderation state never leaks through this endpoint.
-    if (
-      listing.sellerAccount.status !== 'ACTIVE' ||
-      (listing.status !== 'ACTIVE' && listing.status !== 'SOLD')
-    ) {
-      throw new AppException('LISTING_NOT_FOUND');
-    }
-
     const description = dto.description?.trim();
+
+    // The reportability check and the insert share ONE transaction: we lock the
+    // Listing row first so a concurrent archive + image cleanup (§5.16) can no
+    // longer sneak a report in behind a stale pre-archive status read.
     const report = await this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM "Listing" WHERE id = ${listingId}::uuid FOR UPDATE`;
+
+      const listing = await tx.listing.findUnique({
+        where: { id: listingId },
+        select: {
+          id: true,
+          status: true,
+          deletedAt: true,
+          sellerAccount: { select: { status: true, ownerUserId: true } },
+        },
+      });
+      if (!listing || listing.deletedAt !== null) {
+        throw new AppException('LISTING_NOT_FOUND');
+      }
+      // Reviewing your own content is moderation's job, not a report.
+      if (listing.sellerAccount.ownerUserId === userId) {
+        throw new AppException('CANNOT_REPORT_OWN_LISTING');
+      }
+      // Only states the reporter could see publicly are reportable (§110);
+      // moderation state never leaks through this endpoint.
+      if (
+        listing.sellerAccount.status !== 'ACTIVE' ||
+        (listing.status !== 'ACTIVE' && listing.status !== 'SOLD')
+      ) {
+        throw new AppException('LISTING_NOT_FOUND');
+      }
+
       try {
         const created = await tx.report.create({
           data: {
