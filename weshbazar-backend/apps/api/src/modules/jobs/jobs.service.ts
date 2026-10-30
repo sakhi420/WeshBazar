@@ -63,6 +63,7 @@ const JOB_NAMES = {
   cleanChallenges: 'jobs.clean-challenges',
   cleanSessions: 'jobs.clean-sessions',
   cleanOrphanMedia: 'jobs.clean-orphan-media',
+  cleanArchivedListingImages: 'jobs.clean-archived-listing-images',
 } as const;
 
 @Injectable()
@@ -118,6 +119,13 @@ export class JobsService implements OnModuleInit, OnModuleDestroy {
       this.jobsConfig.cleanOrphanMediaIntervalSeconds,
       () => this.cleanOrphanMedia(),
     );
+    if (this.jobsConfig.cleanArchivedListingImagesEnabled) {
+      this.registerInterval(
+        JOB_NAMES.cleanArchivedListingImages,
+        this.jobsConfig.cleanArchivedListingImagesIntervalSeconds,
+        () => this.cleanArchivedListingImages(),
+      );
+    }
     this.logger.log(
       {
         jobs: this.registeredIntervals.join(', '),
@@ -280,6 +288,192 @@ export class JobsService implements OnModuleInit, OnModuleDestroy {
     const rows = await this.sweepDeletedImageRows(cutoff);
     const reconciled = await this.removeUnreferencedObjects(cutoff);
     return { scanned: rows.scanned, deleted: rows.deleted, reconciled };
+  }
+
+  /**
+   * Safe cleanup of archived listings' images (master prompt §5, §8, §9).
+   *
+   * Opt-in and dry-run by default: the interval only registers when
+   * `cleanArchivedListingImagesEnabled` is true, and this method refuses to
+   * mutate while that flag is false — so direct calls are as safe as timers.
+   */
+  async cleanArchivedListingImages(now: Date = new Date()): Promise<JobLogFields> {
+    const startedAt = Date.now();
+    const counts: JobLogFields = {
+      scannedListings: 0,
+      eligibleListings: 0,
+      claimedListings: 0,
+      claimedImages: 0,
+      purgedListings: 0,
+      purgedImages: 0,
+      skippedGuard: 0,
+      skippedReport: 0,
+      skippedModeration: 0,
+      storageFailed: 0,
+      dbFailed: 0,
+      needsReconciliation: 0,
+    };
+
+    if (!this.jobsConfig.cleanArchivedListingImagesEnabled) {
+      counts.durationMs = Date.now() - startedAt;
+      return counts;
+    }
+
+    const cutoff = this.daysAgo(now, this.jobsConfig.archivedImageRetentionDays);
+    const candidates = await this.prisma.listing.findMany({
+      where: {
+        status: 'ARCHIVED',
+        archivedAt: { lte: cutoff },
+        deletedAt: null,
+        images: { some: { deletedAt: null } },
+      },
+      orderBy: [{ archivedAt: 'asc' }, { id: 'asc' }],
+      take: this.jobsConfig.batchSize,
+      select: { id: true },
+    });
+    counts.scannedListings = candidates.length;
+
+    for (const candidate of candidates) {
+      try {
+        if (this.jobsConfig.cleanArchivedListingImagesDryRun) {
+          await this.inspectForDryRun(candidate.id, cutoff, counts);
+        } else {
+          await this.claimArchivedListing(candidate.id, cutoff, now, counts);
+        }
+      } catch (error) {
+        counts.dbFailed += 1;
+        this.logger.warn(
+          { listingId: candidate.id, err: error },
+          'Archived image cleanup: listing skipped due to error',
+        );
+      }
+    }
+
+    counts.durationMs = Date.now() - startedAt;
+    return counts;
+  }
+
+  /** Read-only candidate inspection: classifies the reason without mutating (§8). */
+  private async inspectForDryRun(
+    listingId: string,
+    cutoff: Date,
+    counts: JobLogFields,
+  ): Promise<void> {
+    const [listing, reportCount, moderationCount, liveImageCount] = await Promise.all([
+      this.prisma.listing.findUnique({
+        where: { id: listingId },
+        select: { status: true, archivedAt: true, deletedAt: true },
+      }),
+      this.prisma.report.count({ where: { listingId } }),
+      this.prisma.moderationAction.count({ where: { listingId } }),
+      this.prisma.listingImage.count({ where: { listingId, deletedAt: null } }),
+    ]);
+    if (reportCount > 0) {
+      counts.skippedReport += 1;
+      return;
+    }
+    if (moderationCount > 0) {
+      counts.skippedModeration += 1;
+      return;
+    }
+    if (
+      listing === null ||
+      listing.deletedAt !== null ||
+      listing.status !== 'ARCHIVED' ||
+      listing.archivedAt === null ||
+      listing.archivedAt > cutoff ||
+      liveImageCount === 0
+    ) {
+      counts.skippedGuard += 1;
+      return;
+    }
+    counts.eligibleListings += 1;
+  }
+
+  /**
+   * Atomic claim for one listing: lock, re-check every guard, soft-delete every
+   * live image row, commit; then delete the binaries per-key (best effort).
+   */
+  private async claimArchivedListing(
+    listingId: string,
+    cutoff: Date,
+    now: Date,
+    counts: JobLogFields,
+  ): Promise<void> {
+    let keys: string[] = [];
+    await this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM "Listing" WHERE id = ${listingId}::uuid FOR UPDATE`;
+
+      const listing = await tx.listing.findUnique({
+        where: { id: listingId },
+        select: { status: true, archivedAt: true, deletedAt: true },
+      });
+      if (
+        listing === null ||
+        listing.deletedAt !== null ||
+        listing.status !== 'ARCHIVED' ||
+        listing.archivedAt === null ||
+        listing.archivedAt > cutoff
+      ) {
+        counts.skippedGuard += 1;
+        return;
+      }
+
+      const reportCount = await tx.report.count({ where: { listingId } });
+      if (reportCount > 0) {
+        counts.skippedReport += 1;
+        return;
+      }
+      const moderationCount = await tx.moderationAction.count({ where: { listingId } });
+      if (moderationCount > 0) {
+        counts.skippedModeration += 1;
+        return;
+      }
+
+      const images = await tx.listingImage.findMany({
+        where: { listingId, deletedAt: null },
+        select: { storageKey: true, variants: true },
+      });
+      if (images.length === 0) {
+        counts.skippedGuard += 1;
+        return;
+      }
+
+      const claimed = await tx.listingImage.updateMany({
+        where: { listingId, deletedAt: null },
+        data: { deletedAt: now },
+      });
+
+      keys = images.flatMap((image) => [image.storageKey, ...readVariantKeys(image.variants)]);
+      counts.claimedListings += 1;
+      counts.claimedImages += claimed.count;
+    });
+
+    if (keys.length === 0) {
+      return;
+    }
+
+    let deletedFiles = 0;
+    let failed = false;
+    for (const key of keys) {
+      try {
+        await this.storage.delete(key);
+        deletedFiles += 1;
+      } catch (error) {
+        failed = true;
+        counts.storageFailed += 1;
+        this.logger.warn(
+          { key, err: error },
+          'Archived image cleanup: storage deletion failed; left to clean-orphan-media',
+        );
+      }
+    }
+    counts.purgedImages += deletedFiles;
+    if (failed) {
+      counts.needsReconciliation += 1;
+    } else {
+      counts.purgedListings += 1;
+    }
   }
 
   // --- Internals -------------------------------------------------------------------

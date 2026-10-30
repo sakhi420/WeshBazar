@@ -108,6 +108,11 @@ export interface AppConfig {
     cleanChallengesIntervalSeconds: number;
     cleanSessionsIntervalSeconds: number;
     cleanOrphanMediaIntervalSeconds: number;
+    cleanArchivedListingImagesEnabled: boolean;
+    cleanArchivedListingImagesDryRun: boolean;
+    cleanArchivedListingImagesIntervalSeconds: number;
+    /** TTL after `archivedAt` before archived-listing images may be claimed. */
+    archivedImageRetentionDays: number;
     /** Extra grace on top of `expiresAt` before challenges are deleted (§69). */
     challengeRetentionDays: number;
     /** Extra grace on top of `expiresAt` before refresh sessions are deleted. */

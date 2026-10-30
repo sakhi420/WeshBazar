@@ -141,6 +141,11 @@ export const envSchema = z
     JOBS_CLEAN_ORPHAN_MEDIA_INTERVAL_SECONDS: intEnv(21_600).pipe(z.number().min(5)),
     JOBS_CHALLENGE_RETENTION_DAYS: intEnv(1).pipe(z.number().min(0)),
     JOBS_REFRESH_SESSION_RETENTION_DAYS: intEnv(30).pipe(z.number().min(0)),
+    // Archived-listing image retention (opt-in + dry-run by default, §5.17.2)
+    ARCHIVED_IMAGE_RETENTION_DAYS: intEnv(30).pipe(z.number().min(1)),
+    JOBS_CLEAN_ARCHIVED_LISTING_IMAGES_ENABLED: boolEnv('false'),
+    JOBS_CLEAN_ARCHIVED_LISTING_IMAGES_DRY_RUN: boolEnv('true'),
+    JOBS_CLEAN_ARCHIVED_LISTING_IMAGES_INTERVAL_SECONDS: intEnv(21_600).pipe(z.number().min(5)),
 
     // Providers
     SMS_PROVIDER: z.string().min(1).default('mock'),

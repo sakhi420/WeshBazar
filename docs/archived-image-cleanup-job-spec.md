@@ -384,7 +384,7 @@ Integration با Postgres واقعی + دو connection مستقل:
 - گام ۳ (روشن تدریجی): `ENABLED=true` با batch کوچک و مانیتور `claimed/purged/storage_failed`.
 - در همهٔ حالت‌ها، hard-delete نهایی ردیف با مهلت ۷ روزهٔ `clean-orphan-media` انجام می‌شود.
 
-### 5.17.4 ماتریس آزمون الزامی (مرحلهٔ D — طراحی، هنوز اجرا نشده)
+### 5.17.4 ماتریس آزمون الزامی (مرحلهٔ D — طراحی و اجرا شده)
 
 دو اتصال مستقل PostgreSQL + storage آزمایشی (تزریق `now`/barrier برای ترتیب):
 
@@ -396,7 +396,28 @@ Integration با Postgres واقعی + دو connection مستقل:
 6. اجرای تکراری و دو worker هم‌زمان → idempotent / یک برنده.
 7. بررسی نهایی هم‌زمان `Listing.status` / `Report.status` / `ListingImage.deletedAt` + وجود واقعی فایل‌ها در storage.
 
-**وضعیت:** همه «طراحی‌شده»؛ هیچ نتیجهٔ واقعی ادعا نمی‌شود (job و اصلاح گزارش هنوز پیاده‌سازی نشده‌اند).
+**وضعیت:** هر ۷ سناریو پیاده‌سازی و در فازهای ۲–۴ با پایگاه PostgreSQL آزمایشی و storage موقت اجرا شدند؛ نتایج واقعی در §5.19 ثبت است.
 
 ### جمع‌بندی (v6)
 این job فقط چرخهٔ عمر فایل تصویری آگهی بایگانی‌شده را مدیریت می‌کند. اصلاح کلیدی v2: **«ادعای اتمی» (soft-delete در تراکنش قفل‌شده با `SELECT ... FOR UPDATE`) پیش از حذف باینری**، که race با `renew`/`restore` را می‌بندد؛ حذف باینری best-effort و reconcile‌شونده توسط `clean-orphan-media` است. **بدون تغییر schema/migration برای رویکرد اصلی** (فقط دو env جدید + job جدید + ایندکس اختیاری). هیچ آگهی‌ای حذف نمی‌شود؛ شواهد متنی/نظارتی حفظ ولی **باینری تصویر** از بین می‌رود (تصمیم Q8). این سند مجوز اجرای عملیات destructive نیست.
+## 5.18 وضعیت اجرا (v7 — پیاده‌سازی انجام شد؛ حالت مخرب فعال نیست)
+
+- **محیط کار:** worktree مستقل `feature/archived-image-retention` از commit `ea1ff5e`.
+- **انجام‌شده:** اصلاح اتمیک `reports.submit` (قفل `FOR UPDATE` + بازخوانی + درج در یک تراکنش)؛ job جدید `clean-archived-listing-images` (batch صرفاً‌خواندنی + ادعای اتمی per-listing + حذف per-key پس از commit + واگذاری retry به `clean-orphan-media`)؛ ۴ متغیر env جدید با پیش‌فرض `ENABLED=false`/`DRY_RUN=true`؛ متن UI بازنشر اصلاح شد.
+- **اعتبارسنجی:** `typecheck` = ۰ خطا؛ `build` موفق؛ `lint` = ۹ خطای از پیش موجود (هیچ‌کدام در فایل‌های این تغییر نیستند).
+- **نقص پیشین کشف‌شده (blocker برای build تمیز):** دایرکتوری `apps/api/src/providers/storage` توسط الگوی `storage/` در `.gitignore` نادیده گرفته شده و در commit نیست؛ checkout تمیزِ `ea1ff5e` این ماژول را ندارد. اصلاح واقعی نیازمند commit این فایل‌هاست (خارج از این وظیفهٔ بدون‌commit).
+- **تست‌ها:** در فازهای ۲–۴ اجرا و سبز شدند؛ جزئیات و تمایز «اجرا‌شده در فاز قبل» در برابر «بازبینی نهایی» در §5.19 آمده است.
+- **هیچ** job، داده یا فایل واقعی پاک/اجرا نشد؛ migration ایجاد/اجرا نشد؛ API/OpenAPI تغییری نکرد.
+
+## 5.19 نتایج آزمون و بازبینی نهایی (v8)
+
+نتایج واقعی — اجرا‌شده در فازهای ۲–۴ با پایگاه PostgreSQL آزمایشی `weshbazar_test` و storage موقت (هیچ job تولیدی یا عملیات مخرب اجرا نشد):
+
+- Backend integration: **۳۰/۳۰ سبز** (۶ suite؛ شامل ۵ suite مرتبط با این job به‌علاوهٔ `database.integration-spec.ts` پیش‌موجود).
+- Storage provider unit: **۱۹/۱۹ سبز** (`local-storage.provider.spec.ts`).
+- Frontend UI: **۷/۷ سبز** (`listing-manage-card.test.tsx`).
+- API `typecheck` / `build`: exit 0.
+- Frontend `typecheck` / `lint` / `build`: exit 0.
+- API `lint`: exit 1 با ۹ خطای از پیش موجود که در بازبینی نهایی مستقیماً در برابر commit پایهٔ `ea1ff5e` تأیید شد (بدون هیچ خطای جدید).
+
+تمایز شفاف: اعداد بالا در فازهای قبل (۲–۴) اجرا شدند؛ بازبینیِ نهایی (Code Review) فقط `lint` و بازرسی read-only را مستقیماً دوباره اجرا کرد و **کل مجموعهٔ آزمون‌ها دوباره اجرا نشد**.

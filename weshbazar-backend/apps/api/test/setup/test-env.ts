@@ -81,6 +81,12 @@ const defaults: Record<string, string> = {
   JOBS_CLEAN_ORPHAN_MEDIA_INTERVAL_SECONDS: '21600',
   JOBS_CHALLENGE_RETENTION_DAYS: '1',
   JOBS_REFRESH_SESSION_RETENTION_DAYS: '30',
+  // Archived-image cleanup is opt-in + dry-run even in tests; the dedicated
+  // job spec flips these to exercise the destructive path explicitly.
+  ARCHIVED_IMAGE_RETENTION_DAYS: '30',
+  JOBS_CLEAN_ARCHIVED_LISTING_IMAGES_ENABLED: 'false',
+  JOBS_CLEAN_ARCHIVED_LISTING_IMAGES_DRY_RUN: 'true',
+  JOBS_CLEAN_ARCHIVED_LISTING_IMAGES_INTERVAL_SECONDS: '21600',
 
   SMS_PROVIDER: 'mock',
   MODERATION_PROVIDER: 'noop',
