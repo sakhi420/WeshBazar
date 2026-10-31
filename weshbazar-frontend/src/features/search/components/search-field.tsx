@@ -36,12 +36,15 @@ interface SearchFieldProps {
   placeholder?: string;
   /** When true, submits navigate to /search?q=... instead of writing q to current URL. */
   redirectToSearch?: boolean;
+  /** Single-row icon submit — for the mobile header where vertical space is tight. */
+  compact?: boolean;
 }
 
 export function SearchField({
   className,
   placeholder = 'جست‌وجو در ویش‌بازار…',
   redirectToSearch = false,
+  compact = false,
 }: SearchFieldProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -214,8 +217,16 @@ export function SearchField({
   }
 
   return (
-    <form role="search" onSubmit={handleSubmit} className={cn('flex items-center gap-2', className)}>
-      <div ref={wrapperRef} className="relative min-w-0 flex-1">
+    <form
+      role="search"
+      onSubmit={handleSubmit}
+      className={cn(
+        'flex w-full min-w-0 gap-2',
+        compact ? 'flex-row items-center' : 'flex-col lg:flex-row lg:items-center',
+        className,
+      )}
+    >
+      <div ref={wrapperRef} className="relative w-full min-w-0 flex-1">
         <Search
           className="pointer-events-none absolute start-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground"
           aria-hidden
@@ -256,8 +267,13 @@ export function SearchField({
           </div>
         ) : null}
       </div>
-      <Button type="submit" size="lg" className="shrink-0">
-        جست‌وجو
+      <Button
+        type="submit"
+        size="lg"
+        className={cn('shrink-0', compact ? 'px-3' : 'w-full lg:w-auto')}
+        aria-label="جست‌وجو"
+      >
+        {compact ? <Search aria-hidden /> : 'جست‌وجو'}
       </Button>
     </form>
   );

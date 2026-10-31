@@ -37,6 +37,15 @@ jest.mock('@/features/search/components/search-field', () => ({
 jest.mock('@/components/location/location-picker', () => ({
   LocationPicker: () => <div data-testid="location-picker" />,
 }));
+jest.mock('@/components/discovery/home-search-panel', () => ({
+  HomeSearchPanel: () => (
+    <div>
+      <h1>بازار خرید و فروش در افغانستان</h1>
+      <div data-testid="search-field" />
+      <div data-testid="location-picker" />
+    </div>
+  ),
+}));
 
 import HomePage from './page';
 import { fetchCategoriesServer } from '@/features/categories';
@@ -80,5 +89,20 @@ describe('HomePage (F-02 — honest error vs empty states)', () => {
 
     expect(screen.getByText('هنوز آگهی‌ای ثبت نشده است')).toBeInTheDocument();
     expect(screen.queryByText('آگهی‌ها بارگذاری نشد')).not.toBeInTheDocument();
+  });
+
+  it('keeps both the keyword field and the city control on the homepage', async () => {
+    mockFetchListingsServer.mockResolvedValue({
+      items: [{ id: 'l-1' }],
+      nextCursor: null,
+      hasMore: false,
+      total: 1,
+    });
+
+    const element = await HomePage();
+    render(element);
+
+    expect(screen.getByTestId('search-field')).toBeInTheDocument();
+    expect(screen.getByTestId('location-picker')).toBeInTheDocument();
   });
 });

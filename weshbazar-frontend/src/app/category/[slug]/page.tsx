@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -18,6 +19,7 @@ import {
   FilterPanelDesktop,
   MobileFilterSheet,
 } from '@/features/search/components/filter-panel';
+import { MobileKeywordSearch } from '@/features/search/components/mobile-keyword-search';
 import { SortControl } from '@/features/search/components/sort-control';
 import { ApiError, type CursorPage } from '@/lib/api';
 
@@ -146,14 +148,19 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         <FilterPanelDesktop provinces={provinces} filterSchema={filterSchema} />
 
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <MobileFilterSheet
-              provinces={provinces}
-              filterSchema={filterSchema}
-              className="shrink-0"
-            />
-            <SortControl className="min-w-0 flex-1 sm:max-w-48" />
-          </div>
+          <Suspense fallback={null}>
+            <div className="space-y-3">
+              <MobileKeywordSearch />
+              <div className="flex items-center gap-2">
+                <MobileFilterSheet
+                  provinces={provinces}
+                  filterSchema={filterSchema}
+                  className="shrink-0"
+                />
+                <SortControl className="min-w-0 flex-1 sm:max-w-48" />
+              </div>
+            </div>
+          </Suspense>
 
           <ActiveFilterChips
             provinces={provinces}

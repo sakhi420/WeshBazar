@@ -23,19 +23,26 @@ jest.mock('next/link', () => {
 jest.mock('@/components/layout/header-auth-actions', () => ({
   HeaderAuthActions: () => <div data-testid="auth-actions" />,
 }));
+jest.mock('@/features/search/components/search-field', () => ({
+  SearchField: () => <div data-testid="search-field" />,
+}));
+jest.mock('@/components/location/location-picker', () => ({
+  LocationPicker: () => <div data-testid="location-picker" />,
+}));
 
 import { MobileHeader } from './mobile-header';
 
 describe('MobileHeader', () => {
-  it('exposes a search entry linking to /search (HF-NAV-004)', () => {
+  it('exposes a keyword search field on mobile (HF-NAV-004)', () => {
     render(<MobileHeader />);
-    expect(screen.getByRole('link', { name: 'جست‌وجو' })).toHaveAttribute('href', '/search');
+    expect(screen.getByTestId('search-field')).toBeInTheDocument();
+    expect(screen.getByTestId('location-picker')).toBeInTheDocument();
   });
 
   it('keeps the logo link and sell action', () => {
     render(<MobileHeader />);
     expect(screen.getByRole('link', { name: /صفحه اصلی/ })).toHaveAttribute('href', '/');
-    expect(screen.getByRole('link', { name: 'جست‌وجو' })).toBeInTheDocument();
+    expect(screen.getByTestId('search-field')).toBeInTheDocument();
     expect(screen.getAllByRole('link').some((a) => a.getAttribute('href') === '/sell')).toBe(true);
   });
 });

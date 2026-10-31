@@ -29,7 +29,7 @@ export function DesktopHeader() {
         </Suspense>
 
         <Suspense fallback={null}>
-          <LocationPicker className="shrink-0" redirectToSearch />
+          <LocationPicker inline redirectToSearch />
         </Suspense>
 
         <Button asChild variant="ghost" size="sm" className="shrink-0">

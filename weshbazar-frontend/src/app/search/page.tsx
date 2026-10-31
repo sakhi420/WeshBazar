@@ -16,6 +16,7 @@ import {
   FilterPanelDesktop,
   MobileFilterSheet,
 } from '@/features/search/components/filter-panel';
+import { MobileKeywordSearch } from '@/features/search/components/mobile-keyword-search';
 import { SortControl } from '@/features/search/components/sort-control';
 import { ApiError, type CursorPage } from '@/lib/api';
 
@@ -83,13 +84,16 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
         <div className="min-w-0">
           <Suspense fallback={null}>
-            <div className="flex items-center gap-2">
-              <MobileFilterSheet
-                provinces={provinces}
-                categories={categories}
-                className="shrink-0"
-              />
-              <SortControl className="min-w-0 flex-1 sm:max-w-48" />
+            <div className="space-y-3">
+              <MobileKeywordSearch />
+              <div className="flex items-center gap-2">
+                <MobileFilterSheet
+                  provinces={provinces}
+                  categories={categories}
+                  className="shrink-0"
+                />
+                <SortControl className="min-w-0 flex-1 sm:max-w-48" />
+              </div>
             </div>
           </Suspense>
 

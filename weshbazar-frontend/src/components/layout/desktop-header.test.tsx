@@ -49,6 +49,7 @@ describe('DesktopHeader', () => {
     render(<DesktopHeader />);
     expect(screen.getByRole('link', { name: /صفحه اصلی/ })).toHaveAttribute('href', '/');
     expect(screen.getByTestId('search-field')).toBeInTheDocument();
+    expect(screen.getByTestId('location-picker')).toBeInTheDocument();
     expect(screen.getByTestId('auth-actions')).toBeInTheDocument();
   });
 });

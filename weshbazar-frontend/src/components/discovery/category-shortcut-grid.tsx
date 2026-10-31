@@ -20,8 +20,8 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
   if (categories.length === 0) return null;
 
   const capsuleClass = cn(
-    'flex w-[84px] shrink-0 flex-col items-center gap-2.5 rounded-card border border-transparent bg-surface px-2.5 py-3.5 text-center shadow-soft transition-all duration-small',
-    'hover:-translate-y-0.5 hover:border-primary/20 hover:bg-primary-soft/50 hover:shadow-card',
+    'flex w-[88px] shrink-0 flex-col items-center gap-2.5 rounded-card border border-border/70 bg-surface px-2.5 py-3.5 text-center shadow-soft transition-all duration-small',
+    'hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary-soft hover:shadow-card',
     'focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
     'lg:w-auto lg:flex-1',
   );

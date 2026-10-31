@@ -1,14 +1,12 @@
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { LayoutGrid, ArrowLeft, Plus, ShieldAlert } from 'lucide-react';
+import { LayoutGrid, ArrowLeft, Plus, ShieldAlert, Search, MessageCircle } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { ErrorState } from '@/components/feedback/error-state';
 import { ListingGrid } from '@/components/listings/listing-grid';
 import { CategoryShortcutGrid } from '@/components/discovery/category-shortcut-grid';
-import { LocationPicker } from '@/components/location/location-picker';
-import { SearchField } from '@/features/search/components/search-field';
+import { HomeSearchPanel } from '@/components/discovery/home-search-panel';
 import { Button } from '@/components/ui/button';
 import { SectionHeader } from '@/components/layout/section-header';
 import { ApiError } from '@/lib/api';
@@ -75,27 +73,35 @@ export default async function HomePage() {
 
   return (
     <PageContainer className="space-y-8">
-      {/* Search-first opening viewport (§16, §55): balanced compact fold with gentle brand atmosphere. */}
-      <section className="space-y-3 pt-6">
-        
-        <h1 className="text-heading font-bold text-foreground sm:text-section">
-          بازار خرید و فروش در افغانستان
-        </h1>
-        <p className="text-body text-muted-foreground">
-          اجناس نو و دست‌دوم را جست‌وجو کنید یا آگهی خود را رایگان ثبت کنید.
-        </p>
+      <HomeSearchPanel />
 
-        <Suspense fallback={null}>
-          <div className="flex flex-col gap-3 md:flex-row md:items-center">
-            <SearchField className="min-w-0 flex-1" redirectToSearch />
-            <LocationPicker className="shrink-0" redirectToSearch />
-          </div>
-        </Suspense>
+      <section aria-label="چطور کار می‌کند" className="grid gap-3 lg:grid-cols-3">
+        <HomeStep
+          href="/search"
+          icon={Search}
+          title="جست‌وجو کنید"
+          description="با کلمه یا دسته، آگهی‌های نو و دست‌دوم را پیدا کنید."
+        />
+        <HomeStep
+          href="/sell"
+          icon={Plus}
+          title="رایگان بفروشید"
+          description="آگهی بگذارید و مستقیم با خریدار در تماس باشید."
+        />
+        <HomeStep
+          href="/help/safety"
+          icon={MessageCircle}
+          title="امن معامله کنید"
+          description="کالا را از نزدیک ببینید و در مکان عمومی معامله کنید."
+        />
       </section>
 
       {/* Category discovery — compact one-row pills (§108) */}
       {catResult.status === 'ok' ? (
-        <section aria-labelledby="categories-heading" className="space-y-2">
+        <section
+          aria-labelledby="categories-heading"
+          className="space-y-3 rounded-surface border border-border/80 bg-surface/80 p-3 shadow-soft sm:p-4"
+        >
           <h2
             id="categories-heading"
             className="flex items-center gap-2 text-section font-semibold"
@@ -149,17 +155,22 @@ export default async function HomePage() {
         ) : null}
       </section>
 
-      {/* Sell CTA — Enhanced with gradient background and stronger visual presence */}
-      <section className="relative overflow-hidden rounded-surface border border-accent/30 bg-gradient-to-br from-accent/15 via-accent/8 to-surface p-6 text-center shadow-card sm:p-8">
-        {/* Decorative brand atmosphere */}
-        <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full bg-accent/10 blur-3xl" aria-hidden />
-        <h2 className="relative text-xl font-bold text-foreground sm:text-2xl">
-          کالایی برای فروش دارید؟
-        </h2>
-        <p className="relative mx-auto mt-2 max-w-prose text-body text-muted-foreground sm:text-lg">
+      <section className="relative overflow-hidden rounded-surface bg-accent px-5 py-7 text-center text-accent-foreground shadow-card sm:px-8 sm:py-9">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
+              `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path fill="none" stroke="#0B2F2B" stroke-width="0.7" d="M14 2l1.6 10L26 14l-10.4 1.6L14 26l-1.6-10.4L2 14l10.4-1.6z"/></svg>`,
+            )}")`,
+            backgroundSize: '28px 28px',
+          }}
+        />
+        <h2 className="relative text-xl font-bold sm:text-2xl">کالایی برای فروش دارید؟</h2>
+        <p className="relative mx-auto mt-2 max-w-prose text-body sm:text-lg">
           آگهی خود را رایگان ثبت کنید و مستقیماً با خریداران در تماس باشید.
         </p>
-        <Button asChild variant="accent" size="lg" className="relative mt-5 shadow-md hover:shadow-lg transition-transform hover:-translate-y-0.5">
+        <Button asChild size="lg" className="relative mt-5 bg-primary-dark text-primary-foreground hover:bg-primary">
           <Link href="/sell">
             <Plus aria-hidden />
             <span className="font-semibold">ثبت آگهی رایگان</span>
@@ -168,11 +179,20 @@ export default async function HomePage() {
       </section>
 
       {/* Safety */}
-      <section className="rounded-surface border border-border bg-surface p-4 shadow-card sm:p-6">
+      <section className="rounded-surface border border-warning/25 bg-gradient-to-l from-surface to-warning/5 p-4 shadow-card sm:p-6">
         <div className="flex items-start gap-3">
-          <ShieldAlert className="size-5 shrink-0 text-warning" aria-hidden />
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-warning/10 text-warning">
+            <ShieldAlert className="size-5" aria-hidden />
+          </span>
           <div>
-            <h2 className="text-ui font-semibold text-foreground">نکات ایمنی</h2>
+            <h2 className="text-ui font-semibold text-foreground">
+              <Link
+                href="/help/safety"
+                className="rounded-control hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                نکات ایمنی
+              </Link>
+            </h2>
             <ul className="mt-2 space-y-1 text-ui text-muted-foreground">
               <li>· قبل از پرداخت، کالا را از نزدیک بررسی کنید.</li>
               <li>· در مکان عمومی و امن معامله کنید.</li>
@@ -183,5 +203,30 @@ export default async function HomePage() {
         </div>
       </section>
     </PageContainer>
+  );
+}
+
+function HomeStep({
+  href,
+  icon: Icon,
+  title,
+  description,
+}: {
+  href: string;
+  icon: typeof Search;
+  title: string;
+  description: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group rounded-surface border border-border bg-surface p-4 shadow-soft transition-all duration-small hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <span className="flex size-10 items-center justify-center rounded-full bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+        <Icon className="size-5" aria-hidden />
+      </span>
+      <h2 className="mt-3 text-ui font-semibold text-foreground">{title}</h2>
+      <p className="mt-1 text-caption text-muted-foreground">{description}</p>
+    </Link>
   );
 }

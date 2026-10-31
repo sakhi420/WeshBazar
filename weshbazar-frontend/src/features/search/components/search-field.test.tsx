@@ -43,6 +43,19 @@ describe('SearchField', () => {
     mockPathname = '/';
   });
 
+  it('always renders the keyword combobox (not only a submit/filter control)', () => {
+    render(<SearchField />);
+    expect(screen.getByRole('combobox', { name: 'جست‌وجوی آگهی‌ها' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'جست‌وجو' })).toBeInTheDocument();
+    expect(screen.getByRole('search')).not.toHaveClass('md:flex-row');
+  });
+
+  it('compact variant keeps the combobox in a single row', () => {
+    render(<SearchField compact />);
+    expect(screen.getByRole('combobox', { name: 'جست‌وجوی آگهی‌ها' })).toBeInTheDocument();
+    expect(screen.getByRole('search')).toHaveClass('flex-row');
+  });
+
   it('without redirect → writes q to the current URL', () => {
     render(<SearchField />);
     submit('کتاب');

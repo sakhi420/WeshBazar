@@ -57,6 +57,30 @@ describe('LocationPicker (F-04 — error/retry + safe queryFn)', () => {
     expect(provincesResult.refetch).toHaveBeenCalled();
   });
 
+  it('portals the open panel so header/hero overflow cannot clip it', () => {
+    provincesResult.data = [KABUL];
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+      x: 20,
+      y: 40,
+      top: 40,
+      left: 20,
+      right: 180,
+      bottom: 88,
+      width: 160,
+      height: 48,
+      toJSON() {
+        return {};
+      },
+    });
+
+    render(<LocationPicker />);
+    fireEvent.click(screen.getByRole('button', { name: /انتخاب شهر/ }));
+
+    const listbox = screen.getByRole('listbox', { name: 'انتخاب ولایت و شهر' });
+    expect(listbox.parentElement).toBe(document.body);
+    expect(listbox).toHaveClass('fixed');
+  });
+
   it('shows an inline error and retry when cities fail to load', () => {
     provincesResult.data = [KABUL];
     mockNuqsProvinceParam.value = 'kabul';
