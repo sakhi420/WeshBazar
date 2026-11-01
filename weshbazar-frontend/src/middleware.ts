@@ -56,6 +56,6 @@ export function middleware(request: NextRequest) {
  */
 export const config = {
   matcher: [
-    '/((?!_next|api|favicon|brand|fonts|media|\\.well-known).*)',
+    '/((?!_next|api|favicon|images|brand|fonts|media|\\.well-known).*)',
   ],
 };
