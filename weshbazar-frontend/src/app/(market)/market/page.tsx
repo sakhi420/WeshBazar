@@ -21,7 +21,7 @@ import { fetchListingsServer, type PublicListingSummary } from '@/features/listi
 export const metadata: Metadata = {
   title: siteConfig.name,
   description: siteConfig.description,
-  alternates: { canonical: '/' },
+  alternates: { canonical: '/market' },
 };
 
 // Revalidate the public home feed; category data changes rarely.

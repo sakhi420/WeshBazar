@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { INTRO_COOKIE_NAME, MARKET_PATH } from '@/features/welcome/constants';
 
 /**
  * Route guard middleware (§7, V5.3 session regression).
@@ -24,9 +25,16 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hasSession = request.cookies.has('weshbazar_session');
 
+  // First-visit intro: a returning visitor (intro already seen) skips the
+  // welcome landing page and goes straight to the marketplace. This runs
+  // server-side so there is never a flash of the intro before redirecting.
+  if (pathname === '/' && request.cookies.has(INTRO_COOKIE_NAME)) {
+    return NextResponse.redirect(new URL(MARKET_PATH, request.url));
+  }
+
   // Redirect signed-in users away from login/register.
   if (hasSession && AUTH_PATHS.includes(pathname)) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL(MARKET_PATH, request.url));
   }
 
   // Redirect guests to login for protected routes, preserving the target.

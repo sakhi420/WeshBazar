@@ -81,7 +81,7 @@ export default async function SellerPage({ params }: SellerPageProps) {
   return (
     <PageContainer>
       <Breadcrumbs
-        items={[{ label: 'خانه', href: '/' }, { label: profile.displayName }]}
+        items={[{ label: 'خانه', href: '/market' }, { label: profile.displayName }]}
       />
 
       <section

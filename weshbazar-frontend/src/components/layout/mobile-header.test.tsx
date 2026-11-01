@@ -41,7 +41,7 @@ describe('MobileHeader', () => {
 
   it('keeps the logo link and sell action', () => {
     render(<MobileHeader />);
-    expect(screen.getByRole('link', { name: /صفحه اصلی/ })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /صفحه اصلی/ })).toHaveAttribute('href', '/market');
     expect(screen.getByTestId('search-field')).toBeInTheDocument();
     expect(screen.getAllByRole('link').some((a) => a.getAttribute('href') === '/sell')).toBe(true);
   });

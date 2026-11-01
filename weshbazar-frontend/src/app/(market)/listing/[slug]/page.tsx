@@ -135,7 +135,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
       />
       <Breadcrumbs
         items={[
-          { label: 'خانه', href: '/' },
+          { label: 'خانه', href: '/market' },
           { label: detail.category.name, href: `/category/${detail.category.slug}` },
           { label: detail.title },
         ]}

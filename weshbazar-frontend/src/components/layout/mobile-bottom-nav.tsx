@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/auth-provider';
 
 const links = [
-  { href: '/', label: 'خانه', icon: Home },
+  { href: '/market', label: 'خانه', icon: Home },
   { href: '/search', label: 'جستجو', icon: Search },
   { href: '/categories', label: 'دسته‌ها', icon: Grid3X3 },
   { href: '/favorites', label: 'علاقه‌مندی‌ها', icon: Heart },
@@ -34,7 +34,7 @@ export function MobileBottomNav() {
       <ul className="flex h-full items-center justify-around px-2">
         {links.map(({ href, label, icon: Icon }) => {
           const isActive =
-            href === '/' ? pathname === '/' : pathname.startsWith(href);
+            href === '/market' ? pathname === '/market' : pathname.startsWith(href);
           return (
             <li key={href}>
               <Link

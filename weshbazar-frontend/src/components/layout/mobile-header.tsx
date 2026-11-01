@@ -16,7 +16,7 @@ export function MobileHeader() {
     <header className="sticky top-0 z-header border-b border-border bg-surface/90 shadow-soft backdrop-blur-md lg:hidden">
       <div className="flex h-header items-center justify-between px-4">
         <Link
-          href="/"
+          href="/market"
           aria-label="ویش‌بازار — صفحه اصلی"
           className="flex shrink-0 items-center rounded-control focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >

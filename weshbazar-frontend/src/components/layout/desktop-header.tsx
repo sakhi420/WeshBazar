@@ -17,7 +17,7 @@ export function DesktopHeader() {
     <header className="sticky top-0 z-header hidden border-b border-border bg-surface/80 shadow-soft backdrop-blur-md lg:flex">
       <div className="container flex h-[4rem] items-center gap-3">
         <Link
-          href="/"
+          href="/market"
           aria-label="ویش‌بازار — صفحه اصلی"
           className="me-4 flex shrink-0 items-center rounded-control focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         >

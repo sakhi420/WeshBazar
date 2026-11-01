@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { BrandLogo } from '@/components/brand/brand-logo';
 
 const marketplaceLinks = [
-  { href: '/', label: 'صفحه اصلی' },
+  { href: '/market', label: 'صفحه اصلی' },
   { href: '/search', label: 'جست‌وجوی آگهی‌ها' },
   { href: '/sell', label: 'ثبت آگهی' },
 ] as const;
@@ -29,7 +29,7 @@ export function SiteFooter() {
       <div className="container grid gap-8 py-8 md:grid-cols-2 lg:grid-cols-[minmax(0,1.3fr)_repeat(3,minmax(0,1fr))] md:py-10">
         <div className="space-y-4">
           <Link
-            href="/"
+            href="/market"
             aria-label="ویش‌بازار — صفحه اصلی"
             className="inline-flex rounded-control focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
           >

@@ -103,7 +103,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       : [];
 
   const breadcrumbItems = [
-    { label: 'خانه', href: '/' },
+    { label: 'خانه', href: '/market' },
     ...detail.ancestors.map((ancestor) => ({
       label: ancestor.name,
       href: `/category/${ancestor.slug}`,

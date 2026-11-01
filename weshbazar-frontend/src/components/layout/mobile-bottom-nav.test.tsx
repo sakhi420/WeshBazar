@@ -50,7 +50,7 @@ describe('MobileBottomNav', () => {
     authStub('anonymous');
     render(<MobileBottomNav />);
     expect(screen.getByRole('link', { name: 'دسته‌ها' })).toHaveAttribute('href', '/categories');
-    expect(screen.getByRole('link', { name: 'خانه' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'خانه' })).toHaveAttribute('href', '/market');
     expect(screen.getByRole('link', { name: 'جستجو' })).toHaveAttribute('href', '/search');
     expect(screen.getByRole('link', { name: 'علاقه‌مندی‌ها' })).toHaveAttribute('href', '/favorites');
   });

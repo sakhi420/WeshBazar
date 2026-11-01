@@ -47,7 +47,7 @@ describe('DesktopHeader', () => {
 
   it('renders the logo link, search field and auth actions', () => {
     render(<DesktopHeader />);
-    expect(screen.getByRole('link', { name: /صفحه اصلی/ })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /صفحه اصلی/ })).toHaveAttribute('href', '/market');
     expect(screen.getByTestId('search-field')).toBeInTheDocument();
     expect(screen.getByTestId('location-picker')).toBeInTheDocument();
     expect(screen.getByTestId('auth-actions')).toBeInTheDocument();

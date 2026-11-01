@@ -123,3 +123,36 @@
     display: none;
   }
 }
+
+/*
+ * Welcome landing — gentle, low-amplitude float for decorative SVG chips.
+ * The global `prefers-reduced-motion` rule above collapses these to near-zero
+ * duration, so they are fully disabled for users who opt out of motion.
+ */
+@keyframes wb-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+@keyframes wb-float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(-2deg);
+  }
+}
+.animate-wb-float {
+  animation: wb-float 6s ease-in-out infinite;
+}
+.animate-wb-float-slow {
+  animation: wb-float-slow 9s ease-in-out infinite;
+}
+.animate-wb-float-delay {
+  animation: wb-float 6s ease-in-out 1.5s infinite;
+}
