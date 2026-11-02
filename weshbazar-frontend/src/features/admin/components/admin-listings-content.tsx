@@ -116,6 +116,10 @@ export function AdminListingsContent({ onSessionLost }: { onSessionLost: () => v
   };
 
   const handleAction = (listing: AdminListingItem, request: ModerationRequest) => {
+    // Ignore a second click while a command is already in flight: a fast
+    // double-click otherwise fires two approve/reject requests, and the second
+    // one hits a 409 once the first already changed the listing's state.
+    if (moderation.isPending) return;
     moderation.mutate({
       listingId: listing.id,
       action: request.action,

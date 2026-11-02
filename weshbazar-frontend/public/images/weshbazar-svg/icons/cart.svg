@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">آیکون cart برای ویش‌بازار</title><desc id="desc">Original transparent vector artwork for WeshBazar marketplace.</desc>
+<defs><linearGradient id="i_teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36D4C3"/><stop offset="1" stop-color="#0F766E"/></linearGradient></defs>
+<g><path d="M13 22h15l12 62h53l15-46H35" stroke="url(#i_teal)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="101" r="7" fill="#0F766E"/><circle cx="87" cy="101" r="7" fill="#0F766E"/><path d="M47 45v25m19-25v25m19-25v25" stroke="#23B8AA" stroke-width="6" stroke-linecap="round"/></g>
+</svg>

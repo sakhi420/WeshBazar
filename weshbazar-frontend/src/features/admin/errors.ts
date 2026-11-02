@@ -25,9 +25,16 @@ export function describeModerationError(error: unknown): string {
   switch (error.code) {
     case ApiErrorCode.VALIDATION_ERROR:
       return 'ورودی‌ها معتبر نیستند؛ دلیل رد را انتخاب کنید و دوباره تلاش کنید.';
-    case 'LISTING_INVALID_TRANSITION':
+    case ApiErrorCode.MODERATION_ACTION_NOT_ALLOWED:
+    case ApiErrorCode.LISTING_INVALID_TRANSITION:
+      // 409 — the row moved out of the state the button assumed (already
+      // approved/rejected/edited by someone else). The queue refetches on settle.
       return 'این عمل در وضعیت کنونی آگهی مجاز نیست؛ فهرست به‌روزرسانی شد.';
-    case 'LISTING_NOT_FOUND':
+    case ApiErrorCode.LISTING_VERSION_CONFLICT:
+      return 'آگهی هم‌زمان تغییر کرده است؛ فهرست به‌روزرسانی شد — دوباره تلاش کنید.';
+    case ApiErrorCode.LISTING_LIMIT_REACHED:
+      return 'فروشنده به سقف آگهی‌های فعال رسیده است؛ این آگهی منتشر نشد.';
+    case ApiErrorCode.LISTING_NOT_FOUND:
       return 'آگهی پیدا نشد؛ ممکن است حذف شده باشد — فهرست به‌روزرسانی شد.';
     case ApiErrorCode.FORBIDDEN:
       return 'دسترسی شما به این عملیات مجاز نیست.';

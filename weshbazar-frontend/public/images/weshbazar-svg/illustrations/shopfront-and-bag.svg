@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450" height="330" viewBox="0 0 450 330" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">تصویر فروشگاه و کیف خرید</title><desc id="desc">Original transparent vector artwork for WeshBazar marketplace.</desc>
+<defs>
+    <linearGradient id="bs_teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#38D6C5"/><stop offset=".48" stop-color="#20B8AA"/><stop offset="1" stop-color="#064E4A"/></linearGradient>
+    <linearGradient id="bs_tealDark" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#127F77"/><stop offset="1" stop-color="#064B47"/></linearGradient>
+    <linearGradient id="bs_gold" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#FFD86A"/><stop offset=".5" stop-color="#F59E0B"/><stop offset="1" stop-color="#E87900"/></linearGradient>
+    <linearGradient id="bs_screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9FAF8"/></linearGradient>
+    <linearGradient id="bs_mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E9FBF8"/><stop offset="1" stop-color="#BDEFE8"/></linearGradient>
+    <linearGradient id="bs_navy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#243B4E"/><stop offset="1" stop-color="#0B2430"/></linearGradient>
+    <linearGradient id="bs_skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F7C6A0"/><stop offset="1" stop-color="#D98B65"/></linearGradient>
+    <filter id="bs_shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="10"/><feOffset dy="12"/><feComponentTransfer><feFuncA type="linear" slope=".18"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="bs_soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="18"/></filter>
+    </defs>
+
+<ellipse cx="260" cy="290" rx="225" ry="23" fill="#0F766E" opacity=".10"/>
+<path d="M32 265q-21-92 56-134 74-39 138 13 76-30 141 22 55 48 16 105-55 74-176 59Q53 327 32 265Z" fill="url(#bs_mint)"/>
+<!-- shop canopy -->
+<g transform="translate(42 53)" filter="url(#bs_shadow)"><path d="M28 104h246v144H28Z" fill="#E9F8F4" stroke="#9EDCD4" stroke-width="5"/><path d="M12 106 43 36h216l34 70Z" fill="#FFFDF6" stroke="#D6E8E3" stroke-width="4"/><path d="m12 106 31-70 22 70Zm53 0 22-70 22 70Zm53 0 22-70 22 70Zm53 0 22-70 22 70Zm53 0 22-70 22 70Z" fill="url(#bs_gold)"/><path d="M65 142h61v106H65Z" fill="#0D8B83"/><path d="M74 151h43v84H74Z" fill="#B6EDE5"/><path d="M161 144h78v57h-78Z" fill="#8DDCD1"/><path d="M161 209h78v39h-78Z" fill="#D0F0EB"/><path d="M14 108h276" stroke="#0F766E" stroke-width="9" stroke-linecap="round"/></g>
+<!-- shopping tote -->
+<g transform="translate(300 165) rotate(8)" filter="url(#bs_shadow)"><path d="M13 52h112l-12 106H26Z" fill="url(#bs_teal)"/><path d="M43 54V35q0-31 27-31t27 31v19" stroke="#0E716A" stroke-width="10" stroke-linecap="round"/></g>
+<!-- location/spark -->
+<path d="m379 89 8-22 8 22 22 8-22 8-8 22-8-22-22-8Z" fill="#F6B332"/>
+
+</svg>

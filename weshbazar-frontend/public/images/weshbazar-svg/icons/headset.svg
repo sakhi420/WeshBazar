@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">آیکون headset برای ویش‌بازار</title><desc id="desc">Original transparent vector artwork for WeshBazar marketplace.</desc>
+<defs><linearGradient id="i_teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36D4C3"/><stop offset="1" stop-color="#0F766E"/></linearGradient></defs>
+<g><path d="M18 65V54q0-42 42-42t42 42v11" stroke="url(#i_teal)" stroke-width="10" stroke-linecap="round"/><rect x="12" y="55" width="23" height="42" rx="10" fill="#0F8F87"/><rect x="85" y="55" width="23" height="42" rx="10" fill="#0F8F87"/><path d="M96 96q-7 14-28 14H57" stroke="#F59E0B" stroke-width="7" stroke-linecap="round"/></g>
+</svg>

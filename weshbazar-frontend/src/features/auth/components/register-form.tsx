@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { ApiError, ApiErrorCode, queryKeys } from '@/lib/api';
+import { ApiError, ApiErrorCode, clearUserScopedCaches, queryKeys } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import {
   isPlausiblePhone,
@@ -76,8 +76,7 @@ export function RegisterForm({ next }: RegisterFormProps) {
       // the auth cache immediately so the header updates without a reload.
       queryClient.setQueryData(queryKeys.auth.me, { user: result.user, session: null });
       queryClient.removeQueries({ queryKey: queryKeys.auth.sessions });
-      queryClient.removeQueries({ queryKey: queryKeys.account.all });
-      queryClient.removeQueries({ queryKey: queryKeys.favorites.all });
+      clearUserScopedCaches(queryClient);
       router.replace(`/auth/verify?next=${encodeURIComponent(next)}`);
     } catch (error) {
       if (error instanceof ApiError) {

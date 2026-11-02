@@ -3,6 +3,16 @@ import { BrandLogo } from '@/components/brand/brand-logo';
 
 const persianYear = new Intl.NumberFormat('fa-AF').format(new Date().getFullYear());
 
+const footerLinks = [
+  { href: '/market', label: 'ورود به بازار' },
+  { href: '/search', label: 'جست‌وجوی آگهی‌ها' },
+  { href: '/sell', label: 'ثبت آگهی' },
+  { href: '/auth/login', label: 'ورود به حساب' },
+  { href: '/about', label: 'درباره ما' },
+  { href: '/help/safety', label: 'نکات ایمنی' },
+  { href: '/contact', label: 'تماس با ما' },
+] as const;
+
 /**
  * Welcome landing shell — deliberately lighter than the marketplace chrome.
  * Header keeps the reference top bar (logo right, tagline left); footer is a
@@ -30,20 +40,37 @@ export default function WelcomeLayout({ children }: { children: React.ReactNode 
       <main id="main" className="flex-1">{children}</main>
 
       <footer className="bg-primary-dark text-white">
-        <div className="container grid gap-6 py-10 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-10">
-          <Link
-            href="/"
-            aria-label="ویش‌بازار"
-            className="inline-flex justify-self-center rounded-control focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none md:justify-self-start"
-          >
-            <BrandLogo variant="white" height={30} />
-          </Link>
+        <div className="container flex flex-col gap-6 py-10">
+          <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:justify-between">
+            <Link
+              href="/"
+              aria-label="ویش‌بازار"
+              className="inline-flex rounded-control focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+            >
+              <BrandLogo variant="white" height={30} />
+            </Link>
 
-          <p className="max-w-md text-center text-body leading-7 text-white/80 md:mx-auto">
-            بازار آنلاین خرید و فروش در افغانستان؛ جست‌وجوی ساده، ثبت آگهی و تماس مستقیم با فروشنده.
-          </p>
+            <p className="max-w-md text-center text-body leading-7 text-white/80">
+              بازار آنلاین خرید و فروش در افغانستان؛ جست‌وجوی ساده، ثبت آگهی و تماس مستقیم با فروشنده.
+            </p>
+          </div>
 
-          <p className="text-center text-caption text-white/60 md:text-end">
+          <nav aria-label="لینک‌های ویش‌بازار">
+            <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+              {footerLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="inline-flex rounded-control text-ui text-white/80 transition-colors duration-small hover:text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <p className="text-center text-caption text-white/60">
             © {persianYear} همه حقوق برای ویش‌بازار محفوظ است.
           </p>
         </div>

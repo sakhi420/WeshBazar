@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { ApiError, ApiErrorCode, queryKeys } from '@/lib/api';
+import { ApiError, ApiErrorCode, clearUserScopedCaches, queryKeys } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { isPlausiblePhone, login, normalizePhone } from '@/features/auth';
 import { FormError, FormNotice, bindFieldErrors } from './form-error';
@@ -61,8 +61,7 @@ export function LoginForm({ next, justReset }: LoginFormProps) {
       // refetches for the new session.
       queryClient.setQueryData(queryKeys.auth.me, { user: result.user, session: null });
       queryClient.removeQueries({ queryKey: queryKeys.auth.sessions });
-      queryClient.removeQueries({ queryKey: queryKeys.account.all });
-      queryClient.removeQueries({ queryKey: queryKeys.favorites.all });
+      clearUserScopedCaches(queryClient);
       const target = result.user.phoneVerified
         ? next
         : `/auth/verify?next=${encodeURIComponent(next)}`;

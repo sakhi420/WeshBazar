@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">آیکون rocket برای ویش‌بازار</title><desc id="desc">Original transparent vector artwork for WeshBazar marketplace.</desc>
+<defs><linearGradient id="i_teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36D4C3"/><stop offset="1" stop-color="#0F766E"/></linearGradient></defs>
+<g><path d="M42 83Q33 42 77 13q19-12 34-10 1 17-11 37Q72 83 42 83Z" fill="url(#i_teal)"/><circle cx="88" cy="31" r="10" fill="#E8FFFA"/><path d="m40 76-19 4-10 21 29-2m9-9-4 19 20 4 2-27" fill="#F59E0B"/><path d="M22 53Q7 66 15 79q15-4 18-18" fill="#F9B42F"/></g>
+</svg>

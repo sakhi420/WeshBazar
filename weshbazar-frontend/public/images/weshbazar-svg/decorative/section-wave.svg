@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="220" viewBox="0 0 1440 220" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">موج تزئینی شفاف برای جداکردن بخش‌ها</title><desc id="desc">Original transparent vector artwork for WeshBazar marketplace.</desc>
+<defs><linearGradient id="waveMint" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#DDF8F5"/><stop offset="1" stop-color="#B9EEE7"/></linearGradient><linearGradient id="waveDeep" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#0F766E"/><stop offset="1" stop-color="#28B7A8"/></linearGradient></defs>
+<path d="M0 112C190 34 330 180 520 115s330-85 470-27 265 48 450-18v110H0Z" fill="url(#waveMint)" opacity=".76"/><path d="M0 132c190-64 310 126 500 66s345-96 490-38 272 40 450-22" stroke="url(#waveDeep)" stroke-width="7" opacity=".20" fill="none"/>
+</svg>

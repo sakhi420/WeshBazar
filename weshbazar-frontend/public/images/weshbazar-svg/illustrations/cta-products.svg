@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="390" viewBox="0 0 760 390" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">مجموعهٔ کالاهای فروشگاهی برای بنر ویش‌بازار</title><desc id="desc">Original transparent vector artwork for WeshBazar marketplace.</desc>
+<defs>
+    <linearGradient id="c_teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#38D6C5"/><stop offset=".48" stop-color="#20B8AA"/><stop offset="1" stop-color="#064E4A"/></linearGradient>
+    <linearGradient id="c_tealDark" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#127F77"/><stop offset="1" stop-color="#064B47"/></linearGradient>
+    <linearGradient id="c_gold" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#FFD86A"/><stop offset=".5" stop-color="#F59E0B"/><stop offset="1" stop-color="#E87900"/></linearGradient>
+    <linearGradient id="c_screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9FAF8"/></linearGradient>
+    <linearGradient id="c_mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E9FBF8"/><stop offset="1" stop-color="#BDEFE8"/></linearGradient>
+    <linearGradient id="c_navy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#243B4E"/><stop offset="1" stop-color="#0B2430"/></linearGradient>
+    <linearGradient id="c_skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F7C6A0"/><stop offset="1" stop-color="#D98B65"/></linearGradient>
+    <filter id="c_shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="10"/><feOffset dy="12"/><feComponentTransfer><feFuncA type="linear" slope=".18"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="c_soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="18"/></filter>
+    </defs>
+
+<ellipse cx="360" cy="352" rx="300" ry="24" fill="#063F3C" opacity=".13" filter="url(#c_soft)"/>
+<!-- loose botanical accents -->
+<g fill="#24A879"><path d="M40 269q-19-76 39-111 19 66-39 111Zm42 20q-7-83 58-119 12 79-58 119Z"/><path d="M570 244q-8-88 62-122 13 82-62 122Zm36 47q17-73 87-82-10 72-87 82Z"/></g>
+<g fill="#81D6B4"><path d="M74 218q-40-63-4-109 37 52 4 109Zm523-49q-5-68 48-99 16 63-48 99Z"/></g>
+<!-- laptop -->
+<g transform="translate(95 122) rotate(-4)" filter="url(#c_shadow)">
+ <path d="M21 7q0-15 18-15h222q17 0 17 17v151H21Z" fill="url(#c_navy)"/>
+ <rect x="31" y="4" width="236" height="136" rx="7" fill="#DDF7F4"/>
+ <rect x="39" y="12" width="220" height="120" rx="4" fill="#0F766E"/>
+ <path d="M39 109q45-48 90-19t130-43v85H39Z" fill="#2FC2B0" opacity=".75"/>
+ <path d="M39 122q65-50 110-24 62 34 110-28v62H39Z" fill="#F3B43B" opacity=".8"/>
+ <path d="M8 159h281l-24 22H34Z" fill="#BCCBD0"/>
+ <path d="M123 161h50l9 8h-69Z" fill="#738A91"/>
+</g>
+<!-- smartphone behind products -->
+<g transform="translate(380 78) rotate(6)" filter="url(#c_shadow)"><rect width="93" height="200" rx="18" fill="#253C49"/><rect x="6" y="7" width="81" height="185" rx="13" fill="#ECF8F6"/><rect x="34" y="13" width="24" height="4" rx="2" fill="#829A9E"/><rect x="17" y="38" width="58" height="57" rx="8" fill="#D0F0EB"/><path d="m28 77 13-27 15 27Z" fill="#0E9E91"/><rect x="17" y="107" width="58" height="7" rx="3" fill="#B0D6D2"/><rect x="17" y="122" width="43" height="7" rx="3" fill="#B0D6D2"/></g>
+<!-- shopping bag -->
+<g transform="translate(502 135)" filter="url(#c_shadow)"><path d="M13 54q0-12 13-12h112q13 0 13 12l-12 137H25Z" fill="url(#c_tealDark)"/><path d="M49 55V34q0-29 35-29t35 29v21" stroke="#C7843F" stroke-width="13" stroke-linecap="round"/><path d="M49 55V34q0-29 35-29t35 29v21" stroke="#F5B35D" stroke-width="7" stroke-linecap="round"/></g>
+<!-- sneaker foreground -->
+<g transform="translate(290 256) rotate(-4)" filter="url(#c_shadow)"><path d="M15 45q31-4 51-42 11-18 25-3l44 46q24 24 57 31 18 5 19 24 1 17-21 21H34Q4 119 7 90Z" fill="#F4F7F7" stroke="#B6C8CB" stroke-width="4"/><path d="M14 88q92 15 195 1 12 28-24 34H35Q9 120 14 88Z" fill="#DDE7E8"/><path d="m76 43 27 24m-42-12 27 24m-39-17 26 26" stroke="#91A9AD" stroke-width="6" stroke-linecap="round"/><path d="M72 39q10-11 22-16" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/></g>
+<!-- lamp -->
+<g transform="translate(625 70)" filter="url(#c_shadow)"><path d="M42 106h18v157H42Z" fill="#D8E5E4"/><path d="M15 107h72l-9-19H24Z" fill="#B8C9C8"/><path d="M3 88q7-67 47-67t48 67Z" fill="#FFF1D7" stroke="#E9D8B9" stroke-width="4"/><ellipse cx="51" cy="264" rx="50" ry="10" fill="#AFC5C3"/></g>
+<!-- small highlight dots -->
+<circle cx="74" cy="91" r="7" fill="#F8B638"/><circle cx="650" cy="42" r="5" fill="#F8B638"/>
+
+</svg>

@@ -4,19 +4,10 @@ import Link from 'next/link';
 import {
   ArrowDown,
   ArrowLeft,
-  BookOpen,
-  ClipboardList,
-  Eye,
   Handshake,
-  MapPin,
-  MessageCircle,
-  Scale,
-  Search,
   ShieldCheck,
   ShoppingCart,
   Tag,
-  Users,
-  Wallet,
   type LucideIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -42,12 +33,37 @@ function toFa(value: number): string {
   return faNumber.format(value);
 }
 
-/** Homepage art assets (WebP extracted from the design reference). */
+/**
+ * Homepage art assets. Per the design review, Hero + Seller keep the original
+ * raster art (superior illustration quality); Trust + CTA use the kit's
+ * independent, transparent SVG illustrations. `width`/`height` record the
+ * files' intrinsic px sizes so aspect ratios are preserved (no crop/stretch).
+ */
 const art = {
-  hero: '/images/homepage/hero-art.webp',
-  processSeller: '/images/homepage/process-seller-art.webp',
-  trustShield: '/images/homepage/trust-shield-art.webp',
-  ctaProducts: '/images/homepage/cta-products-art.webp',
+  hero: { src: '/images/homepage/hero-art.webp', width: 580, height: 450 },
+  processSeller: { src: '/images/homepage/process-seller-art.webp', width: 310, height: 255 },
+  trustShield: {
+    src: '/images/weshbazar-svg/illustrations/trust-shield.svg',
+    width: 520,
+    height: 410,
+  },
+  ctaProducts: {
+    src: '/images/weshbazar-svg/illustrations/cta-products.svg',
+    width: 760,
+    height: 390,
+  },
+} as const;
+
+/** Section icons pulled from the kit's `icons/` folder (120×120 transparent SVG). */
+const sectionIcon = {
+  pin: '/images/weshbazar-svg/icons/pin.svg',
+  users: '/images/weshbazar-svg/icons/users.svg',
+  scale: '/images/weshbazar-svg/icons/scale.svg',
+  search: '/images/weshbazar-svg/icons/search.svg',
+  listing: '/images/weshbazar-svg/icons/listing.svg',
+  handshake: '/images/weshbazar-svg/icons/handshake.svg',
+  lock: '/images/weshbazar-svg/icons/lock.svg',
+  shieldCheck: '/images/weshbazar-svg/icons/shield-check.svg',
 } as const;
 
 export default function WelcomePage() {
@@ -120,15 +136,15 @@ function HeroArt() {
       <div className="pointer-events-none absolute bottom-10 start-0 h-44 w-44 rounded-full bg-accent/20 blur-3xl" />
       <div className="pointer-events-none absolute -top-4 end-8 h-36 w-36 rounded-full bg-primary/20 blur-3xl" />
 
-      {/* fade the outer edges + blend white background into the hero gradient */}
-      <div className="relative aspect-[58/45] w-full [mask-image:radial-gradient(ellipse_115%_115%_at_50%_45%,#000_60%,transparent_96%)] [-webkit-mask-image:radial-gradient(ellipse_115%_115%_at_50%_45%,#000_60%,transparent_96%)]">
+      {/* Raster hero blended into the hero gradient — soft edge mask, no crop */}
+      <div className="relative aspect-[58/45] w-full [mask-image:radial-gradient(ellipse_115%_115%_at_50%_45%,#000_62%,transparent_97%)] [-webkit-mask-image:radial-gradient(ellipse_115%_115%_at_50%_45%,#000_62%,transparent_97%)]">
         <Image
-          src={art.hero}
+          src={art.hero.src}
           alt="تصویر هنری بازار آنلاین ویش‌بازار"
           fill
           sizes="(max-width: 1024px) 100vw, 620px"
           priority
-          className="object-cover mix-blend-multiply"
+          className="object-contain mix-blend-multiply"
         />
       </div>
 
@@ -180,6 +196,20 @@ function FloatingChip({
   );
 }
 
+/** Renders a kit icon SVG as a crisp, unoptimized vector (mirrors `BrandLogo`). */
+function KitIcon({ src, className }: { src: string; className?: string }) {
+  return (
+    <Image
+      src={src}
+      alt=""
+      width={120}
+      height={120}
+      unoptimized
+      className={cn('size-6', className)}
+    />
+  );
+}
+
 function HeroWave() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 text-surface">
@@ -205,24 +235,24 @@ function WhyWeshBazar() {
           <TitleWithLines>چرا ویش‌بازار؟</TitleWithLines>
         </div>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           <WhyCard
-            icon={MapPin}
+            icon={sectionIcon.pin}
             title="پوشش و دسترسی بازار"
             desc="آگهی‌ها را بر اساس شهر و محل جست‌وجو کنید و کالای مورد نظر را در نزدیکی خود بیابید."
           />
           <WhyCard
-            icon={Users}
+            icon={sectionIcon.users}
             title="جامعهٔ کاربران"
             desc="فضایی مشترک برای خریداران و فروشندگان؛ هر آگهی در دسترس جست‌وجوکنندگان قرار می‌گیرد."
           />
           <WhyCard
-            icon={Scale}
+            icon={sectionIcon.scale}
             title="خرید و فروش آگاهانه"
             desc="جزئیات آگهی را پیش از معامله بررسی کنید و با آگاهی کامل تصمیم بگیرید."
           />
           <WhyCard
-            icon={Search}
+            icon={sectionIcon.search}
             title="جست‌وجوی سریع و آسان"
             desc="با کلمهٔ کلیدی یا دسته‌بندی، آگهی مورد نظر را به‌سادگی پیدا کنید."
           />
@@ -233,18 +263,18 @@ function WhyWeshBazar() {
 }
 
 function WhyCard({
-  icon: Icon,
+  icon,
   title,
   desc,
 }: {
-  icon: LucideIcon;
+  icon: string;
   title: string;
   desc: string;
 }) {
   return (
     <article className="group rounded-surface border border-border bg-surface p-6 shadow-soft transition-all duration-medium hover:-translate-y-1 hover:shadow-card">
-      <span className="flex size-12 items-center justify-center rounded-2xl bg-primary-soft text-primary transition-colors duration-small group-hover:bg-primary group-hover:text-primary-foreground">
-        <Icon className="size-6" aria-hidden />
+      <span className="flex size-12 items-center justify-center rounded-2xl bg-primary-soft transition-colors duration-small group-hover:bg-primary">
+        <KitIcon src={icon} className="size-6" />
       </span>
       <h3 className="mt-5 text-card-title font-bold text-foreground">{title}</h3>
       <p className="mt-2 text-body leading-7 text-muted-foreground">{desc}</p>
@@ -269,17 +299,17 @@ function TitleWithLines({ children }: { children: React.ReactNode }) {
 
 const howSteps = [
   {
-    icon: Search,
+    icon: sectionIcon.search,
     title: 'جست‌وجوی کالا',
     desc: 'با کلمهٔ کلیدی یا دسته‌بندی، آگهی مورد نظر خود را پیدا کنید.',
   },
   {
-    icon: Eye,
+    icon: sectionIcon.listing,
     title: 'بررسی آگهی',
     desc: 'عکس‌ها، توضیحات و شرایط آگهی را با دقت ببینید.',
   },
   {
-    icon: MessageCircle,
+    icon: sectionIcon.handshake,
     title: 'تماس با فروشنده',
     desc: 'برای جزئیات بیشتر و هماهنگی، با فروشنده در تماس شوید.',
   },
@@ -319,13 +349,13 @@ function HowItWorks() {
 
 function HowStep({
   step,
-  icon: Icon,
+  icon,
   title,
   desc,
   isLast,
 }: {
   step: number;
-  icon: LucideIcon;
+  icon: string;
   title: string;
   desc: string;
   isLast: boolean;
@@ -333,8 +363,8 @@ function HowStep({
   return (
     <div className="flex items-start gap-4">
       <div className="flex flex-col items-center">
-        <span className="relative flex size-14 shrink-0 items-center justify-center rounded-full bg-surface text-primary shadow-card ring-1 ring-primary/15">
-          <Icon className="size-6" aria-hidden />
+        <span className="relative flex size-14 shrink-0 items-center justify-center rounded-full bg-surface shadow-card ring-1 ring-primary/15">
+          <KitIcon src={icon} className="size-6" />
         </span>
         {!isLast && (
           <span className="my-1 flex h-9 items-center text-primary/40" aria-hidden>
@@ -361,13 +391,13 @@ function ProcessArt() {
       <Leaf className="absolute bottom-4 end-0 h-12 w-12 rotate-12 text-accent/40" />
       <Leaf className="absolute top-1/2 -end-3 h-8 w-8 -rotate-45 text-primary/40" />
 
-      <div className="relative aspect-[62/51] w-full max-w-[360px] rounded-[1.75rem] border border-border bg-surface/80 p-3 shadow-lift backdrop-blur-sm">
+      <div className="relative aspect-[62/51] w-full max-w-[360px]">
         <Image
-          src={art.processSeller}
+          src={art.processSeller.src}
           alt="فروشنده‌ای که با موبایل آگهی خود را مدیریت می‌کند"
           fill
           sizes="(max-width: 1024px) 100vw, 360px"
-          className="object-contain p-1"
+          className="object-contain mix-blend-multiply"
         />
       </div>
     </div>
@@ -390,22 +420,22 @@ function Leaf({ className }: { className?: string }) {
 
 const safetyFeatures = [
   {
-    icon: ClipboardList,
+    icon: sectionIcon.listing,
     title: 'بررسی کامل آگهی',
     desc: 'جزئیات، عکس‌ها و توضیحات آگهی را با دقت بخوانید.',
   },
   {
-    icon: Scale,
+    icon: sectionIcon.scale,
     title: 'معاملهٔ منصفانه',
     desc: 'شرایط قیمت و تحویل را پیش از معامله روشن کنید.',
   },
   {
-    icon: Wallet,
+    icon: sectionIcon.lock,
     title: 'احتیاط در پرداخت',
     desc: 'پیش از واریز هر مبلغ، کالا و فروشنده را ارزیابی کنید.',
   },
   {
-    icon: BookOpen,
+    icon: sectionIcon.shieldCheck,
     title: 'آگاهی از قوانین',
     desc: 'نکات ایمنی و راهنمای معامله را مطالعه کنید.',
   },
@@ -426,15 +456,14 @@ function TrustSafety() {
           {/* Shield art — first child renders on the right in RTL */}
           <div aria-hidden className="relative mx-auto w-full max-w-[340px]">
             <div className="pointer-events-none absolute inset-4 rounded-full bg-primary/10 blur-3xl" />
-            <div className="relative aspect-[249/182] w-full">
-              <Image
-                src={art.trustShield}
-                alt="سپر امنیت با نمای شهری و روبان نارنجی"
-                fill
-                sizes="(max-width: 1024px) 100vw, 340px"
-                className="object-contain"
-              />
-            </div>
+            <Image
+              src={art.trustShield.src}
+              alt="سپر امنیت با نمای شهری و روبان نارنجی"
+              width={art.trustShield.width}
+              height={art.trustShield.height}
+              unoptimized
+              className="relative h-auto w-full"
+            />
           </div>
 
           <div className="rounded-surface border border-border bg-surface p-6 shadow-soft sm:p-8">
@@ -453,14 +482,14 @@ function TrustSafety() {
           </div>
         </div>
 
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {safetyFeatures.map((feature) => (
             <li
               key={feature.title}
               className="rounded-surface border border-border bg-surface p-5 shadow-soft"
             >
-              <span className="flex size-11 items-center justify-center rounded-xl bg-primary-soft text-primary">
-                <feature.icon className="size-5" aria-hidden />
+              <span className="flex size-11 items-center justify-center rounded-xl bg-primary-soft">
+                <KitIcon src={feature.icon} className="size-6" />
               </span>
               <h3 className="mt-4 text-ui font-bold text-foreground">{feature.title}</h3>
               <p className="mt-1.5 text-meta leading-6 text-muted-foreground">{feature.desc}</p>
@@ -486,15 +515,14 @@ function CtaBanner() {
         <div className="relative grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto]">
           {/* Products art — first child → right in RTL */}
           <div aria-hidden className="relative mx-auto w-full max-w-[380px]">
-            <div className="relative aspect-[123/65] w-full">
-              <Image
-                src={art.ctaProducts}
-                alt="مجموعه‌ای از کالاهای قابل معامله در ویش‌بازار"
-                fill
-                sizes="(max-width: 1024px) 100vw, 380px"
-                className="object-contain"
-              />
-            </div>
+            <Image
+              src={art.ctaProducts.src}
+              alt="مجموعه‌ای از کالاهای قابل معامله در ویش‌بازار"
+              width={art.ctaProducts.width}
+              height={art.ctaProducts.height}
+              unoptimized
+              className="h-auto w-full"
+            />
           </div>
 
           <div className="text-center lg:text-start">

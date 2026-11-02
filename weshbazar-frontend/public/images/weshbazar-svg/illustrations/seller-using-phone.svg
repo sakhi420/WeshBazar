@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="590" viewBox="0 0 520 590" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">تصویر فروشنده در حال استفاده از موبایل</title><desc id="desc">Original transparent vector artwork for WeshBazar marketplace.</desc>
+<defs>
+    <linearGradient id="s_teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#38D6C5"/><stop offset=".48" stop-color="#20B8AA"/><stop offset="1" stop-color="#064E4A"/></linearGradient>
+    <linearGradient id="s_tealDark" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#127F77"/><stop offset="1" stop-color="#064B47"/></linearGradient>
+    <linearGradient id="s_gold" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#FFD86A"/><stop offset=".5" stop-color="#F59E0B"/><stop offset="1" stop-color="#E87900"/></linearGradient>
+    <linearGradient id="s_screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9FAF8"/></linearGradient>
+    <linearGradient id="s_mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E9FBF8"/><stop offset="1" stop-color="#BDEFE8"/></linearGradient>
+    <linearGradient id="s_navy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#243B4E"/><stop offset="1" stop-color="#0B2430"/></linearGradient>
+    <linearGradient id="s_skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F7C6A0"/><stop offset="1" stop-color="#D98B65"/></linearGradient>
+    <filter id="s_shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="10"/><feOffset dy="12"/><feComponentTransfer><feFuncA type="linear" slope=".18"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="s_soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="18"/></filter>
+    </defs>
+
+<ellipse cx="290" cy="548" rx="215" ry="30" fill="#0B766D" opacity=".10" filter="url(#s_soft)"/>
+<!-- organic transparent foliage shapes -->
+<path d="M30 428q-32-120 78-176 94-48 174 14 90-42 160 29 62 65 2 151-84 102-245 72Q67 508 30 428Z" fill="url(#s_mint)" opacity=".95"/>
+<path d="M35 455q22-88 67-103-3 79-67 103Zm50 54q6-92 74-127-10 93-74 127Zm305-24q-1-92 58-133 15 84-58 133Z" fill="#5BC9A4" opacity=".75"/>
+<g fill="#159A75"><path d="M45 487q-39-44-24-93 45 25 24 93Zm27 21q-6-65 39-95 12 58-39 95Zm321-8q-4-68 44-92 15 60-44 92Z"/></g>
+<!-- seller seated body -->
+<path d="M112 512q7-91 73-128 57-30 120-8 68 26 80 136l-18 33H134Z" fill="url(#s_navy)"/>
+<path d="M139 516q28-81 78-103 44-19 87 1 51 23 61 102l-17 26H143Z" fill="#0F766E"/>
+<!-- shirt -->
+<path d="M199 386q37-34 83-21l43 31-24 123h-96l-30-112Z" fill="#F4F5F0"/>
+<path d="m220 366 34 33 28-34 22 30-23 106h-57l-28-105Z" fill="#E7ECE8"/>
+<!-- vest -->
+<path d="M204 376q-21 7-30 31l21 90 36-9-13-78 19-42Zm77 1q30 7 42 36l-19 85-37-9 17-77-18-40Z" fill="#244E4B"/>
+<path d="m229 399 9 84m36-84-10 84" stroke="#49736D" stroke-width="4"/>
+<!-- neck -->
+<path d="M235 330v44q19 25 42 1v-51Z" fill="url(#s_skin)"/>
+<!-- head and ears -->
+<path d="M209 260q4-80 81-76 65 4 69 76l-10 54q-16 58-70 60-48-5-64-63Z" fill="url(#s_skin)"/>
+<ellipse cx="208" cy="295" rx="12" ry="20" fill="#D9906B"/><ellipse cx="353" cy="291" rx="11" ry="18" fill="#D9906B"/>
+<!-- hair -->
+<path d="M208 278q-24-58 8-100 28-38 82-30 58 8 68 63 3 23-11 53-3-34-19-49-13 25-49 24-35-2-55 22l-13 42Z" fill="#19252C"/>
+<path d="M215 220q12-50 65-56 48-4 70 36-33-17-63-7-34-8-72 27Z" fill="#293C46"/>
+<path d="M237 186q27-28 65-13" stroke="#53636B" stroke-width="7" stroke-linecap="round" opacity=".7"/>
+<!-- eyebrows and eyes -->
+<path d="M232 278q18-12 34-2m34-4q18-10 33 2" stroke="#57382F" stroke-width="6" stroke-linecap="round"/>
+<ellipse cx="252" cy="290" rx="5" ry="7" fill="#233B43"/><ellipse cx="319" cy="289" rx="5" ry="7" fill="#233B43"/>
+<path d="M280 292q-5 17-3 25 7 6 15 1" stroke="#C77F60" stroke-width="4" stroke-linecap="round"/>
+<!-- beard -->
+<path d="M217 314q18 11 37 7 25-2 42 0 31 3 52-13-6 62-65 75-51 4-66-69Z" fill="#27343A"/>
+<path d="M242 338q31 19 65-1" stroke="#6B5147" stroke-width="4" stroke-linecap="round" opacity=".65"/>
+<path d="M264 365q19 8 37-2" stroke="#E7B18E" stroke-width="4" stroke-linecap="round"/>
+<!-- arms -->
+<path d="M185 410q-34 12-46 50l66 61 25-24-39-49 31-21Z" fill="#F4F5F0"/>
+<path d="M308 405q38 1 53 36l-31 53-27-17 16-34-34-18Z" fill="#F4F5F0"/>
+<path d="M160 453q-11 21 8 38l48 27q17 8 26-7 6-12-8-20l-45-34Z" fill="url(#s_skin)"/>
+<path d="M323 464q21-15 42-5 14 7 7 20l-28 37q-14 15-28 4-13-10-2-24l18-21Z" fill="url(#s_skin)"/>
+<!-- smartphone -->
+<g transform="translate(300 395) rotate(12)" filter="url(#s_shadow)"><rect width="76" height="133" rx="13" fill="#162B34"/><rect x="5" y="7" width="66" height="119" rx="9" fill="#E8F8F6"/><rect x="27" y="12" width="22" height="3" rx="2" fill="#78979A"/><path d="m24 48 14-23 15 23-13 17Z" fill="url(#s_teal)"/><rect x="15" y="77" width="46" height="6" rx="3" fill="#B6D8D5"/><rect x="15" y="90" width="33" height="6" rx="3" fill="#B6D8D5"/></g>
+<!-- fingers over phone -->
+<path d="M330 484q-10 9-7 19 4 10 14 4l20-17m-7 23q-6 12 3 16 9 3 15-8" stroke="#D99570" stroke-width="9" stroke-linecap="round"/>
+<!-- tiny sparkles -->
+<path d="m111 267 8-24 8 24 24 8-24 8-8 24-8-24-24-8Zm339 74 5-15 5 15 15 5-15 5-5 15-5-15-15-5Z" fill="#F8B72D" opacity=".9"/>
+<circle cx="418" cy="250" r="9" fill="#2CB8A7" opacity=".8"/>
+
+</svg>
