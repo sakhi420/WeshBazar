@@ -72,10 +72,10 @@ export default async function HomePage() {
   const topCategories = catResult.status === 'ok' ? orderHomeCategories(catResult.categories) : [];
 
   return (
-    <PageContainer className="space-y-5 sm:space-y-8">
+    <PageContainer className="space-y-5 md:space-y-8">
       <HomeSearchPanel />
 
-      <section aria-label="چطور کار می‌کند" className="grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-3">
+      <section aria-label="چطور کار می‌کند" className="grid grid-cols-3 gap-2 md:gap-3 lg:grid-cols-3">
         <HomeStep
           href="/search"
           icon={Search}
@@ -128,7 +128,7 @@ export default async function HomePage() {
       ) : null}
 
       {/* Latest listings */}
-      <section aria-labelledby="latest-heading" className="space-y-2 sm:space-y-3">
+      <section aria-labelledby="latest-heading" className="space-y-2 md:space-y-3">
         <SectionHeader
           id="latest-heading"
           title="آخرین آگهی‌ها"
@@ -220,13 +220,13 @@ function HomeStep({
   return (
     <Link
       href={href}
-      className="group rounded-surface border border-border bg-surface p-2 shadow-soft transition-all duration-small hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-4"
+      className="group rounded-surface border border-border bg-surface p-2 shadow-soft transition-all duration-small hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:p-4"
     >
-      <span className="flex size-8 items-center justify-center rounded-full bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground sm:size-10">
-        <Icon className="size-4 sm:size-5" aria-hidden />
+      <span className="flex size-8 items-center justify-center rounded-full bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground md:size-10">
+        <Icon className="size-4 md:size-5" aria-hidden />
       </span>
-      <h2 className="mt-1 text-caption font-semibold text-foreground sm:mt-3 sm:text-ui">{title}</h2>
-      <p className="mt-1 hidden text-caption text-muted-foreground sm:block">{description}</p>
+      <h2 className="mt-1 text-caption font-semibold text-foreground md:mt-3 md:text-ui">{title}</h2>
+      <p className="mt-1 hidden text-caption text-muted-foreground md:block">{description}</p>
     </Link>
   );
 }
