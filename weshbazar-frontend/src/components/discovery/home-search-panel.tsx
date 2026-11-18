@@ -4,9 +4,8 @@ import { LocationPicker } from '@/components/location/location-picker';
 import { SearchField } from '@/features/search/components/search-field';
 
 /**
- * Search-first homepage hero. Keyword and city stay stacked until `lg`
- * (768px). The theme's `md` is 430px — a row at that width collapses the
- * input and leaves only the city control.
+ * Search-first homepage hero. The market page keeps one prominent search
+ * experience; mobile spacing is tightened while desktop composition remains.
  */
 export function HomeSearchPanel() {
   return (
@@ -25,20 +24,20 @@ export function HomeSearchPanel() {
         <div className="absolute -end-16 bottom-0 h-48 w-48 rounded-full bg-accent/25 blur-3xl" />
       </div>
 
-      <div className="relative space-y-4 px-4 py-6 sm:px-6 sm:py-8">
+      <div className="relative space-y-3 px-3 py-4 sm:space-y-4 sm:px-6 sm:py-8">
         <p className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-caption font-medium text-accent">
           <Sparkles className="size-3.5" aria-hidden />
           بازار افغانستان
         </p>
-        <h1 className="max-w-xl text-heading font-bold leading-tight sm:text-display-mobile">
+        <h1 className="max-w-xl text-xl font-bold leading-tight sm:text-display-mobile">
           بازار خرید و فروش در افغانستان
         </h1>
-        <p className="max-w-prose text-body text-white/80">
+        <p className="max-w-prose text-caption leading-5 text-white/80 sm:text-body">
           آنچه می‌خواهید را پیدا کنید؛ آنچه دارید را رایگان بفروشید. جست‌وجو، شهر، و تماس مستقیم با فروشنده.
         </p>
 
         <Suspense fallback={null}>
-          <div className="rounded-surface bg-surface p-3 shadow-glow sm:p-4">
+          <div className="rounded-surface bg-surface p-2.5 shadow-glow sm:p-4">
             <div className="flex flex-col gap-2 lg:flex-row lg:items-stretch">
               <SearchField
                 className="w-full min-w-0 flex-1"
@@ -50,7 +49,7 @@ export function HomeSearchPanel() {
           </div>
         </Suspense>
 
-        <ul className="flex flex-wrap gap-2 text-caption text-white/85">
+        <ul className="hidden flex-wrap gap-2 text-caption text-white/85 sm:flex">
           <li className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1">
             <BadgeCheck className="size-3.5 text-accent" aria-hidden />
             ثبت آگهی رایگان
