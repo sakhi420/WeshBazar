@@ -1,16 +1,21 @@
+'use client';
+
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Plus, Search } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/brand-logo';
 import { Button } from '@/components/ui/button';
 import { HeaderAuthActions } from '@/components/layout/header-auth-actions';
 
 /**
  * Shared mobile app header.
- * Keep the same compact one-row chrome across every marketplace route.
- * Search remains available through the bottom navigation and page-specific
- * search controls instead of consuming a second row in the global header.
+ * The marketplace home already presents a prominent search panel; internal
+ * routes get a small search shortcut instead of a second full search row.
  */
 export function MobileHeader() {
+  const pathname = usePathname();
+  const showSearchShortcut = pathname !== '/market';
+
   return (
     <header className="sticky top-0 z-header border-b border-border bg-surface/90 shadow-soft backdrop-blur-md lg:hidden">
       <div className="flex h-header items-center justify-between px-4">
@@ -22,7 +27,14 @@ export function MobileHeader() {
           <BrandLogo height={28} priority />
         </Link>
 
-        <nav aria-label="اقدام‌های حساب" className="flex items-center gap-1">
+        <nav aria-label="اقدام‌های اصلی" className="flex items-center gap-1">
+          {showSearchShortcut ? (
+            <Button asChild variant="ghost" size="icon" aria-label="جستجو">
+              <Link href="/search">
+                <Search aria-hidden />
+              </Link>
+            </Button>
+          ) : null}
           <Button asChild variant="accent" size="icon" aria-label="ثبت آگهی">
             <Link href="/sell">
               <Plus aria-hidden />
