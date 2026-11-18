@@ -72,10 +72,10 @@ export default async function HomePage() {
   const topCategories = catResult.status === 'ok' ? orderHomeCategories(catResult.categories) : [];
 
   return (
-    <PageContainer className="space-y-8">
+    <PageContainer className="space-y-5 sm:space-y-8">
       <HomeSearchPanel />
 
-      <section aria-label="چطور کار می‌کند" className="grid gap-3 lg:grid-cols-3">
+      <section aria-label="چطور کار می‌کند" className="grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-3">
         <HomeStep
           href="/search"
           icon={Search}
@@ -100,7 +100,7 @@ export default async function HomePage() {
       {catResult.status === 'ok' ? (
         <section
           aria-labelledby="categories-heading"
-          className="space-y-3 rounded-surface border border-border/80 bg-surface/80 p-3 shadow-soft sm:p-4"
+          className="space-y-2 rounded-surface border border-border/80 bg-surface/80 p-2 shadow-soft sm:space-y-3 sm:p-4"
         >
           <h2
             id="categories-heading"
@@ -128,7 +128,7 @@ export default async function HomePage() {
       ) : null}
 
       {/* Latest listings */}
-      <section aria-labelledby="latest-heading" className="space-y-3">
+      <section aria-labelledby="latest-heading" className="space-y-2 sm:space-y-3">
         <SectionHeader
           id="latest-heading"
           title="آخرین آگهی‌ها"
@@ -155,7 +155,7 @@ export default async function HomePage() {
         ) : null}
       </section>
 
-      <section className="relative overflow-hidden rounded-surface bg-accent px-5 py-7 text-center text-accent-foreground shadow-card sm:px-8 sm:py-9">
+      <section className="relative overflow-hidden rounded-surface bg-accent px-4 py-5 text-center text-accent-foreground shadow-card sm:px-8 sm:py-9">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-20"
@@ -179,7 +179,7 @@ export default async function HomePage() {
       </section>
 
       {/* Safety */}
-      <section className="rounded-surface border border-warning/25 bg-gradient-to-l from-surface to-warning/5 p-4 shadow-card sm:p-6">
+      <section className="rounded-surface border border-warning/25 bg-gradient-to-l from-surface to-warning/5 p-3 shadow-card sm:p-6">
         <div className="flex items-start gap-3">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-warning/10 text-warning">
             <ShieldAlert className="size-5" aria-hidden />
@@ -220,13 +220,13 @@ function HomeStep({
   return (
     <Link
       href={href}
-      className="group rounded-surface border border-border bg-surface p-4 shadow-soft transition-all duration-small hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group rounded-surface border border-border bg-surface p-2 shadow-soft transition-all duration-small hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-4"
     >
-      <span className="flex size-10 items-center justify-center rounded-full bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-        <Icon className="size-5" aria-hidden />
+      <span className="flex size-8 items-center justify-center rounded-full bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground sm:size-10">
+        <Icon className="size-4 sm:size-5" aria-hidden />
       </span>
-      <h2 className="mt-3 text-ui font-semibold text-foreground">{title}</h2>
-      <p className="mt-1 text-caption text-muted-foreground">{description}</p>
+      <h2 className="mt-1 text-caption font-semibold text-foreground sm:mt-3 sm:text-ui">{title}</h2>
+      <p className="mt-1 hidden text-caption text-muted-foreground sm:block">{description}</p>
     </Link>
   );
 }
