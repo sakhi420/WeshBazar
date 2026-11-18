@@ -1,24 +1,16 @@
-'use client';
-
-import { Suspense } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/brand-logo';
 import { Button } from '@/components/ui/button';
 import { HeaderAuthActions } from '@/components/layout/header-auth-actions';
-import { LocationPicker } from '@/components/location/location-picker';
-import { SearchField } from '@/features/search/components/search-field';
 
 /**
- * Mobile header. The marketplace home owns its prominent search panel, so
- * avoid rendering a second search/location row there. Other routes retain the
- * compact global search entry point.
+ * Shared mobile app header.
+ * Keep the same compact one-row chrome across every marketplace route.
+ * Search remains available through the bottom navigation and page-specific
+ * search controls instead of consuming a second row in the global header.
  */
 export function MobileHeader() {
-  const pathname = usePathname();
-  const showHeaderSearch = pathname !== '/market';
-
   return (
     <header className="sticky top-0 z-header border-b border-border bg-surface/90 shadow-soft backdrop-blur-md lg:hidden">
       <div className="flex h-header items-center justify-between px-4">
@@ -30,7 +22,7 @@ export function MobileHeader() {
           <BrandLogo height={28} priority />
         </Link>
 
-        <nav className="flex items-center gap-1">
+        <nav aria-label="اقدام‌های حساب" className="flex items-center gap-1">
           <Button asChild variant="accent" size="icon" aria-label="ثبت آگهی">
             <Link href="/sell">
               <Plus aria-hidden />
@@ -39,22 +31,6 @@ export function MobileHeader() {
           <HeaderAuthActions />
         </nav>
       </div>
-
-      {showHeaderSearch ? (
-        <div className="flex items-stretch gap-2 px-4 pb-3">
-          <Suspense fallback={<div className="h-control-lg min-w-0 flex-1 rounded-control bg-muted/40" />}>
-            <SearchField
-              compact
-              redirectToSearch
-              className="min-w-0 flex-1"
-              placeholder="چی می‌خواهی پیدا کنی؟"
-            />
-          </Suspense>
-          <Suspense fallback={<div className="h-control-lg w-28 shrink-0 rounded-control bg-muted/40" />}>
-            <LocationPicker inline redirectToSearch />
-          </Suspense>
-        </div>
-      ) : null}
     </header>
   );
 }
