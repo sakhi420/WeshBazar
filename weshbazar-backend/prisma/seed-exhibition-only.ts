@@ -14,6 +14,7 @@ import { access, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { PrismaPg } from '@prisma/adapter-pg';
+import sharp from 'sharp';
 import { PrismaClient } from '../apps/api/src/generated/prisma/client';
 import { EXHIBITION_FIXTURES } from './seed/exhibition/fixtures';
 import { seedExhibitionData } from './seed/exhibition/seed-exhibition';
@@ -112,10 +113,18 @@ async function main(): Promise<void> {
       const filePath = path.join(assetsRoot, fixture.imageFile);
       const fileStat = await stat(filePath);
       if (!fileStat.isFile()) throw new Error('Fixture asset is not a file: ' + fixture.imageFile);
-      return fileStat.size;
+      const metadata = await sharp(filePath, { limitInputPixels: 25_000_000 }).metadata();
+      if (
+        !metadata.width ||
+        !metadata.height ||
+        metadata.width * metadata.height > 25_000_000
+      ) {
+        throw new Error('Fixture image dimensions are invalid: ' + fixture.imageFile);
+      }
+      return { size: fileStat.size, width: metadata.width, height: metadata.height };
     }),
   );
-  const missingOrEmptyAssets = assetChecks.filter((size) => size <= 0).length;
+  const missingOrEmptyAssets = assetChecks.filter((asset) => asset.size <= 0).length;
   if (missingOrEmptyAssets > 0) throw new Error('Empty exhibition image assets detected.');
 
   const adapter = new PrismaPg({ connectionString: requiredEnv('DATABASE_URL') });
@@ -142,7 +151,7 @@ async function main(): Promise<void> {
     const [categories, provinces] = await Promise.all([
       prisma.category.findMany({
         where: { slug: { in: categorySlugs } },
-        select: { slug: true },
+        select: { id: true, slug: true },
       }),
       prisma.province.findMany({
         where: { slug: { in: provinceSlugs } },
@@ -151,9 +160,46 @@ async function main(): Promise<void> {
     ]);
 
     const categorySet = new Set(categories.map((category) => category.slug));
+    const categoryIdBySlug = new Map(
+      categories.map((category) => [category.slug, category.id] as const),
+    );
     const provinceMap = new Map(provinces.map((province) => [province.slug, province]));
     const missingCategories = categorySlugs.filter((slug) => !categorySet.has(slug));
     const missingProvinces = provinceSlugs.filter((slug) => !provinceMap.has(slug));
+
+    const categoryAttributes = await prisma.categoryAttribute.findMany({
+      where: { categoryId: { in: categories.map((category) => category.id) }, isActive: true },
+      select: {
+        categoryId: true,
+        key: true,
+        type: true,
+        options: { where: { isActive: true }, select: { value: true } },
+      },
+    });
+    const selectableByCategory = new Map<string, Map<string, string[]>>();
+    for (const attribute of categoryAttributes) {
+      if (attribute.type !== 'SELECT') continue;
+      const selectable = selectableByCategory.get(attribute.categoryId) ?? new Map<string, string[]>();
+      selectable.set(attribute.key, attribute.options.map((option) => option.value));
+      selectableByCategory.set(attribute.categoryId, selectable);
+    }
+
+    const invalidSelections: string[] = [];
+    for (const fixture of EXHIBITION_FIXTURES) {
+      const categoryId = categoryIdBySlug.get(fixture.categorySlug);
+      if (!categoryId) continue;
+      const selectable = selectableByCategory.get(categoryId);
+      for (const [key, value] of Object.entries(fixture.attributes)) {
+        const allowed = selectable?.get(key);
+        if (allowed && !allowed.includes(String(value))) {
+          invalidSelections.push(fixture.key + ':' + key + '=' + String(value));
+        }
+      }
+    }
+
+    if (invalidSelections.length > 0) {
+      throw new Error('Invalid category SELECT attributes: ' + invalidSelections.join(', '));
+    }
 
     const cityPairs = new Map<string, { provinceSlug: string; citySlug: string }>();
     for (const fixture of EXHIBITION_FIXTURES) {
@@ -230,7 +276,7 @@ async function main(): Promise<void> {
       (listing) => listing.images.length === 0,
     ).length;
     const listingsNeedingImages = newListings + existingWithoutImages;
-    const totalAssetBytes = assetChecks.reduce((sum, size) => sum + size, 0);
+    const totalAssetBytes = assetChecks.reduce((sum, asset) => sum + asset.size, 0);
 
     console.log('Exhibition seed preflight');
     console.log('Database host: ' + databaseHost);
