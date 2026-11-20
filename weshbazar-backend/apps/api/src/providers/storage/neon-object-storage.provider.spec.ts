@@ -77,7 +77,7 @@ describe('NeonObjectStorageProvider', () => {
         '<ListBucketResult><IsTruncated>false</IsTruncated><Contents><Key>listings/a/b/original.jpg</Key><LastModified>2026-11-20T10:00:00.000Z</LastModified><Size>12</Size></Contents></ListBucketResult>',
         { status: 200 },
       ))
-      .mockResolvedValueOnce(new Response('', { status: 204 }));
+      .mockResolvedValueOnce(new Response(null, { status: 204 }));
 
     const storage = new NeonObjectStorageProvider(config);
     await expect(storage.deletePrefix('listings/a/b')).resolves.toBe(1);
