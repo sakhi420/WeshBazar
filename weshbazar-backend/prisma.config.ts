@@ -8,7 +8,11 @@ export default defineConfig({
     seed: 'tsx prisma/seed.ts',
   },
   datasource: {
-    url: env('DATABASE_URL'),
+    // Use Neon's direct (unpooled) URL for Prisma CLI migrations when available.
+    // Runtime queries continue using the pooled DATABASE_URL in PrismaService.
+    url: process.env.DATABASE_URL_UNPOOLED
+      ? env('DATABASE_URL_UNPOOLED')
+      : env('DATABASE_URL'),
     ...(process.env.SHADOW_DATABASE_URL
       ? { shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL }
       : {}),
