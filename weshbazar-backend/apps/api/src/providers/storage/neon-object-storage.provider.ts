@@ -186,7 +186,8 @@ export class NeonObjectStorageProvider implements StorageProvider {
     contentType?: string,
     query?: QueryPair[],
   ): Promise<Response> {
-    const url = this.objectUrl(key, query);
+    const safeKey = key === undefined ? undefined : assertSafeStorageKey(key);
+    const url = this.objectUrl(safeKey, query);
     const now = new Date();
     const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, '');
     const dateStamp = amzDate.slice(0, 8);
