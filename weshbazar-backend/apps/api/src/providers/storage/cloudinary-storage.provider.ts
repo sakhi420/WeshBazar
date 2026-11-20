@@ -86,7 +86,9 @@ export class CloudinaryStorageProvider implements StorageProvider {
     for (const [name, value] of Object.entries(params)) form.set(name, value);
     form.set('api_key', this.apiKey);
     form.set('signature', this.signature(params));
-    const blob = new Blob([new Uint8Array(data)], { type: contentType });
+    const bytes = new Uint8Array(data.byteLength);
+    bytes.set(data);
+    const blob = new Blob([bytes.buffer], { type: contentType });
     const fileName = (parsed.publicId.split('/').at(-1) ?? 'image') + '.' + parsed.format;
     form.set('file', blob, fileName);
 
