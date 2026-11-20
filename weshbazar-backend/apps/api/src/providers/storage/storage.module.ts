@@ -7,7 +7,7 @@
 import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { AppConfig } from '../../config/config.types';
-import { CloudinaryStorageProvider } from './cloudinary-storage.provider';
+import { NeonObjectStorageProvider } from './neon-object-storage.provider';
 import { LocalStorageProvider } from './local-storage.provider';
 import { STORAGE_PROVIDER, type StorageProvider } from './storage.provider';
 
@@ -30,9 +30,9 @@ import { STORAGE_PROVIDER, type StorageProvider } from './storage.provider';
               );
             }
             return local;
-          case 'cloudinary':
-            return new CloudinaryStorageProvider(
-              configService.get('storage.cloudinary', { infer: true }),
+          case 'neon':
+            return new NeonObjectStorageProvider(
+              configService.get('storage.neon', { infer: true }),
             );
           default:
             throw new Error(`Unsupported STORAGE_PROVIDER "${String(provider)}".`);
