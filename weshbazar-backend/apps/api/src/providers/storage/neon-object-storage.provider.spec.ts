@@ -92,6 +92,12 @@ describe('NeonObjectStorageProvider', () => {
     await expect(
       storage.put('../secret.jpg', Buffer.from('x'), 'image/jpeg'),
     ).rejects.toThrow(/Unsafe storage key rejected/);
+    await expect(storage.delete('../secret.jpg')).rejects.toThrow(
+      /Unsafe storage key rejected/,
+    );
+    await expect(storage.exists('../secret.jpg')).rejects.toThrow(
+      /Unsafe storage key rejected/,
+    );
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
