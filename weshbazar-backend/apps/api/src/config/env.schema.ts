@@ -110,9 +110,12 @@ export const envSchema = z
     LOGIN_LOCKOUT_DURATION_SECONDS: intEnv(900),
 
     // Storage / media
-    STORAGE_PROVIDER: z.enum(['local']).default('local'),
+    STORAGE_PROVIDER: z.enum(['local', 'cloudinary']).default('local'),
     LOCAL_STORAGE_PATH: z.string().default('./var/storage'),
     PUBLIC_STORAGE_BASE_URL: z.string().default('http://localhost:3000'),
+    CLOUDINARY_CLOUD_NAME: z.string().trim().default(''),
+    CLOUDINARY_API_KEY: z.string().trim().default(''),
+    CLOUDINARY_API_SECRET: z.string().trim().default(''),
     MAX_UPLOAD_SIZE: intEnv(5 * 1024 * 1024),
     MAX_IMAGES_PER_LISTING: intEnv(10),
     MAX_IMAGE_PIXELS: intEnv(25_000_000),
@@ -148,7 +151,7 @@ export const envSchema = z
     JOBS_CLEAN_ARCHIVED_LISTING_IMAGES_INTERVAL_SECONDS: intEnv(21_600).pipe(z.number().min(5)),
 
     // Providers
-    SMS_PROVIDER: z.string().min(1).default('mock'),
+    SMS_PROVIDER: z.enum(['mock', 'http', 'disabled']).default('mock'),
     MODERATION_PROVIDER: z.string().min(1).default('noop'),
 
     // SMS gateway (only required when SMS_PROVIDER=http)
@@ -168,6 +171,21 @@ export const envSchema = z
     SWAGGER_ENABLED: boolEnv('true'),
   })
   .superRefine((env, ctx) => {
+    // Cloudinary credentials are required only when object storage is selected.
+    if (env.STORAGE_PROVIDER === 'cloudinary') {
+      if (!env.CLOUDINARY_CLOUD_NAME) {
+        ctx.addIssue({ code: 'custom', path: ['CLOUDINARY_CLOUD_NAME'], message: 'CLOUDINARY_CLOUD_NAME is required when STORAGE_PROVIDER=cloudinary' });
+      } else if (!/^[A-Za-z0-9_-]+$/.test(env.CLOUDINARY_CLOUD_NAME)) {
+        ctx.addIssue({ code: 'custom', path: ['CLOUDINARY_CLOUD_NAME'], message: 'CLOUDINARY_CLOUD_NAME contains unsupported characters' });
+      }
+      if (!env.CLOUDINARY_API_KEY) {
+        ctx.addIssue({ code: 'custom', path: ['CLOUDINARY_API_KEY'], message: 'CLOUDINARY_API_KEY is required when STORAGE_PROVIDER=cloudinary' });
+      }
+      if (!env.CLOUDINARY_API_SECRET) {
+        ctx.addIssue({ code: 'custom', path: ['CLOUDINARY_API_SECRET'], message: 'CLOUDINARY_API_SECRET is required when STORAGE_PROVIDER=cloudinary' });
+      }
+    }
+
     // The `http` provider has a real delivery dependency; refuse to boot on a
     // half-configured gateway so a misconfiguration fails at startup, not on
     // the first user's verification attempt.

@@ -79,6 +79,11 @@ export function configuration(): AppConfig {
       provider: env.STORAGE_PROVIDER,
       localStoragePath: env.LOCAL_STORAGE_PATH,
       publicBaseUrl: env.PUBLIC_STORAGE_BASE_URL,
+      cloudinary: {
+        cloudName: env.CLOUDINARY_CLOUD_NAME,
+        apiKey: env.CLOUDINARY_API_KEY,
+        apiSecret: env.CLOUDINARY_API_SECRET,
+      },
       maxUploadSize: env.MAX_UPLOAD_SIZE,
       maxImagesPerListing: env.MAX_IMAGES_PER_LISTING,
       maxImagePixels: env.MAX_IMAGE_PIXELS,

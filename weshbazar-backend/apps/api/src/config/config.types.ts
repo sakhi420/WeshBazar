@@ -73,9 +73,10 @@ export interface AppConfig {
     listingViewPerWindow: number;
   };
   storage: {
-    provider: 'local';
+    provider: 'local' | 'cloudinary';
     localStoragePath: string;
     publicBaseUrl: string;
+    cloudinary: { cloudName: string; apiKey: string; apiSecret: string };
     maxUploadSize: number;
     maxImagesPerListing: number;
     maxImagePixels: number;

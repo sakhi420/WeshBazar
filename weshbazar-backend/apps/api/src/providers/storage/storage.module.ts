@@ -7,6 +7,7 @@
 import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { AppConfig } from '../../config/config.types';
+import { CloudinaryStorageProvider } from './cloudinary-storage.provider';
 import { LocalStorageProvider } from './local-storage.provider';
 import { STORAGE_PROVIDER, type StorageProvider } from './storage.provider';
 
@@ -29,9 +30,11 @@ import { STORAGE_PROVIDER, type StorageProvider } from './storage.provider';
               );
             }
             return local;
+          case 'cloudinary':
+            return new CloudinaryStorageProvider(
+              configService.get('storage.cloudinary', { infer: true }),
+            );
           default:
-            // Unreachable while 'local' is the only enum value; keeps the
-            // SMS-module pattern so a future provider fails fast if unhandled.
             throw new Error(`Unsupported STORAGE_PROVIDER "${String(provider)}".`);
         }
       },

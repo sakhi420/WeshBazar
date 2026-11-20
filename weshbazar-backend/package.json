@@ -33,6 +33,7 @@
     "prisma:migrate:reset": "prisma migrate reset",
     "prisma:migrate:status": "prisma migrate status",
     "db:seed": "prisma db seed",
+    "media:migrate:cloudinary": "tsx scripts/migrate-local-storage-to-cloudinary.ts",
     "prepare": "husky"
   },
   "dependencies": {
