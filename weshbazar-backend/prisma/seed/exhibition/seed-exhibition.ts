@@ -15,6 +15,11 @@ import type { PrismaClient } from '../../../apps/api/src/generated/prisma/client
 import { EXHIBITION_FIXTURES } from './fixtures';
 
 const LISTING_EXPIRES_AFTER_DAYS = 30;
+
+export interface ExhibitionSeedOptions {
+  /** Keep false unless the admin explicitly approves publishing their phone number. */
+  contactsEnabled?: boolean;
+}
 const ORIGINAL_MIME_TYPE = 'image/jpeg';
 const VARIANT_MIME_TYPE = 'image/webp';
 const MAX_IMAGE_PIXELS = 25_000_000;
@@ -186,7 +191,12 @@ async function ensureImage(
   });
 }
 
-export async function seedExhibitionData(prisma: PrismaClient): Promise<void> {
+export async function seedExhibitionData(
+  prisma: PrismaClient,
+  options: ExhibitionSeedOptions = {},
+): Promise<void> {
+  const contactsEnabled = options.contactsEnabled ?? true;
+
   // The app serves media from `apps/api/var/storage` (NestJS runs with CWD =
   // apps/api), so a relative LOCAL_STORAGE_PATH must be resolved the same way —
   // otherwise re-seeding writes images the running backend cannot serve.
@@ -328,13 +338,13 @@ export async function seedExhibitionData(prisma: PrismaClient): Promise<void> {
 
     await prisma.listingContactMethod.upsert({
       where: { listingId_type: { listingId: listing.id, type: 'PHONE' } },
-      update: {},
-      create: { listingId: listing.id, type: 'PHONE', enabled: true },
+      update: { enabled: contactsEnabled },
+      create: { listingId: listing.id, type: 'PHONE', enabled: contactsEnabled },
     });
     await prisma.listingContactMethod.upsert({
       where: { listingId_type: { listingId: listing.id, type: 'WHATSAPP' } },
-      update: {},
-      create: { listingId: listing.id, type: 'WHATSAPP', enabled: true },
+      update: { enabled: contactsEnabled },
+      create: { listingId: listing.id, type: 'WHATSAPP', enabled: contactsEnabled },
     });
 
     await ensureImage(prisma, listing.id, path.join(assetsDir, fixture.imageFile), storageRoot);
