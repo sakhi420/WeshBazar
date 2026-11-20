@@ -123,10 +123,14 @@ export class CloudinaryStorageProvider implements StorageProvider {
       throw new Error('deletePrefix requires a non-empty prefix.');
     }
     const normalized = assertSafeStorageKey(prefix).replace(/\/+$/, '');
-    const query = new URLSearchParams({ prefix: normalized + '/' });
-    const response = await fetch(this.apiBase + '/resources/image/upload?' + query, {
+    const body = new URLSearchParams({ prefix: normalized + '/' });
+    const response = await fetch(this.apiBase + '/resources/image/upload', {
       method: 'DELETE',
-      headers: this.adminHeaders(),
+      headers: {
+        ...this.adminHeaders(),
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body,
     });
     const payload = await this.readJson(response);
     if (payload.partial === true) {
