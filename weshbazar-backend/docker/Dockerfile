@@ -26,7 +26,12 @@ COPY tsconfig.json ./
 COPY apps/api ./apps/api
 
 # Generate Prisma Client and compile the application.
-RUN npx prisma generate && npm run build
+# Prisma's config requires a datasource URL while loading, even though
+# `prisma generate` does not connect to the database. Supply build-only
+# localhost placeholders so no production credentials enter the image.
+RUN DATABASE_URL_UNPOOLED="postgresql://build:build@127.0.0.1:5432/build?schema=public" \
+    DATABASE_URL="postgresql://build:build@127.0.0.1:5432/build?schema=public" \
+    npx prisma generate && npm run build
 
 # --- Stage 2: production dependencies ----------------------------------------
 FROM node:24-bookworm-slim AS prod-deps
