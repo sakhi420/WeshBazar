@@ -35,7 +35,12 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
-RUN npm ci --omit=dev && npm cache clean --force
+# The root prepare script invokes Husky, which is a devDependency and is
+# intentionally absent from this production-only install. Remove that script
+# from this temporary image copy; keep dependency lifecycle scripts enabled.
+RUN npm pkg delete scripts.prepare \
+    && npm ci --omit=dev \
+    && npm cache clean --force
 
 # --- Stage 3: runtime ---------------------------------------------------------
 FROM node:24-bookworm-slim AS runtime
