@@ -8,6 +8,10 @@ contract frozen.
 
 ## Target services
 
+Neon's current Free plan includes 5 GB of Object Storage per project and does
+not require a payment card. Monitor usage in the Neon Console; stay within the
+free allowance for this temporary demonstration.
+
 - Netlify: Next.js 15 frontend, repository base directory `weshbazar-frontend`.
 - Render: NestJS/Fastify API, repository root directory `weshbazar-backend`,
   existing Dockerfile `docker/Dockerfile`.
