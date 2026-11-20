@@ -73,10 +73,10 @@ export interface AppConfig {
     listingViewPerWindow: number;
   };
   storage: {
-    provider: 'local' | 'cloudinary';
+    provider: 'local' | 'neon';
     localStoragePath: string;
     publicBaseUrl: string;
-    cloudinary: { cloudName: string; apiKey: string; apiSecret: string };
+    neon: { endpoint: string; bucket: string; region: string; accessKeyId: string; secretAccessKey: string };
     maxUploadSize: number;
     maxImagesPerListing: number;
     maxImagePixels: number;
