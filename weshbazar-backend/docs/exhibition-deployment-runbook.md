@@ -46,10 +46,12 @@ JOBS_CLEAN_ARCHIVED_LISTING_IMAGES_ENABLED=false
 JOBS_CLEAN_ARCHIVED_LISTING_IMAGES_DRY_RUN=true
 ```
 
-`SMS_PROVIDER=disabled` is a read-only exhibition mode. Existing verified
-accounts can sign in; registration, phone verification, phone changes and
-password resets cannot complete until a real SMS gateway is configured.
-Never use a fake OTP or mock SMS provider on the public deployment.
+`SMS_PROVIDER=disabled` only disables OTP delivery; it does not make the
+marketplace read-only. Existing verified accounts can sign in and perform
+authorized actions, while registration, phone verification, phone changes and
+password resets fail closed until a real SMS gateway is configured. Restrict
+write access separately if the exhibition must be read-only. Never use a fake
+OTP or mock SMS provider on the public deployment.
 
 ## Frontend environment
 
@@ -58,7 +60,7 @@ Set these in Netlify, replacing the example origins with the actual service URLs
 ```env
 NEXT_PUBLIC_API_BASE_URL=
 API_SERVER_BASE_URL=https://<render-api-host>
-NEXT_PUBLIC_MEDIA_BASE_URL=https://res.neon.com/<cloud-name>
+NEXT_PUBLIC_MEDIA_BASE_URL=https://<Neon-S3-endpoint>/<bucket-name>
 NEXT_PUBLIC_SITE_URL=https://<netlify-site-host>
 ```
 
@@ -78,14 +80,14 @@ rewrites.
 
 ## Media migration
 
-1. Create a public_read bucket in the same Neon project and obtain its S3 endpoint, bucket name, region, access key and secret key.
+1. Create a bucket with `public_read` access in the same Neon project. Obtain its S3 endpoint, bucket name, region, access key and secret key from the Neon Console.
 2. Put these values in the local backend `.env` file; never commit secrets.
 3. Run `npm run media:migrate:neon -- --dry-run` from
    `weshbazar-backend` and verify the source path and file count.
 4. Run `npm run media:migrate:neon`. The script copies files and never
    deletes local originals.
-5. Verify original and thumbnail/medium/large URLs in the Neon Object Storage Media
-   Library before switching Render to `STORAGE_PROVIDER=neon`.
+5. Verify original and thumbnail/medium/large object URLs using an incognito
+   browser window before switching Render to `STORAGE_PROVIDER=neon`.
 
 ## Final checks
 
