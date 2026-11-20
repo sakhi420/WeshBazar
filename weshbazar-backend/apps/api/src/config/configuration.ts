@@ -79,10 +79,12 @@ export function configuration(): AppConfig {
       provider: env.STORAGE_PROVIDER,
       localStoragePath: env.LOCAL_STORAGE_PATH,
       publicBaseUrl: env.PUBLIC_STORAGE_BASE_URL,
-      cloudinary: {
-        cloudName: env.CLOUDINARY_CLOUD_NAME,
-        apiKey: env.CLOUDINARY_API_KEY,
-        apiSecret: env.CLOUDINARY_API_SECRET,
+      neon: {
+        endpoint: env.NEON_STORAGE_ENDPOINT,
+        bucket: env.NEON_STORAGE_BUCKET,
+        region: env.NEON_STORAGE_REGION,
+        accessKeyId: env.NEON_STORAGE_ACCESS_KEY_ID,
+        secretAccessKey: env.NEON_STORAGE_SECRET_ACCESS_KEY,
       },
       maxUploadSize: env.MAX_UPLOAD_SIZE,
       maxImagesPerListing: env.MAX_IMAGES_PER_LISTING,
