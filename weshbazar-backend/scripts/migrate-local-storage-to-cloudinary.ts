@@ -56,9 +56,11 @@ function requiredEnv(name: string): string {
 
 async function main(): Promise<void> {
   const rawStoragePath = process.env.LOCAL_STORAGE_PATH?.trim() || './var/storage';
+  // The API workspace runs with apps/api as its working directory.
+  // This script is invoked from the backend repository root.
   const storageRoot = path.isAbsolute(rawStoragePath)
     ? rawStoragePath
-    : path.resolve(process.cwd(), rawStoragePath);
+    : path.resolve(process.cwd(), 'apps/api', rawStoragePath);
   const dryRun = process.argv.includes('--dry-run');
 
   const files = await collectFiles(storageRoot);
