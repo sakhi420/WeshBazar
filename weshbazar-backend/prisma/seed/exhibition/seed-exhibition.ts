@@ -4,8 +4,8 @@
  * same re-encode + WebP variant pipeline used by `ImageProcessor`, writes the
  * storage objects under `LOCAL_STORAGE_PATH`, and creates `ListingImage` rows.
  *
- * Idempotency: listings are slug-upserted (stable `slug` from fixture key); images
- * are added only when the listing currently has none, so re-runs never duplicate.
+ * Idempotency: stable fixture slugs are create-once; re-runs preserve existing
+ * listing edits and only add a missing image. Non-active fixtures are never reactivated.
  */
 import { createHash, randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
@@ -195,7 +195,7 @@ export async function seedExhibitionData(
   prisma: PrismaClient,
   options: ExhibitionSeedOptions = {},
 ): Promise<void> {
-  const contactsEnabled = options.contactsEnabled ?? true;
+  const contactsEnabled = options.contactsEnabled ?? false;
 
   // The app serves media from `apps/api/var/storage` (NestJS runs with CWD =
   // apps/api), so a relative LOCAL_STORAGE_PATH must be resolved the same way —
@@ -273,45 +273,47 @@ export async function seedExhibitionData(
       Date.now() + LISTING_EXPIRES_AFTER_DAYS * 24 * 60 * 60 * 1000,
     );
 
-    const listing = await prisma.listing.upsert({
+    const existingListing = await prisma.listing.findUnique({
       where: { slug: fixture.slug },
-      update: {
-        title: fixture.title,
-        description: fixture.description,
-        price: fixture.price,
-        pricingType: fixture.pricingType,
-        negotiable: fixture.negotiable,
-        condition: fixture.condition,
-        status: 'ACTIVE',
-        attributes: fixture.attributes,
-        categoryId: category.id,
-        provinceId: province.id,
-        cityId: city.id,
-        searchText,
-        publishedAt,
-        expiresAt,
-        deletedAt: null,
-      },
-      create: {
-        sellerAccountId: sellerAccount.id,
-        categoryId: category.id,
-        provinceId: province.id,
-        cityId: city.id,
-        slug: fixture.slug,
-        title: fixture.title,
-        description: fixture.description,
-        price: fixture.price,
-        currency: 'AFN',
-        pricingType: fixture.pricingType,
-        negotiable: fixture.negotiable,
-        condition: fixture.condition,
-        status: 'ACTIVE',
-        attributes: fixture.attributes,
-        searchText,
-        publishedAt,
-        expiresAt,
-      },
     });
+    let listing: NonNullable<typeof existingListing>;
+
+    if (existingListing) {
+      if (existingListing.sellerAccountId !== sellerAccount.id) {
+        throw new Error(
+          `Fixture slug "${fixture.slug}" is already owned by another seller.`,
+        );
+      }
+      if (existingListing.status !== 'ACTIVE' || existingListing.deletedAt !== null) {
+        throw new Error(
+          `Fixture listing "${fixture.slug}" is not active; refusing to reactivate it.`,
+        );
+      }
+      // Preserve any edits made after the first seed.
+      listing = existingListing;
+    } else {
+      listing = await prisma.listing.create({
+        data: {
+          sellerAccountId: sellerAccount.id,
+          categoryId: category.id,
+          provinceId: province.id,
+          cityId: city.id,
+          slug: fixture.slug,
+          title: fixture.title,
+          description: fixture.description,
+          price: fixture.price,
+          currency: 'AFN',
+          pricingType: fixture.pricingType,
+          negotiable: fixture.negotiable,
+          condition: fixture.condition,
+          status: 'ACTIVE',
+          attributes: fixture.attributes,
+          searchText,
+          publishedAt,
+          expiresAt,
+        },
+      });
+    }
 
     const revision = await prisma.listingRevision.findUnique({
       where: { listingId_version: { listingId: listing.id, version: 1 } },
