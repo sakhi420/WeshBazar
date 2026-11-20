@@ -45,11 +45,37 @@ function requiredEnv(name: string): string {
 
 async function main(): Promise<void> {
   const rawStoragePath = process.env.LOCAL_STORAGE_PATH?.trim() || './var/storage';
-  const storageRoot = path.isAbsolute(rawStoragePath)
-    ? rawStoragePath
-    : path.resolve(process.cwd(), 'apps/api', rawStoragePath);
+  const candidates = path.isAbsolute(rawStoragePath)
+    ? [rawStoragePath]
+    : [
+        path.resolve(process.cwd(), 'apps/api', rawStoragePath),
+        path.resolve(process.cwd(), rawStoragePath),
+      ];
+  const matches: Array<{ root: string; files: LocalFile[] }> = [];
+  for (const candidate of [...new Set(candidates)]) {
+    try {
+      const files = await collectFiles(candidate);
+      if (files.length > 0) matches.push({ root: candidate, files });
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+    }
+  }
+  if (matches.length === 0) {
+    throw new Error(
+      'No media files were found. Checked: ' + candidates.join(', ') +
+      '. Confirm LOCAL_STORAGE_PATH before retrying.',
+    );
+  }
+  if (matches.length > 1) {
+    throw new Error(
+      'Media files exist in more than one candidate directory. Set LOCAL_STORAGE_PATH to an absolute path to select the correct source: ' +
+      matches.map((match) => match.root).join(', '),
+    );
+  }
+
+  const storageRoot = matches[0].root;
+  const files = matches[0].files;
   const dryRun = process.argv.includes('--dry-run');
-  const files = await collectFiles(storageRoot);
 
   let totalBytes = 0;
   for (const file of files) totalBytes += (await readFile(file.absolutePath)).byteLength;
