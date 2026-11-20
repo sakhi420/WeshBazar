@@ -147,7 +147,7 @@ npm run db:seed:exhibition -- --apply
 Then upload only those isolated image files to Neon Object Storage:
 
 ```powershell
-$env:LOCAL_STORAGE_PATH = Join-Path (Get-Location) "apps\\api\\var\\exhibition-seed-storage"
+$env:LOCAL_STORAGE_PATH = Join-Path (Get-Location) "apps\api\var\exhibition-seed-storage"
 npm run media:migrate:neon -- --dry-run
 npm run media:migrate:neon
 ```
