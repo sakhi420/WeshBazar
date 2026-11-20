@@ -1,5 +1,5 @@
 /**
- * Explicit no-delivery SMS provider for read-only exhibition deployments.
+ * Explicit no-delivery SMS provider for OTP-disabled demonstration deployments.
  *
  * OTP issuance fails closed through VerificationService. Existing verified
  * accounts can still sign in, while registration and password/phone recovery
