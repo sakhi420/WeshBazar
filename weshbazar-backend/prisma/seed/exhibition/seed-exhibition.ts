@@ -1,5 +1,5 @@
 /**
- * Exhibition seeding — inserts the 147 REAL marketplace listings from
+ * Exhibition seeding — inserts the 147 exhibition listing fixtures from
  * `fixtures.ts` under the admin seller account, routes each image through the
  * same re-encode + WebP variant pipeline used by `ImageProcessor`, writes the
  * storage objects under `LOCAL_STORAGE_PATH`, and creates `ListingImage` rows.
