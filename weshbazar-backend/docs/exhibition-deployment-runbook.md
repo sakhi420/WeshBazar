@@ -28,7 +28,8 @@ Set these only in Render's private environment settings:
 ```env
 NODE_ENV=production
 PORT=3000
-DATABASE_URL=<Neon pooled PostgreSQL connection string>
+DATABASE_URL=<Neon pooled PostgreSQL connection string for API runtime>
+DATABASE_URL_UNPOOLED=<Neon direct PostgreSQL connection string for Prisma migrations>
 DB_POOL_MAX=5
 JWT_ACCESS_SECRET=<random secret, at least 32 characters>
 JWT_REFRESH_SECRET=<different random secret, at least 32 characters>
@@ -76,8 +77,10 @@ rewrites.
 ## Database migration
 
 1. Take and verify a local PostgreSQL backup with `pg_dump`.
-2. Create Neon and run the existing migrations with
-   `npm run prisma:migrate:deploy`.
+2. Create Neon, ensure `DATABASE_URL_UNPOOLED` contains Neon's direct (unpooled)
+   connection string, and run the existing migrations with
+   `npm run prisma:migrate:deploy`. The API itself continues using the pooled
+   `DATABASE_URL`.
 3. Restore the local database backup into Neon. Do not seed over an existing
    dataset until the idempotent exhibition seed behavior is reviewed.
 4. Compare row counts and key tables before switching the API to Neon.
