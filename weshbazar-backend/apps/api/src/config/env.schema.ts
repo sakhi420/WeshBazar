@@ -110,12 +110,14 @@ export const envSchema = z
     LOGIN_LOCKOUT_DURATION_SECONDS: intEnv(900),
 
     // Storage / media
-    STORAGE_PROVIDER: z.enum(['local', 'cloudinary']).default('local'),
+    STORAGE_PROVIDER: z.enum(['local', 'neon']).default('local'),
     LOCAL_STORAGE_PATH: z.string().default('./var/storage'),
     PUBLIC_STORAGE_BASE_URL: z.string().default('http://localhost:3000'),
-    CLOUDINARY_CLOUD_NAME: z.string().trim().default(''),
-    CLOUDINARY_API_KEY: z.string().trim().default(''),
-    CLOUDINARY_API_SECRET: z.string().trim().default(''),
+    NEON_STORAGE_ENDPOINT: z.string().trim().default(''),
+    NEON_STORAGE_BUCKET: z.string().trim().default(''),
+    NEON_STORAGE_REGION: z.string().trim().default('us-east-2'),
+    NEON_STORAGE_ACCESS_KEY_ID: z.string().trim().default(''),
+    NEON_STORAGE_SECRET_ACCESS_KEY: z.string().trim().default(''),
     MAX_UPLOAD_SIZE: intEnv(5 * 1024 * 1024),
     MAX_IMAGES_PER_LISTING: intEnv(10),
     MAX_IMAGE_PIXELS: intEnv(25_000_000),
@@ -171,18 +173,28 @@ export const envSchema = z
     SWAGGER_ENABLED: boolEnv('true'),
   })
   .superRefine((env, ctx) => {
-    // Cloudinary credentials are required only when object storage is selected.
-    if (env.STORAGE_PROVIDER === 'cloudinary') {
-      if (!env.CLOUDINARY_CLOUD_NAME) {
-        ctx.addIssue({ code: 'custom', path: ['CLOUDINARY_CLOUD_NAME'], message: 'CLOUDINARY_CLOUD_NAME is required when STORAGE_PROVIDER=cloudinary' });
-      } else if (!/^[A-Za-z0-9_-]+$/.test(env.CLOUDINARY_CLOUD_NAME)) {
-        ctx.addIssue({ code: 'custom', path: ['CLOUDINARY_CLOUD_NAME'], message: 'CLOUDINARY_CLOUD_NAME contains unsupported characters' });
+    // Neon Object Storage credentials are required only when selected.
+    if (env.STORAGE_PROVIDER === 'neon') {
+      for (const [variable, value] of [
+        ['NEON_STORAGE_ENDPOINT', env.NEON_STORAGE_ENDPOINT],
+        ['NEON_STORAGE_BUCKET', env.NEON_STORAGE_BUCKET],
+        ['NEON_STORAGE_ACCESS_KEY_ID', env.NEON_STORAGE_ACCESS_KEY_ID],
+        ['NEON_STORAGE_SECRET_ACCESS_KEY', env.NEON_STORAGE_SECRET_ACCESS_KEY],
+      ] as const) {
+        if (!value) {
+          ctx.addIssue({ code: 'custom', path: [variable], message: variable + ' is required when STORAGE_PROVIDER=neon' });
+        }
       }
-      if (!env.CLOUDINARY_API_KEY) {
-        ctx.addIssue({ code: 'custom', path: ['CLOUDINARY_API_KEY'], message: 'CLOUDINARY_API_KEY is required when STORAGE_PROVIDER=cloudinary' });
+      if (env.NEON_STORAGE_ENDPOINT) {
+        try {
+          const endpoint = new URL(env.NEON_STORAGE_ENDPOINT);
+          if (endpoint.protocol !== 'https:') throw new Error('HTTPS required');
+        } catch {
+          ctx.addIssue({ code: 'custom', path: ['NEON_STORAGE_ENDPOINT'], message: 'NEON_STORAGE_ENDPOINT must be an absolute HTTPS URL' });
+        }
       }
-      if (!env.CLOUDINARY_API_SECRET) {
-        ctx.addIssue({ code: 'custom', path: ['CLOUDINARY_API_SECRET'], message: 'CLOUDINARY_API_SECRET is required when STORAGE_PROVIDER=cloudinary' });
+      if (env.NEON_STORAGE_BUCKET && !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(env.NEON_STORAGE_BUCKET)) {
+        ctx.addIssue({ code: 'custom', path: ['NEON_STORAGE_BUCKET'], message: 'NEON_STORAGE_BUCKET must be a valid S3 bucket name' });
       }
     }
 
