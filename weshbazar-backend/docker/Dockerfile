@@ -52,7 +52,7 @@ WORKDIR /app
 
 # Run as the unprivileged node user.
 COPY --from=prod-deps --chown=node:node /app/node_modules ./node_modules
-COPY --from=prod-deps --chown=node:node /app/apps/api/node_modules ./apps/api/node_modules
+# npm workspaces hoists production dependencies into the root node_modules.
 COPY --from=build --chown=node:node /app/package.json ./package.json
 COPY --from=build --chown=node:node /app/apps/api/package.json ./apps/api/package.json
 COPY --from=build --chown=node:node /app/apps/api/dist ./apps/api/dist
