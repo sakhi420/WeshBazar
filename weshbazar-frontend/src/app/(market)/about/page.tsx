@@ -53,7 +53,7 @@ export default function AboutPage() {
         icon={ShoppingBag}
       />
 
-      <section aria-label="ویژگی‌های ویش‌بازار" className="grid gap-3 sm:grid-cols-3 sm:gap-4">
+      <section aria-label="ویژگی‌های ویش‌بازار" className="grid gap-3 lg:grid-cols-3 sm:gap-4">
         {pillars.map(({ icon: Icon, title, description }) => (
           <article
             key={title}
@@ -72,7 +72,7 @@ export default function AboutPage() {
         ))}
       </section>
 
-      <section className="mt-8 grid gap-4 lg:grid-cols-[1.3fr_0.9fr]">
+      <section className="mt-8 grid gap-4 xl:grid-cols-[1.3fr_0.9fr]">
         <article className="rounded-3xl border border-border bg-surface p-5 shadow-soft sm:p-7">
           <div className="flex items-center gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
@@ -119,7 +119,7 @@ export default function AboutPage() {
         </aside>
       </section>
 
-      <section className="mt-6 flex flex-col gap-4 rounded-3xl border border-border bg-surface p-5 shadow-soft sm:flex-row sm:items-center sm:justify-between sm:p-6">
+      <section className="mt-6 flex flex-col gap-4 rounded-3xl border border-border bg-surface p-5 shadow-soft lg:flex-row lg:items-center lg:justify-between sm:p-6">
         <div className="flex items-center gap-3">
           <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-accent/15 text-accent-dark">
             <UserRound className="size-6" aria-hidden="true" />
@@ -134,7 +134,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section className="mt-6 flex flex-col gap-4 rounded-3xl bg-primary-soft/70 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+      <section className="mt-6 flex flex-col gap-4 rounded-3xl bg-primary-soft/70 p-5 lg:flex-row lg:items-center lg:justify-between sm:p-7">
         <div>
           <h2 className="text-section font-bold text-foreground">آمادهٔ گشت‌وگذار در بازار هستید؟</h2>
           <p className="mt-1 text-ui leading-7 text-muted-foreground">

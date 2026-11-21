@@ -117,7 +117,7 @@ export default function HelpPage() {
           <span className="text-caption text-muted-foreground">۵ گام ساده</span>
         </div>
 
-        <ol className="mt-4 grid list-none gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <ol className="mt-4 grid list-none gap-3 lg:grid-cols-2 xl:grid-cols-3">
           {quickStart.map(({ title, text, href }, index) => {
             const body = (
               <>
@@ -160,7 +160,7 @@ export default function HelpPage() {
         <h2 id="help-topics" className="mt-1 text-section font-bold text-foreground">
           راهنماهای پرکاربرد
         </h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
           {topics.map(({ href, icon: Icon, title, description }) => (
             <Link
               key={href}
@@ -186,7 +186,7 @@ export default function HelpPage() {
         <h2 id="common-questions" className="mt-1 text-section font-bold text-foreground">
           پرسش‌های رایج
         </h2>
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
           {faqs.map(({ question, answer }) => (
             <details
               key={question}
@@ -207,7 +207,7 @@ export default function HelpPage() {
         </div>
       </section>
 
-      <section className="mt-8 flex flex-col gap-4 rounded-3xl bg-primary-soft/70 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+      <section className="mt-8 flex flex-col gap-4 rounded-3xl bg-primary-soft/70 p-5 lg:flex-row lg:items-center lg:justify-between sm:p-7">
         <div className="flex items-start gap-3">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-surface text-primary shadow-soft">
             <MessageCircle className="size-5" aria-hidden="true" />

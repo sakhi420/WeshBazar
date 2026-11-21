@@ -39,7 +39,7 @@ export default function ContactPage() {
         icon={HelpCircle}
       />
 
-      <section aria-label="راه‌های تماس مستقیم" className="grid gap-4 md:grid-cols-2">
+      <section aria-label="راه‌های تماس مستقیم" className="grid gap-4 lg:grid-cols-2">
         <a
           href={'mailto:' + supportEmail}
           className="group flex h-full flex-col rounded-3xl border border-border bg-surface p-5 shadow-soft transition-all duration-small hover:-translate-y-1 hover:border-primary/30 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-7"
@@ -85,7 +85,7 @@ export default function ContactPage() {
         </a>
       </section>
 
-      <section className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+      <section className="mt-6 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
         <article className="rounded-3xl border border-border bg-surface p-5 shadow-soft sm:p-6">
           <div className="flex items-center gap-3">
             <span className="flex size-11 items-center justify-center rounded-2xl bg-danger/10 text-danger">
@@ -120,7 +120,7 @@ export default function ContactPage() {
         </aside>
       </section>
 
-      <section className="mt-6 flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
+      <section className="mt-6 flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h2 className="text-card-title font-bold text-foreground">پاسخ پرسش‌های رایج</h2>
           <p className="mt-1 text-ui leading-7 text-muted-foreground">

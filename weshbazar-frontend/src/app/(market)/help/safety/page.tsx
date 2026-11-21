@@ -90,7 +90,7 @@ export default function SafetyPage() {
         </div>
       </aside>
 
-      <section aria-label="توصیه‌های خریداران و فروشندگان" className="grid gap-4 md:grid-cols-2">
+      <section aria-label="توصیه‌های خریداران و فروشندگان" className="grid gap-4 xl:grid-cols-2">
         <article className="rounded-3xl border border-border bg-surface p-5 shadow-soft sm:p-6">
           <div className="flex items-center gap-3 border-b border-border pb-4">
             <span className="flex size-11 items-center justify-center rounded-2xl bg-primary-soft text-primary">
@@ -141,7 +141,7 @@ export default function SafetyPage() {
         </p>
       </section>
 
-      <section className="mt-6 flex flex-col gap-4 rounded-3xl bg-primary-dark p-5 text-white shadow-soft sm:flex-row sm:items-center sm:justify-between sm:p-7">
+      <section className="mt-6 flex flex-col gap-4 rounded-3xl bg-primary-dark p-5 text-white shadow-soft xl:flex-row xl:items-center xl:justify-between sm:p-7">
         <div className="flex items-start gap-3">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-white">
             <ShieldAlert className="size-6" aria-hidden="true" />
