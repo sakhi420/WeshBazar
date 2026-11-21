@@ -3,7 +3,7 @@
  * Real phone/password pairs are read only from the ignored local JSON file.
  */
 import 'dotenv/config';
-import { argon2id, hash as argon2Hash } from 'argon2';
+import { argon2id, hash as argon2Hash, verify as argon2Verify } from 'argon2';
 import { access, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -231,6 +231,12 @@ async function buildPreflight(
     )) {
       throw new Error(`Existing account for seller "${credential.key}" is not an eligible active USER; it will not be overwritten.`);
     }
+    if (user && !(await argon2Verify(user.passwordHash, credential.password))) {
+      throw new Error(
+        `The supplied password does not match the existing account for seller "${credential.key}". ` +
+        'No existing password will be changed by the exhibition seed.',
+      );
+    }
     if (user && userIds.has(user.id)) throw new Error('Two seller phones resolve to the same user.');
     if (user) userIds.add(user.id);
 
@@ -444,6 +450,44 @@ async function provisionSellers(
   return result;
 }
 
+async function assertActiveCapacity(
+  tx: Prisma.TransactionClient,
+  preflight: Preflight,
+  owners: Record<ExhibitionSellerKey, ExhibitionSellerOwner>,
+): Promise<void> {
+  const configuredLimit = Number(process.env.MAX_ACTIVE_LISTINGS_PER_USER ?? 50);
+  if (!Number.isInteger(configuredLimit) || configuredLimit < 1) {
+    throw new Error('MAX_ACTIVE_LISTINGS_PER_USER must be a positive integer.');
+  }
+
+  for (const seller of preflight.sellers) {
+    const owner = owners[seller.key];
+    const assignedSlugs = EXHIBITION_FIXTURES
+      .filter((fixture) => sellerKeyForFixture(fixture) === seller.key)
+      .map((fixture) => fixture.slug);
+    const [activeTotal, activeFixtures] = await Promise.all([
+      tx.listing.count({
+        where: { sellerAccountId: owner.sellerAccountId, status: 'ACTIVE', deletedAt: null },
+      }),
+      tx.listing.count({
+        where: {
+          sellerAccountId: owner.sellerAccountId,
+          status: 'ACTIVE',
+          deletedAt: null,
+          slug: { in: assignedSlugs },
+        },
+      }),
+    ]);
+    const toActivate = seller.fixtureCount - activeFixtures;
+    if (activeTotal + toActivate > configuredLimit) {
+      throw new Error(
+        `Seller "${seller.key}" would exceed the active listing cap inside the write transaction: ` +
+        `${activeTotal} current + ${toActivate} to activate (limit ${configuredLimit}).`,
+      );
+    }
+  }
+}
+
 async function main(): Promise<void> {
   const { apply } = parseArgs();
   const databaseHost = validateTarget();
@@ -501,6 +545,7 @@ async function main(): Promise<void> {
     const result = await prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('weshbazar:exhibition-seed:v2'))`;
       const owners = await provisionSellers(tx, preflight, hashes);
+      await assertActiveCapacity(tx, preflight, owners);
       const seeded = await seedExhibitionData(tx, {
         sellers: owners,
         adminUserId: preflight.adminUserId,
