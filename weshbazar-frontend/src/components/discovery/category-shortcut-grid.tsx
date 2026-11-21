@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,6 +19,8 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
   const viewportRef = useRef<HTMLDivElement>(null);
   const firstGroupRef = useRef<HTMLDivElement>(null);
   const groupWidthRef = useRef(0);
+  const hasOverflowRef = useRef(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
   const lastFrameTimeRef = useRef(0);
   const resumeTimerRef = useRef<number | null>(null);
@@ -53,13 +55,14 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
   const normalizeScrollPosition = useCallback(() => {
     const viewport = viewportRef.current;
     const width = groupWidthRef.current;
-    if (!viewport || width <= 0) return;
+    if (!viewport || width <= 0 || !hasOverflowRef.current) return;
 
-    // Keep the viewport in the middle half of the two-copy belt. Both
-    // copies are identical, so shifting by one group is visually invisible.
-    if (viewport.scrollLeft >= width * 1.5) {
+    // Three identical groups keep a full group of scroll room on both sides.
+    // Repositioning by exactly one group is visually indistinguishable.
+    while (viewport.scrollLeft >= width * 2) {
       viewport.scrollLeft -= width;
-    } else if (viewport.scrollLeft <= width * 0.5) {
+    }
+    while (viewport.scrollLeft <= width) {
       viewport.scrollLeft += width;
     }
   }, []);
@@ -77,9 +80,16 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
       const width = firstGroup.getBoundingClientRect().width;
       if (width <= 0) return;
 
-      if (Math.abs(width - groupWidthRef.current) > 1) {
+      const overflowing = width > viewport.clientWidth + 1;
+      const geometryChanged =
+        Math.abs(width - groupWidthRef.current) > 1 ||
+        overflowing !== hasOverflowRef.current;
+
+      if (geometryChanged) {
         groupWidthRef.current = width;
-        viewport.scrollLeft = width;
+        hasOverflowRef.current = overflowing;
+        setHasOverflow(overflowing);
+        viewport.scrollLeft = overflowing ? width * 1.5 : 0;
       }
     };
 
@@ -87,6 +97,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
       !disposed &&
       !pausedRef.current &&
       !reducedMotion.matches &&
+      hasOverflowRef.current &&
       mobileViewport.matches &&
       document.visibilityState === 'visible';
 
@@ -129,6 +140,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(firstGroup);
+    observer.observe(viewport);
     mobileViewport.addEventListener('change', syncEnvironment);
     reducedMotion.addEventListener('change', syncEnvironment);
     document.addEventListener('visibilitychange', syncEnvironment);
@@ -153,6 +165,15 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
       startLoopRef.current = null;
     };
   }, [categories.length, normalizeScrollPosition]);
+
+  // Wait until all three identical groups are in the DOM before centering
+  // the initial position; this avoids a first-render blank edge on hydration.
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    const width = groupWidthRef.current;
+    if (!viewport || width <= 0) return;
+    viewport.scrollLeft = hasOverflow ? width * 1.5 : 0;
+  }, [hasOverflow]);
 
   if (categories.length === 0) return null;
 
@@ -263,14 +284,26 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
           >
             {renderCategoryLinks()}
           </div>
-          <div
-            dir="rtl"
-            aria-hidden="true"
-            inert
-            className="flex w-max shrink-0 items-start gap-3 pe-3"
-          >
-            {renderCategoryLinks(true)}
-          </div>
+          {hasOverflow ? (
+            <>
+              <div
+                dir="rtl"
+                aria-hidden="true"
+                inert
+                className="flex w-max shrink-0 items-start gap-3 pe-3"
+              >
+                {renderCategoryLinks(true)}
+              </div>
+              <div
+                dir="rtl"
+                aria-hidden="true"
+                inert
+                className="flex w-max shrink-0 items-start gap-3 pe-3"
+              >
+                {renderCategoryLinks(true)}
+              </div>
+            </>
+          ) : null}
         </div>
       </div>
 
