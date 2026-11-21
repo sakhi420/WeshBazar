@@ -88,7 +88,7 @@ export function ProfilePhotoControls({ hasAvatar }: { hasAvatar: boolean }) {
           onClick={() => inputRef.current?.click()}
         >
           {busy ? <Loader2 aria-hidden className="animate-spin" /> : <ImagePlus aria-hidden />}
-          تغییر عکس پروفایل
+          تغییر عکس
         </Button>
         {hasAvatar ? (
           <Button
@@ -105,7 +105,7 @@ export function ProfilePhotoControls({ hasAvatar }: { hasAvatar: boolean }) {
         ) : null}
       </div>
       <p className="mt-1 text-caption text-muted-foreground">
-        JPEG، PNG یا WebP تا ۵ مگابایت. عکس شما برای همهٔ خریداران نمایش داده می‌شود.
+        JPEG، PNG یا WebP · حداکثر ۵ مگابایت
       </p>
       {error ? (
         <p role="alert" className="mt-1 text-meta text-danger">
