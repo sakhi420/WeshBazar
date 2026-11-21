@@ -1,7 +1,6 @@
 /**
- * Exhibition fixtures — Dari-language marketplace listing content seeded under
- * the existing admin seller account. Generated from WeshBazar_150_Exhibition_Listings_FA.md.
- * Slug-upsert idempotency key: `slug` (stable, derived from fixture key).
+ * Dari-language exhibition fixture dataset.
+ * Stable slugs are the idempotency keys; seller ownership is assigned in sellers.ts.
  */
 
 export interface ExhibitionFixture {
