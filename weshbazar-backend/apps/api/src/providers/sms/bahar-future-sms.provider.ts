@@ -50,6 +50,8 @@ export class BaharFutureSmsProvider implements SmsProvider {
         signal: AbortSignal.timeout(this.config.timeoutMs),
       });
 
+      const body = await response.text();
+
       if (response.status === 500 && attempt + 1 < maxAttempts) {
         this.logger.warn(
           `Bahar Future returned HTTP 500; retrying submission (attempt ${attempt + 1}/${maxAttempts}).`,
@@ -60,8 +62,7 @@ export class BaharFutureSmsProvider implements SmsProvider {
 
       if (!response.ok) throw this.gatewayError(response.status);
 
-      const body = (await response.text()).trim();
-      const messageId = body.replace(/^"(.*)"$/s, '$1').trim();
+      const messageId = body.trim().replace(/^"(.*)"$/s, '$1').trim();
       if (!messageId || /^error\b/i.test(messageId)) {
         throw new Error('Bahar Future returned HTTP 200 without a valid SMS message ID.');
       }

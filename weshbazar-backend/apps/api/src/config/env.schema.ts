@@ -205,9 +205,8 @@ export const envSchema = z
       }
     }
 
-    // The `http` provider has a real delivery dependency; refuse to boot on a
-    // half-configured gateway so a misconfiguration fails at startup, not on
-    // the first user's verification attempt.
+    // Real providers have delivery dependencies; fail at startup rather than
+    // discovering missing configuration on the first verification attempt.
     if (env.SMS_PROVIDER === 'bahar-future') {
       for (const [variable, value] of [
         ['BAHAR_FUTURE_USERNAME', env.BAHAR_FUTURE_USERNAME],
@@ -221,7 +220,7 @@ export const envSchema = z
           });
         }
       }
-      if (env.BAHAR_FUTURE_SENDER_ID && !/^([A-Za-z0-9]{1,11}|\\d{6,15})$/.test(env.BAHAR_FUTURE_SENDER_ID)) {
+      if (env.BAHAR_FUTURE_SENDER_ID && !/^([A-Za-z0-9]{1,11}|\d{6,15})$/.test(env.BAHAR_FUTURE_SENDER_ID)) {
         ctx.addIssue({
           code: 'custom',
           path: ['BAHAR_FUTURE_SENDER_ID'],
