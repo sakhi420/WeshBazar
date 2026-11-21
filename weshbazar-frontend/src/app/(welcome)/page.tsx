@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Store,
   Tag,
+  type LucideIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
@@ -162,7 +163,7 @@ function HeroPoint({
   icon: Icon,
   children,
 }: {
-  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean }>;
+  icon: LucideIcon;
   children: React.ReactNode;
 }) {
   return (
