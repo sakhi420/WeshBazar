@@ -3,9 +3,7 @@ import Link from 'next/link';
 import {
   ArrowLeft,
   ArrowUpLeft,
-  BadgeCheck,
   CarFront,
-  Check,
   Compass,
   Eye,
   House,
