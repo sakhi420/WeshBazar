@@ -50,10 +50,15 @@ describe('SearchField', () => {
     expect(screen.getByRole('search')).not.toHaveClass('md:flex-row');
   });
 
-  it('compact variant keeps the combobox in a single row', () => {
+  it('compact variant keeps one submit icon without a duplicate prefix icon', () => {
     render(<SearchField compact />);
-    expect(screen.getByRole('combobox', { name: 'جست‌وجوی آگهی‌ها' })).toBeInTheDocument();
-    expect(screen.getByRole('search')).toHaveClass('flex-row');
+    const input = screen.getByRole('combobox', { name: 'جست‌وجوی آگهی‌ها' });
+    const form = screen.getByRole('search');
+
+    expect(input).toBeInTheDocument();
+    expect(input).toHaveClass('ps-4');
+    expect(form).toHaveClass('flex-row');
+    expect(form.querySelectorAll('svg')).toHaveLength(1);
   });
 
   it('without redirect → writes q to the current URL', () => {

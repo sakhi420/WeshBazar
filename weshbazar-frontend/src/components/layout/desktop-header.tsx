@@ -1,5 +1,8 @@
+'use client';
+
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Grid3X3, Plus } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/brand-logo';
 import { Button } from '@/components/ui/button';
@@ -8,13 +11,18 @@ import { LocationPicker } from '@/components/location/location-picker';
 import { SearchField } from '@/features/search/components/search-field';
 
 /**
- * Desktop header (master prompt §102): 64px full top bar.
- * Logo + wide search + location picker + category link + sell CTA + auth actions.
- * Visible only on screens >= 768px (hidden lg:flex).
+ * Desktop header.
+ *
+ * The homepage owns its search experience in the hero, so its header only
+ * carries global navigation and actions. Other marketplace routes keep the
+ * compact header search and location controls.
  */
 export function DesktopHeader() {
+  const pathname = usePathname();
+  const isMarketplaceHome = pathname === '/market';
+
   return (
-    <header className="sticky top-0 z-header hidden border-b border-border bg-surface/80 shadow-soft backdrop-blur-md lg:flex">
+    <header className="sticky top-0 z-header hidden border-b border-border bg-surface/85 shadow-soft backdrop-blur-md lg:flex">
       <div className="container flex h-[4rem] items-center gap-3">
         <Link
           href="/market"
@@ -24,13 +32,19 @@ export function DesktopHeader() {
           <BrandLogo height={34} priority />
         </Link>
 
-        <Suspense fallback={null}>
-          <SearchField className="min-w-0 max-w-xl flex-1" redirectToSearch />
-        </Suspense>
+        {isMarketplaceHome ? (
+          <div aria-hidden className="flex-1" />
+        ) : (
+          <>
+            <Suspense fallback={null}>
+              <SearchField className="min-w-0 max-w-xl flex-1" redirectToSearch />
+            </Suspense>
 
-        <Suspense fallback={null}>
-          <LocationPicker inline redirectToSearch />
-        </Suspense>
+            <Suspense fallback={null}>
+              <LocationPicker inline redirectToSearch />
+            </Suspense>
+          </>
+        )}
 
         <Button asChild variant="ghost" size="sm" className="shrink-0">
           <Link href="/categories">

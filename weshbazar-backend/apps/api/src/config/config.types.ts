@@ -73,9 +73,10 @@ export interface AppConfig {
     listingViewPerWindow: number;
   };
   storage: {
-    provider: 'local';
+    provider: 'local' | 'neon';
     localStoragePath: string;
     publicBaseUrl: string;
+    neon: { endpoint: string; bucket: string; region: string; accessKeyId: string; secretAccessKey: string };
     maxUploadSize: number;
     maxImagesPerListing: number;
     maxImagePixels: number;

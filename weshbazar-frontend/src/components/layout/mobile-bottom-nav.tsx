@@ -2,98 +2,110 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Grid3X3, Heart, Shield, User } from 'lucide-react';
+import { Home, Search, Grid2X2, Heart, UserRound } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/auth-provider';
 
 const links = [
   { href: '/market', label: 'خانه', icon: Home },
   { href: '/search', label: 'جستجو', icon: Search },
-  { href: '/categories', label: 'دسته‌ها', icon: Grid3X3 },
-  { href: '/favorites', label: 'علاقه‌مندی‌ها', icon: Heart },
+  { href: '/categories', label: 'دسته‌ها', icon: Grid2X2 },
+  { href: '/favorites', label: 'علاقه‌ها', icon: Heart },
 ] as const;
 
+function isWithinPath(pathname: string, basePath: string) {
+  return pathname === basePath || pathname.startsWith(`${basePath}/`);
+}
+
+function isLinkActive(href: (typeof links)[number]['href'], pathname: string) {
+  if (href === '/market') return pathname === '/market';
+  if (href === '/categories') {
+    return pathname === '/categories' || isWithinPath(pathname, '/category');
+  }
+  return isWithinPath(pathname, href);
+}
+
+function isAccountArea(pathname: string) {
+  return ['/account', '/my-listings', '/seller', '/admin', '/auth'].some((path) =>
+    isWithinPath(pathname, path),
+  );
+}
+
 /**
- * Mobile bottom navigation (§103, §458, §492).
- * 64-72px + safe area. Visible on screens < lg (768px).
- * The account tab links to /account when signed in, /auth/login otherwise.
+ * Mobile bottom navigation.
+ * Five equally sized primary destinations; staff tools remain in the account menu.
+ * The 64px navigation row is extended by the device safe area on phones with a home indicator.
  */
 export function MobileBottomNav() {
   const pathname = usePathname();
   const { status, user } = useAuth();
 
-  const accountHref = status === 'ready' ? '/account' : '/auth/login';
-  const showAdmin = status === 'ready' && user && (user.role === 'MODERATOR' || user.role === 'ADMIN');
+  const accountHref = status === 'ready' && user ? '/account' : '/auth/login';
+  const accountActive = isAccountArea(pathname);
 
   return (
     <nav
       aria-label="ناوبری اصلی"
-      className="lg:hidden fixed bottom-0 start-0 end-0 z-header border-t border-border bg-surface pb-[env(safe-area-inset-bottom,0px)]"
-      style={{ height: 'var(--bottom-nav)' }}
+      className={cn(
+        'fixed inset-x-0 bottom-0 z-header lg:hidden',
+        'border-t border-border/80 bg-surface/95 shadow-[0_-6px_24px_rgba(18,52,48,0.07)]',
+        'pb-[env(safe-area-inset-bottom,0px)] backdrop-blur-xl',
+      )}
+      style={{ height: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}
     >
-      <ul className="flex h-full items-center justify-around px-2">
+      <ul className="grid h-full grid-cols-5 items-center gap-0 px-1 sm:px-2">
         {links.map(({ href, label, icon: Icon }) => {
-          const isActive =
-            href === '/market' ? pathname === '/market' : pathname.startsWith(href);
+          const active = isLinkActive(href, pathname);
           return (
-            <li key={href}>
+            <li key={href} className="h-full min-w-0">
               <Link
                 href={href}
+                aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'flex flex-col items-center gap-0.5 rounded-control px-2 py-1 min-w-touch text-caption transition-colors duration-small border-t-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-                  isActive
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-muted-foreground hover:text-foreground',
+                  'group flex h-full min-h-11 w-full min-w-0 flex-col items-center justify-center gap-0.5',
+                  'rounded-xl px-0.5 py-1 text-[11px] leading-4 transition-colors duration-small',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
+                  active ? 'font-bold text-primary' : 'font-medium text-muted-foreground hover:text-foreground',
                 )}
               >
-                <Icon className={cn('size-5', isActive && 'stroke-[1.5]')} aria-hidden />
-                <span>{label}</span>
+                <span
+                  className={cn(
+                    'flex size-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-small',
+                    active
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground group-hover:bg-muted/50 group-hover:text-foreground',
+                  )}
+                >
+                  <Icon size={21} strokeWidth={active ? 2 : 1.8} aria-hidden />
+                </span>
+                <span className="whitespace-nowrap">{label}</span>
               </Link>
             </li>
           );
         })}
 
-        {/* Admin tab — only for staff */}
-        {showAdmin && (
-          <li>
-            <Link
-              href="/admin"
-              className={cn(
-                'flex flex-col items-center gap-0.5 rounded-control px-2 py-1 min-w-touch text-caption transition-colors duration-small border-t-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-                pathname.startsWith('/admin')
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground',
-              )}
-            >
-              <Shield
-                className={cn('size-5', pathname.startsWith('/admin') && 'stroke-[1.5]')}
-                aria-hidden
-              />
-              <span>مدیریت</span>
-            </Link>
-          </li>
-        )}
-
-        {/* Account tab — auth-aware */}
-        <li>
+        <li className="h-full min-w-0">
           <Link
             href={accountHref}
+            aria-current={accountActive ? 'page' : undefined}
             className={cn(
-              'flex flex-col items-center gap-0.5 rounded-control px-2 py-1 min-w-touch text-caption transition-colors duration-small border-t-2 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
-              pathname.startsWith('/account') || pathname.startsWith('/auth/login')
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:text-foreground',
+              'group flex h-full min-h-11 w-full min-w-0 flex-col items-center justify-center gap-0.5',
+              'rounded-xl px-0.5 py-1 text-[11px] leading-4 transition-colors duration-small',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
+              accountActive ? 'font-bold text-primary' : 'font-medium text-muted-foreground hover:text-foreground',
             )}
           >
-            <User
+            <span
               className={cn(
-                'size-5',
-                (pathname.startsWith('/account') || pathname.startsWith('/auth/login')) &&
-                  'stroke-[1.5]',
+                'flex size-8 shrink-0 items-center justify-center rounded-xl transition-colors duration-small',
+                accountActive
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-muted-foreground group-hover:bg-muted/50 group-hover:text-foreground',
               )}
-              aria-hidden
-            />
-            <span>حساب</span>
+            >
+              <UserRound size={21} strokeWidth={accountActive ? 2 : 1.8} aria-hidden />
+            </span>
+            <span className="whitespace-nowrap">حساب</span>
           </Link>
         </li>
       </ul>
