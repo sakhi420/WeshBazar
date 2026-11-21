@@ -302,8 +302,33 @@ async function buildPreflight(
   const schemaRefs = new Map<string, Prisma.InputJsonValue>();
   const missing: string[] = [];
   const invalid: string[] = [];
+  const minTitleLength = Number(process.env.MIN_LISTING_TITLE_LENGTH ?? 10);
+  const maxTitleLength = Number(process.env.MAX_LISTING_TITLE_LENGTH ?? 120);
+  const minDescriptionLength = Number(process.env.MIN_LISTING_DESCRIPTION_LENGTH ?? 30);
+  const maxDescriptionLength = Number(process.env.MAX_LISTING_DESCRIPTION_LENGTH ?? 5000);
+  const maxAttributes = Number(process.env.MAX_LISTING_ATTRIBUTES ?? 30);
+  const htmlTagPattern = /<\\s*\\/?\\s*[a-zA-Z][^>]*>/;
+  const controlCharacters = /[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]/;
 
   for (const fixture of EXHIBITION_FIXTURES) {
+    const title = fixture.title.trim();
+    const description = fixture.description.trim();
+    const price = fixture.price === null ? null : Number(fixture.price);
+    const contentErrors: string[] = [];
+    if (title.length < minTitleLength || title.length > maxTitleLength) contentErrors.push('title length');
+    if (description.length < minDescriptionLength || description.length > maxDescriptionLength) contentErrors.push('description length');
+    if (htmlTagPattern.test(title) || htmlTagPattern.test(description)) contentErrors.push('HTML markup');
+    if (controlCharacters.test(title) || controlCharacters.test(description)) contentErrors.push('control characters');
+    if (Object.keys(fixture.attributes).length > maxAttributes) contentErrors.push('too many attributes');
+    if (fixture.pricingType === 'PAID' && (price === null || !Number.isFinite(price) || price <= 0)) {
+      contentErrors.push('PAID price must be greater than zero');
+    }
+    if (fixture.pricingType === 'FREE' && price !== null) contentErrors.push('FREE price must be null');
+    if (price !== null && (!Number.isFinite(price) || price < 0)) contentErrors.push('price must be non-negative');
+    if (contentErrors.length) {
+      invalid.push(`${fixture.key}: ${contentErrors.join(', ')}`);
+      continue;
+    }
     const category = categoryBySlug.get(fixture.categorySlug);
     const province = provinceBySlug.get(fixture.provinceSlug);
     const city = province ? cityByKey.get(province.id + '/' + fixture.citySlug) : undefined;
