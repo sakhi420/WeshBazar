@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { ArrowLeft, BadgeCheck, MapPinned, Sparkles } from 'lucide-react';
+import { ArrowLeft, MapPinned, Sparkles, Tag } from 'lucide-react';
 import { LocationPicker } from '@/components/location/location-picker';
 import { SearchField } from '@/features/search/components/search-field';
 
@@ -83,8 +83,8 @@ export function HomeSearchPanel() {
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] font-semibold text-muted-foreground sm:text-xs">
             <span className="inline-flex items-center gap-1.5">
-              <BadgeCheck className="size-4 text-primary" aria-hidden />
-              ثبت آگهی رایگان
+              <Tag className="size-4 text-primary" aria-hidden />
+              اجناس نو و دست‌دوم
             </span>
             <span className="inline-flex items-center gap-1.5">
               <MapPinned className="size-4 text-primary" aria-hidden />
