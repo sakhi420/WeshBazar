@@ -5,105 +5,143 @@ import { ArrowLeft, BadgeCheck, MapPinned, Sparkles } from 'lucide-react';
 import { LocationPicker } from '@/components/location/location-picker';
 import { SearchField } from '@/features/search/components/search-field';
 
-const HERO_IMAGES = [
-  {
+const HERO_IMAGES = {
+  vehicle: {
     src: 'https://images.unsplash.com/photo-1760713170685-b67abc3be5ad?auto=format&fit=crop&w=1200&q=82',
     position: 'center 58%',
   },
-  {
-    src: 'https://images.unsplash.com/photo-1781269986378-a2f366df4d0f?auto=format&fit=crop&w=1200&q=82',
+  home: {
+    src: 'https://images.unsplash.com/photo-1781269986378-a2f366df4d0f?auto=format&fit=crop&w=900&q=80',
     position: 'center 52%',
   },
-  {
-    src: 'https://images.unsplash.com/photo-1722151954628-c218fbb82710?auto=format&fit=crop&w=1200&q=82',
+  mobile: {
+    src: 'https://images.unsplash.com/photo-1722151954628-c218fbb82710?auto=format&fit=crop&w=700&q=78',
     position: 'center 48%',
   },
-  {
-    src: 'https://images.unsplash.com/photo-1776482128012-a47f853abd57?auto=format&fit=crop&w=1200&q=82',
+  furniture: {
+    src: 'https://images.unsplash.com/photo-1776482128012-a47f853abd57?auto=format&fit=crop&w=700&q=78',
     position: 'center 55%',
   },
-] as const;
+} as const;
+
+function HeroPhoto({
+  photo,
+  alt,
+  priority = false,
+}: {
+  photo: (typeof HERO_IMAGES)[keyof typeof HERO_IMAGES];
+  alt: string;
+  priority?: boolean;
+}) {
+  return (
+    <Image
+      src={photo.src}
+      alt={alt}
+      fill
+      priority={priority}
+      sizes="(max-width: 1023px) 48vw, 24vw"
+      className="object-cover"
+      style={{ objectPosition: photo.position }}
+    />
+  );
+}
 
 /**
- * Search-first homepage hero with a photographic marketplace collage.
- * The dark teal gradient protects text contrast while the four photos hint
- * at the range of goods available across the marketplace.
+ * Mobile-first marketplace hero.
+ *
+ * The canvas stays light and open rather than becoming a heavy solid-green
+ * banner. Product photography is contained in a compact collage so it adds
+ * emotion without reducing headline/search contrast or dominating the fold.
  */
 export function HomeSearchPanel() {
   return (
-    <section className="relative isolate overflow-hidden rounded-[1.8rem] bg-[#0b514a] text-white shadow-[0_18px_50px_rgba(15,76,69,0.16)]">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 grid grid-cols-2 grid-rows-2 gap-1.5 p-1.5 opacity-80 sm:gap-2 sm:p-2 lg:inset-y-0 lg:end-0 lg:w-[58%] lg:gap-2.5 lg:p-3"
-      >
-        {HERO_IMAGES.map((photo, index) => (
-          <div key={photo.src} className="relative min-h-0 overflow-hidden rounded-[1.1rem]">
-            <Image
-              src={photo.src}
-              alt=""
-              fill
-              priority={index < 2}
-              sizes="(max-width: 1023px) 50vw, 29vw"
-              className="object-cover"
-              style={{ objectPosition: photo.position }}
-            />
-          </div>
-        ))}
-      </div>
+    <section
+      aria-labelledby="home-hero-title"
+      className="relative isolate overflow-hidden rounded-[1.75rem] border border-primary/10 bg-gradient-to-br from-surface via-primary-soft/45 to-accent/10 shadow-card sm:rounded-[2rem]"
+    >
+      <div aria-hidden className="pointer-events-none absolute -end-20 -top-24 size-72 rounded-full bg-primary/10 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -start-16 bottom-10 size-56 rounded-full bg-accent/10 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-l from-transparent via-primary/20 to-transparent" />
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0b514a]/70 via-[#0b514a]/88 to-[#0b514a] lg:bg-gradient-to-l lg:from-[#0b514a] lg:via-[#0b514a]/88 lg:to-[#0b514a]/25"
-      />
-      <div aria-hidden className="pointer-events-none absolute -start-20 -top-24 size-64 rounded-full border border-white/10" />
-      <div aria-hidden className="pointer-events-none absolute -start-8 -top-12 size-40 rounded-full border border-white/10" />
-      <div aria-hidden className="pointer-events-none absolute -bottom-24 end-[28%] size-64 rounded-full bg-amber-400/10 blur-3xl" />
-
-      <div className="relative max-w-3xl space-y-4 px-4 py-5 sm:space-y-5 sm:px-7 sm:py-7 lg:px-8 lg:py-8">
-        <div>
-          <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/90 backdrop-blur-sm">
-            <Sparkles className="size-3.5 text-amber-300" aria-hidden />
+      <div className="relative grid gap-5 px-4 pb-4 pt-5 sm:gap-6 sm:px-6 sm:pb-6 sm:pt-7 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.9fr)] lg:items-center lg:gap-8 lg:px-8 lg:pb-7 lg:pt-8">
+        <div className="relative z-10 min-w-0 space-y-3 sm:space-y-4">
+          <p className="inline-flex items-center gap-2 rounded-full border border-primary/10 bg-white/75 px-3 py-1.5 text-[11px] font-bold text-primary shadow-soft backdrop-blur-sm">
+            <Sparkles className="size-3.5 text-accent" aria-hidden />
             بازار آنلاین افغانستان
           </p>
-          <h1 className="mt-3 max-w-2xl text-2xl font-black leading-[1.4] tracking-tight sm:text-3xl lg:text-4xl">
-            هر چی می‌خواهی، در ویش‌بازار پیدا کن
-          </h1>
-          <p className="mt-2 max-w-xl text-xs leading-6 text-white/80 sm:text-sm sm:leading-7">
-            از موتر و خانه تا موبایل و وسایل روزمره؛ آگهی‌ها را جست‌وجو کن یا کالایت را رایگان بفروش.
-          </p>
-        </div>
+          <div className="space-y-2">
+            <h1
+              id="home-hero-title"
+              className="max-w-xl text-[1.7rem] font-black leading-[1.42] tracking-tight text-foreground sm:text-3xl lg:text-[2.55rem]"
+            >
+              هر چی می‌خواهی، از همین‌جا پیدا کن
+            </h1>
+            <p className="max-w-xl text-xs leading-6 text-muted-foreground sm:text-sm sm:leading-7">
+              آگهی‌های موتر، خانه، موبایل و هزاران نیاز روزمره را جست‌وجو کن؛ یا کالایت را رایگان به دیگران معرفی کن.
+            </p>
+          </div>
 
-        <div className="rounded-[1.25rem] border border-white/60 bg-white p-2.5 text-foreground shadow-[0_14px_38px_rgba(0,0,0,0.18)] sm:p-3">
-          <p className="mb-2 px-1 text-xs font-bold text-slate-600">چی دنبالش هستی؟</p>
-          <Suspense fallback={null}>
-            <div className="flex flex-col gap-2 lg:flex-row lg:items-stretch">
-              <SearchField
-                className="w-full min-w-0 flex-1"
-                placeholder="مثلاً موتر، خانه یا موبایل..."
-                redirectToSearch
-              />
-              <LocationPicker className="w-full shrink-0 lg:w-auto" redirectToSearch />
-            </div>
-          </Suspense>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-white/85 sm:text-xs">
-          <span className="inline-flex items-center gap-1.5">
-            <BadgeCheck className="size-3.5 text-amber-300" aria-hidden />
-            ثبت آگهی رایگان
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <MapPinned className="size-3.5 text-amber-300" aria-hidden />
-            جست‌وجو بر اساس شهر
-          </span>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] font-semibold text-muted-foreground sm:text-xs">
+            <span className="inline-flex items-center gap-1.5">
+              <BadgeCheck className="size-4 text-primary" aria-hidden />
+              ثبت آگهی رایگان
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <MapPinned className="size-4 text-primary" aria-hidden />
+              جست‌وجو بر اساس شهر
+            </span>
+          </div>
           <Link
             href="/sell"
-            className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-3 py-1.5 font-bold text-amber-950 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b514a]"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-accent px-4 py-2 text-xs font-extrabold text-accent-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
-            کالایت را ثبت کن
-            <ArrowLeft className="size-3.5" aria-hidden />
+            ثبت آگهی رایگان
+            <ArrowLeft className="size-4" aria-hidden />
           </Link>
         </div>
+
+        <div className="relative mx-auto w-full max-w-[520px] lg:me-0">
+          <div aria-hidden className="pointer-events-none absolute -inset-3 rounded-[1.6rem] bg-gradient-to-br from-primary/10 via-transparent to-accent/15 blur-xl" />
+          <div className="relative grid h-[164px] grid-cols-[1.05fr_0.95fr] grid-rows-2 gap-2 sm:h-[205px] lg:h-[238px]">
+            <div className="relative row-span-2 overflow-hidden rounded-[1.2rem] border border-white/80 bg-primary-soft shadow-card">
+              <HeroPhoto photo={HERO_IMAGES.vehicle} alt="موتر برای خرید و فروش" priority />
+              <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-foreground/30 via-transparent to-transparent" />
+            </div>
+            <div className="relative overflow-hidden rounded-[1.2rem] border border-white/80 bg-primary-soft shadow-soft">
+              <HeroPhoto photo={HERO_IMAGES.home} alt="خانه برای خرید و کرایه" />
+            </div>
+            <div className="grid min-h-0 grid-cols-2 gap-2">
+              <div className="relative overflow-hidden rounded-[1.1rem] border border-white/80 bg-primary-soft shadow-soft">
+                <HeroPhoto photo={HERO_IMAGES.mobile} alt="موبایل و وسایل الکترونیکی" />
+              </div>
+              <div className="relative overflow-hidden rounded-[1.1rem] border border-white/80 bg-primary-soft shadow-soft">
+                <HeroPhoto photo={HERO_IMAGES.furniture} alt="مبلمان و لوازم خانه" />
+              </div>
+            </div>
+          </div>
+          <div className="absolute -bottom-2 end-2 inline-flex items-center gap-2 rounded-full border border-white/80 bg-surface/95 px-3 py-2 text-[10px] font-bold text-foreground shadow-card backdrop-blur-sm sm:bottom-2 sm:end-3 sm:text-xs">
+            <span className="size-2 rounded-full bg-success" />
+            خرید و فروش در یک‌جا
+          </div>
+        </div>
+      </div>
+
+      <div className="relative border-t border-primary/10 bg-white/80 px-3 py-3 backdrop-blur-sm sm:px-6 sm:py-4 lg:px-8">
+        <div className="mb-2 flex items-center justify-between gap-3 px-1">
+          <p className="text-xs font-extrabold text-foreground sm:text-sm">چی دنبالش هستی؟</p>
+          <span className="text-[10px] font-medium text-muted-foreground sm:text-xs">جست‌وجو در آگهی‌ها</span>
+        </div>
+        <Suspense fallback={<div className="h-12 animate-pulse rounded-xl bg-muted/20" />}>
+          <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-stretch">
+            <SearchField
+              className="w-full min-w-0"
+              placeholder="مثلاً موتر، خانه یا موبایل..."
+              redirectToSearch
+              compact
+            />
+            <LocationPicker className="w-full sm:w-auto" redirectToSearch />
+          </div>
+        </Suspense>
       </div>
     </section>
   );
