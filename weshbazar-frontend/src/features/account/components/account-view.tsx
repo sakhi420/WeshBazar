@@ -239,71 +239,71 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
         : 'مسدودشده';
 
   return (
-    <div className={cn('space-y-4 sm:space-y-6', className)}>
+    <div className={cn('space-y-4 lg:space-y-6', className)}>
       <header className="space-y-1">
-        <p className="hidden text-meta font-semibold text-primary sm:block">فضای شخصی ویش‌بازار</p>
+        <p className="hidden text-meta font-semibold text-primary lg:block">فضای شخصی ویش‌بازار</p>
         <h1 className="text-heading font-black tracking-tight text-foreground">حساب من</h1>
-        <p className="hidden text-ui text-muted-foreground sm:block">
+        <p className="hidden text-ui text-muted-foreground lg:block">
           اطلاعات شخصی و فعالیت‌های خود را از همین‌جا مدیریت کن.
         </p>
       </header>
 
       <section
         aria-labelledby="account-identity-title"
-        className="relative isolate overflow-hidden rounded-surface border border-primary/10 bg-gradient-to-br from-surface via-surface to-primary-soft/70 p-3.5 shadow-soft sm:p-6"
+        className="relative isolate overflow-hidden rounded-surface border border-primary/10 bg-gradient-to-br from-surface via-surface to-primary-soft/70 p-3.5 shadow-soft lg:p-6"
       >
         <div
           aria-hidden
           className="pointer-events-none absolute -end-12 -top-16 -z-10 size-44 rounded-full bg-primary/5 blur-2xl"
         />
-        <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-3 gap-y-3 sm:flex sm:items-start sm:gap-4">
-          <div className="contents sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:gap-4">
+        <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-3 gap-y-3 lg:flex lg:items-start lg:gap-4">
+          <div className="contents lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:gap-4">
             <Avatar
               name={profile.displayName}
               src={profile.avatarUrl ?? null}
               size="xl"
-              className="size-14 text-card-title ring-4 ring-white shadow-soft sm:size-16 sm:text-heading"
+              className="size-14 text-card-title ring-4 ring-white shadow-soft lg:size-16 lg:text-heading"
             />
-            <div className="min-w-0 w-full">
+            <div className="min-w-0 w-full lg:flex-1">
               <p className="text-caption font-medium text-muted-foreground">خوش آمدی</p>
               <h2
                 id="account-identity-title"
-                className="mt-0.5 break-words text-ui font-black leading-6 text-foreground sm:text-section"
+                className="mt-0.5 break-words text-ui font-black leading-6 text-foreground lg:text-section"
               >
                 {profile.displayName}
               </h2>
-              <p className="mt-0.5 text-caption text-muted-foreground sm:mt-1 sm:text-ui" dir="ltr">
+              <p className="mt-0.5 text-caption text-muted-foreground lg:mt-1 lg:text-ui" dir="ltr">
                 {profile.phone}
               </p>
-              <div className="mt-1.5 flex flex-wrap items-center gap-1.5 sm:mt-2 sm:gap-2">
+              <div className="mt-1.5 flex flex-wrap items-center gap-1.5 lg:mt-2 lg:gap-2">
                 {profile.phoneVerified ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-caption sm:px-2.5 sm:py-1 font-semibold text-success">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-caption lg:px-2.5 lg:py-1 font-semibold text-success">
                     <BadgeCheck className="size-3.5" aria-hidden />
                     شماره تأییدشده
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-caption sm:px-2.5 sm:py-1 font-semibold text-warning">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-caption lg:px-2.5 lg:py-1 font-semibold text-warning">
                     <CircleAlert className="size-3.5" aria-hidden />
                     شماره تأییدنشده
                   </span>
                 )}
-                <span className="rounded-full border border-border/80 bg-white/70 px-2 py-0.5 text-caption sm:px-2.5 sm:py-1 font-medium text-muted-foreground">
+                <span className="rounded-full border border-border/80 bg-white/70 px-2 py-0.5 text-caption lg:px-2.5 lg:py-1 font-medium text-muted-foreground">
                   {formatRoleLabel(profile.role)}
                 </span>
               </div>
-              <p className="mt-1.5 text-caption text-muted-foreground sm:mt-2">
+              <p className="mt-1.5 text-caption text-muted-foreground lg:mt-2">
                 عضو از {formatMonthYear(profile.createdAt)}
               </p>
             </div>
           </div>
 
-          <div className="col-span-2 min-w-0 border-t border-primary/10 pt-3 sm:ms-auto sm:w-auto sm:border-0 sm:pt-0">
+          <div className="col-span-2 min-w-0 border-t border-primary/10 pt-3 lg:ms-auto lg:w-auto lg:border-0 lg:pt-0">
             <ProfilePhotoControls hasAvatar={Boolean(profile.avatarUrl)} />
           </div>
         </div>
 
         {!profile.phoneVerified ? (
-          <div className="mt-3 flex flex-col gap-2 rounded-card sm:mt-4 border border-warning/25 bg-warning/5 p-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-3 flex flex-col gap-2 rounded-card lg:mt-4 border border-warning/25 bg-warning/5 p-3 lg:flex-row lg:items-center lg:justify-between">
             <p className="text-ui text-foreground/90">
               برای استفادهٔ مطمئن‌تر از حساب، شمارهٔ تلفن خود را تأیید کن.
             </p>
@@ -339,8 +339,8 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
               {nameError ? (
                 <p id="account-display-name-error" className="text-meta text-danger">{nameError}</p>
               ) : null}
-              <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
-                <Button type="submit" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={updateProfile.isPending}>
+              <div className="grid grid-cols-2 gap-2 lg:flex lg:flex-wrap">
+                <Button type="submit" size="sm" className="min-h-11 w-full lg:min-h-9 lg:w-auto" disabled={updateProfile.isPending}>
                   {updateProfile.isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Check className="size-4" aria-hidden />}
                   ذخیره نام
                 </Button>
@@ -348,7 +348,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="min-h-11 w-full sm:min-h-9 sm:w-auto"
+                  className="min-h-11 w-full lg:min-h-9 lg:w-auto"
                   disabled={updateProfile.isPending}
                   onClick={() => {
                     setEditingName(false);
@@ -361,12 +361,12 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
               </div>
             </form>
           ) : (
-            <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-2.5 lg:gap-3">
               <div className="min-w-0">
                 <p className="text-ui font-semibold text-foreground">نام حساب</p>
-                <p className="mt-0.5 hidden text-caption text-muted-foreground sm:block">این نام در اطلاعات حساب شخصی تو استفاده می‌شود.</p>
+                <p className="mt-0.5 hidden text-caption text-muted-foreground lg:block">این نام در اطلاعات حساب شخصی تو استفاده می‌شود.</p>
               </div>
-              <Button type="button" variant="outline" size="sm" className="min-h-11 sm:min-h-9" onClick={beginNameEdit}>
+              <Button type="button" variant="outline" size="sm" className="min-h-11 lg:min-h-9" onClick={beginNameEdit}>
                 <Pencil className="size-3.5" aria-hidden />
                 ویرایش نام
               </Button>
@@ -382,15 +382,15 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
         </p>
       ) : null}
 
-      <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
-        <div className="space-y-4 sm:space-y-6">
+      <div className="grid gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
+        <div className="space-y-4 lg:space-y-6">
           <section aria-labelledby="account-activity-title" className="space-y-3">
             <SectionHeading
               id="account-activity-title"
               title="فعالیت‌های من"
               description="دسترسی سریع به کارهای روزمره"
             />
-            <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
+            <div className="grid gap-2.5 lg:grid-cols-2 lg:gap-3">
               <QuickAction
                 href="/my-listings"
                 title="آگهی‌های من"
@@ -412,7 +412,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
             aria-labelledby="seller-profile-title"
             className="overflow-hidden rounded-surface border border-border bg-surface shadow-soft"
           >
-            <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-border px-3.5 py-3.5 sm:gap-3 sm:px-5 sm:py-4">
+            <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-border px-3.5 py-3.5 lg:gap-3 lg:px-5 lg:py-4">
               <div className="flex min-w-0 items-center gap-3">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-card bg-primary-soft text-primary">
                   <Store className="size-5" aria-hidden />
@@ -438,7 +438,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
               </span>
             </div>
 
-            <div className="space-y-3 p-3.5 sm:space-y-4 sm:p-5">
+            <div className="space-y-3 p-3.5 lg:space-y-4 lg:p-5">
               {editingSeller ? (
                 <form onSubmit={saveSeller} noValidate className="space-y-3">
                   <div className="space-y-1.5">
@@ -483,8 +483,8 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
                     </p>
                   </div>
                   {sellerError ? <p role="alert" className="text-meta text-danger">{sellerError}</p> : null}
-                  <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
-                    <Button type="submit" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={updateProfile.isPending}>
+                  <div className="grid grid-cols-2 gap-2 lg:flex lg:flex-wrap">
+                    <Button type="submit" size="sm" className="min-h-11 w-full lg:min-h-9 lg:w-auto" disabled={updateProfile.isPending}>
                       {updateProfile.isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Check className="size-4" aria-hidden />}
                       ذخیره پروفایل
                     </Button>
@@ -492,7 +492,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="min-h-11 w-full sm:min-h-9 sm:w-auto"
+                      className="min-h-11 w-full lg:min-h-9 lg:w-auto"
                       disabled={updateProfile.isPending}
                       onClick={() => {
                         setEditingSeller(false);
@@ -520,7 +520,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
                         صفحهٔ فروشنده در ویش‌بازار
                       </p>
                     </div>
-                    <Button type="button" variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" onClick={beginSellerEdit}>
+                    <Button type="button" variant="outline" size="sm" className="min-h-11 w-full lg:min-h-9 lg:w-auto" onClick={beginSellerEdit}>
                       <Pencil className="size-3.5" aria-hidden />
                       ویرایش
                     </Button>
@@ -640,7 +640,7 @@ function QuickAction({
   return (
     <Link
       href={href}
-      className="group flex min-h-[76px] min-w-0 items-center gap-3 rounded-surface border border-border bg-surface p-3 shadow-soft transition-all duration-small hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-32 sm:flex-col sm:items-stretch sm:justify-between sm:gap-0 sm:p-4 sm:hover:-translate-y-0.5"
+      className="group flex min-h-[76px] min-w-0 items-center gap-3 rounded-surface border border-border bg-surface p-3 shadow-soft transition-all duration-small hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:min-h-32 lg:flex-col lg:items-stretch lg:justify-between lg:gap-0 lg:p-4 lg:hover:-translate-y-0.5"
     >
       <span
         className={cn(
@@ -650,13 +650,13 @@ function QuickAction({
       >
         {icon}
       </span>
-      <span className="min-w-0 flex-1 sm:mt-3">
-        <span className="block break-words text-ui font-bold text-foreground sm:truncate">{title}</span>
-        <span className="mt-0.5 block text-caption leading-5 text-muted-foreground sm:mt-1">
+      <span className="min-w-0 flex-1 lg:mt-3">
+        <span className="block break-words text-ui font-bold text-foreground lg:truncate">{title}</span>
+        <span className="mt-0.5 block text-caption leading-5 text-muted-foreground lg:mt-1">
           {description}
         </span>
       </span>
-      <span className="ms-auto shrink-0 text-muted-foreground transition-colors group-hover:text-primary sm:mt-2 sm:flex sm:justify-end">
+      <span className="ms-auto shrink-0 text-muted-foreground transition-colors group-hover:text-primary lg:mt-2 lg:flex lg:justify-end">
         <ChevronLeft className="size-4" aria-hidden />
       </span>
     </Link>
@@ -678,7 +678,7 @@ function AccountLink({
     <li>
       <Link
         href={href}
-        className="flex min-h-[64px] items-center gap-3 px-3 py-3 sm:min-h-[68px] sm:px-4 transition-colors duration-small hover:bg-primary-soft/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+        className="flex min-h-[64px] items-center gap-3 px-3 py-3 lg:min-h-[68px] lg:px-4 transition-colors duration-small hover:bg-primary-soft/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
       >
         <span className="flex size-9 shrink-0 items-center justify-center rounded-control bg-primary-soft/70 text-primary">
           {icon}
