@@ -78,13 +78,13 @@ export function ProfilePhotoControls({ hasAvatar }: { hasAvatar: boolean }) {
   }
 
   return (
-    <div className="mt-0 w-full sm:w-auto">
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-2 sm:flex sm:flex-wrap">
+    <div className="mt-0 w-full lg:w-auto">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-2 lg:flex lg:flex-wrap">
         <Button
           type="button"
           variant="outline"
           size="sm"
-          className="min-h-11 w-full sm:min-h-9 sm:w-auto"
+          className="min-h-11 w-full lg:min-h-9 lg:w-auto"
           disabled={busy}
           onClick={() => inputRef.current?.click()}
         >
@@ -96,7 +96,7 @@ export function ProfilePhotoControls({ hasAvatar }: { hasAvatar: boolean }) {
             type="button"
             variant="ghost"
             size="sm"
-            className="min-h-11 w-full sm:min-h-9 sm:w-auto"
+            className="min-h-11 w-full lg:min-h-9 lg:w-auto"
             disabled={busy}
             className="text-danger hover:bg-danger/5 hover:text-danger"
             onClick={handleRemove}
@@ -106,7 +106,7 @@ export function ProfilePhotoControls({ hasAvatar }: { hasAvatar: boolean }) {
           </Button>
         ) : null}
       </div>
-      <p className="mt-1 text-caption text-muted-foreground sm:text-end">
+      <p className="mt-1 text-caption text-muted-foreground lg:text-end">
         JPEG، PNG یا WebP · حداکثر ۵ مگابایت
       </p>
       {error ? (
