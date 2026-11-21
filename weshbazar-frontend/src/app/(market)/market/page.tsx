@@ -1,14 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { LayoutGrid, ArrowLeft, Plus, ShieldAlert, Search, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Search, ShieldAlert } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { ErrorState } from '@/components/feedback/error-state';
 import { ListingGrid } from '@/components/listings/listing-grid';
 import { CategoryShortcutGrid } from '@/components/discovery/category-shortcut-grid';
 import { HomeSearchPanel } from '@/components/discovery/home-search-panel';
-import { Button } from '@/components/ui/button';
-import { SectionHeader } from '@/components/layout/section-header';
 import { ApiError } from '@/lib/api';
 import { siteConfig } from '@/config/site';
 import {
@@ -26,6 +24,8 @@ export const metadata: Metadata = {
 
 // Revalidate the public home feed; category data changes rarely.
 export const revalidate = 300;
+
+const ALL_LISTINGS_HREF = '/search?sort=newest';
 
 type CategoriesResult =
   | { status: 'ok'; categories: CategorySummary[] }
@@ -70,39 +70,19 @@ async function loadLatestListings(): Promise<ListingsResult> {
 export default async function HomePage() {
   const [catResult, listResult] = await Promise.all([loadCategories(), loadLatestListings()]);
   const topCategories = catResult.status === 'ok' ? orderHomeCategories(catResult.categories) : [];
+  const latestCount = listResult.status === 'ok' ? listResult.listings.length : 0;
+  const latestCountLabel = latestCount.toLocaleString('fa-AF');
 
   return (
-    <PageContainer className="space-y-5 md:space-y-8">
+    <PageContainer className="space-y-7 md:space-y-10">
       <HomeSearchPanel />
 
-      <section aria-label="چطور کار می‌کند" className="grid grid-cols-3 gap-2 md:gap-3 lg:grid-cols-3">
-        <HomeStep
-          href="/search"
-          icon={Search}
-          title="جست‌وجو کنید"
-          description="با کلمه یا دسته، آگهی‌های نو و دست‌دوم را پیدا کنید."
-        />
-        <HomeStep
-          href="/sell"
-          icon={Plus}
-          title="رایگان بفروشید"
-          description="آگهی بگذارید و مستقیم با خریدار در تماس باشید."
-        />
-        <HomeStep
-          href="/help/safety"
-          icon={MessageCircle}
-          title="امن معامله کنید"
-          description="کالا را از نزدیک ببینید و در مکان عمومی معامله کنید."
-        />
-      </section>
-
-      {/* Category navigation — clean, unboxed continuous mobile marquee */}
       {catResult.status === 'ok' ? (
         <CategoryShortcutGrid categories={topCategories} />
       ) : null}
       {catResult.status === 'empty' ? (
         <EmptyState
-          icon={LayoutGrid}
+          icon={Search}
           title="هنوز دسته‌بندی‌ای وجود ندارد"
           description="به‌محض فعال شدن دسته‌بندی‌ها از سوی مدیران، اینجا نمایش داده می‌شوند."
         />
@@ -115,22 +95,67 @@ export default async function HomePage() {
         />
       ) : null}
 
-      {/* Latest listings */}
-      <section aria-labelledby="latest-heading" className="space-y-2 md:space-y-3">
-        <SectionHeader
-          id="latest-heading"
-          title="آخرین آگهی‌ها"
-          action={
-            <Link
-              href="/search?sort=newest"
-              className="inline-flex items-center gap-1 rounded-control text-ui text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              مشاهده همه
-              <ArrowLeft className="size-4" aria-hidden />
-            </Link>
-          }
-        />
-        {listResult.status === 'ok' ? <ListingGrid listings={listResult.listings} /> : null}
+      <section aria-labelledby="latest-heading" className="space-y-4 md:space-y-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1.5">
+            <p className="text-xs font-bold text-primary">تازه از بازار</p>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h2 id="latest-heading" className="text-xl font-black tracking-tight text-foreground sm:text-2xl">
+                آخرین آگهی‌ها
+              </h2>
+              {listResult.status === 'ok' ? (
+                <span className="inline-flex items-center rounded-full border border-primary/15 bg-primary-soft px-3 py-1 text-[11px] font-bold text-primary">
+                  {latestCountLabel} آگهی تازه
+                </span>
+              ) : null}
+            </div>
+            <p className="text-xs leading-6 text-muted-foreground sm:text-sm">
+              تازه‌ترین آگهی‌هایی که در ویش‌بازار ثبت شده‌اند.
+            </p>
+          </div>
+
+          <Link
+            href={ALL_LISTINGS_HREF}
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary-soft px-4 py-2.5 text-xs font-bold text-primary transition-colors hover:border-primary/35 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-auto sm:shrink-0"
+          >
+            مشاهده همه آگهی‌ها
+            <ArrowLeft className="size-4" aria-hidden />
+          </Link>
+        </div>
+
+        {listResult.status === 'ok' ? (
+          <>
+            <ListingGrid listings={listResult.listings} />
+
+            <div className="relative isolate flex flex-col gap-4 overflow-hidden rounded-[1.4rem] border border-primary/15 bg-gradient-to-l from-primary-soft via-surface to-amber-50/75 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -end-8 -top-12 size-36 rounded-full bg-primary/10 blur-2xl"
+              />
+              <div className="relative flex min-w-0 items-start gap-3">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-white text-primary shadow-sm">
+                  <Search className="size-5" aria-hidden />
+                </span>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-extrabold text-foreground sm:text-base">
+                    هنوز دنبال گزینهٔ مناسب می‌گردی؟
+                  </h3>
+                  <p className="mt-1 max-w-2xl text-xs leading-6 text-muted-foreground sm:text-sm">
+                    این بخش فقط پیش‌نمایشی از {latestCountLabel} آگهی تازه است؛ برای دیدن فهرست کامل و جست‌وجو میان آگهی‌ها ادامه بده.
+                  </p>
+                </div>
+              </div>
+              <Link
+                href={ALL_LISTINGS_HREF}
+                className="relative inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                رفتن به فهرست کامل
+                <ArrowLeft className="size-4" aria-hidden />
+              </Link>
+            </div>
+          </>
+        ) : null}
+
         {listResult.status === 'empty' ? (
           <EmptyState title="هنوز آگهی‌ای ثبت نشده است" description="اولین آگهی را شما ثبت کنید!" />
         ) : null}
@@ -143,78 +168,26 @@ export default async function HomePage() {
         ) : null}
       </section>
 
-      <section className="relative overflow-hidden rounded-surface bg-accent px-4 py-5 text-center text-accent-foreground shadow-card sm:px-8 sm:py-9">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
-              `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path fill="none" stroke="#0B2F2B" stroke-width="0.7" d="M14 2l1.6 10L26 14l-10.4 1.6L14 26l-1.6-10.4L2 14l10.4-1.6z"/></svg>`,
-            )}")`,
-            backgroundSize: '28px 28px',
-          }}
-        />
-        <h2 className="relative text-xl font-bold sm:text-2xl">کالایی برای فروش دارید؟</h2>
-        <p className="relative mx-auto mt-2 max-w-prose text-body sm:text-lg">
-          آگهی خود را رایگان ثبت کنید و مستقیماً با خریداران در تماس باشید.
-        </p>
-        <Button asChild size="lg" className="relative mt-5 bg-primary-dark text-primary-foreground hover:bg-primary">
-          <Link href="/sell">
-            <Plus aria-hidden />
-            <span className="font-semibold">ثبت آگهی رایگان</span>
-          </Link>
-        </Button>
-      </section>
-
-      {/* Safety */}
-      <section className="rounded-surface border border-warning/25 bg-gradient-to-l from-surface to-warning/5 p-3 shadow-card sm:p-6">
+      <section className="flex flex-col gap-3 rounded-[1.25rem] border border-warning/25 bg-gradient-to-l from-warning/10 via-surface to-surface p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
         <div className="flex items-start gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-warning/10 text-warning">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-warning/10 text-warning">
             <ShieldAlert className="size-5" aria-hidden />
           </span>
           <div>
-            <h2 className="text-ui font-semibold text-foreground">
-              <Link
-                href="/help/safety"
-                className="rounded-control hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                نکات ایمنی
-              </Link>
-            </h2>
-            <ul className="mt-2 space-y-1 text-ui text-muted-foreground">
-              <li>· قبل از پرداخت، کالا را از نزدیک بررسی کنید.</li>
-              <li>· در مکان عمومی و امن معامله کنید.</li>
-              <li>· از واریز پیش پرداخت خودداری کنید.</li>
-              <li>· در صورت مشاهده تخلف، آگهی را گزارش دهید.</li>
-            </ul>
+            <h2 className="text-sm font-bold text-foreground">معاملهٔ امن را جدی بگیر</h2>
+            <p className="mt-1 text-xs leading-6 text-muted-foreground sm:text-sm">
+              پیش از پرداخت، کالا را از نزدیک بررسی کن و در مکان عمومی معامله کن.
+            </p>
           </div>
         </div>
+        <Link
+          href="/help/safety"
+          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-bold text-warning transition-colors hover:bg-warning/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          راهنمای ایمنی
+          <ArrowLeft className="size-3.5" aria-hidden />
+        </Link>
       </section>
     </PageContainer>
-  );
-}
-
-function HomeStep({
-  href,
-  icon: Icon,
-  title,
-  description,
-}: {
-  href: string;
-  icon: typeof Search;
-  title: string;
-  description: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="group rounded-surface border border-border bg-surface p-2 shadow-soft transition-all duration-small hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:p-4"
-    >
-      <span className="flex size-8 items-center justify-center rounded-full bg-primary-soft text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground md:size-10">
-        <Icon className="size-4 md:size-5" aria-hidden />
-      </span>
-      <h2 className="mt-1 text-caption font-semibold text-foreground md:mt-3 md:text-ui">{title}</h2>
-      <p className="mt-1 hidden text-caption text-muted-foreground md:block">{description}</p>
-    </Link>
   );
 }
