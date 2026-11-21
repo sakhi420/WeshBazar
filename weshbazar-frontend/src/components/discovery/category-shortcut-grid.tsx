@@ -145,9 +145,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
         onWheel={() => setIsPaused(true)}
         onFocusCapture={() => setIsPaused(true)}
         className={cn(
-          'no-scrollbar w-full overflow-x-auto overflow-y-hidden overscroll-x-contain touch-pan-x',
-          '[mask-image:linear-gradient(90deg,transparent_0%,black_5%,black_95%,transparent_100%)]',
-          '[-webkit-mask-image:linear-gradient(90deg,transparent_0%,black_5%,black_95%,transparent_100%)]',
+          'category-marquee-viewport no-scrollbar w-full overflow-x-auto overflow-y-hidden overscroll-x-contain touch-pan-x',
           'xl:hidden',
           className,
         )}
