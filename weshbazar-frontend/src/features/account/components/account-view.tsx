@@ -256,15 +256,15 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
           aria-hidden
           className="pointer-events-none absolute -end-12 -top-16 -z-10 size-44 rounded-full bg-primary/5 blur-2xl"
         />
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-          <div className="flex min-w-0 flex-1 items-center gap-3.5 sm:gap-4">
+        <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-3 gap-y-3 sm:flex sm:items-start sm:gap-4">
+          <div className="contents sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:gap-4">
             <Avatar
               name={profile.displayName}
               src={profile.avatarUrl ?? null}
               size="xl"
               className="size-14 text-card-title ring-4 ring-white shadow-soft sm:size-16 sm:text-heading"
             />
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 w-full">
               <p className="text-caption font-medium text-muted-foreground">خوش آمدی</p>
               <h2
                 id="account-identity-title"
@@ -297,7 +297,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
             </div>
           </div>
 
-          <div className="w-full border-t border-primary/10 pt-3 sm:w-auto sm:border-0 sm:pt-0">
+          <div className="col-span-2 min-w-0 border-t border-primary/10 pt-3 sm:ms-auto sm:w-auto sm:border-0 sm:pt-0">
             <ProfilePhotoControls hasAvatar={Boolean(profile.avatarUrl)} />
           </div>
         </div>
