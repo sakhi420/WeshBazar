@@ -77,9 +77,9 @@ export default async function HomePage() {
   const hasMoreListings = latestPage?.hasMore ?? false;
 
   return (
-    <PageContainer className="space-y-7 md:space-y-10">
+    <>
       <HomeSearchPanel />
-
+      <PageContainer className="space-y-7 md:space-y-10">
       {catResult.status === 'ok' ? (
         <CategoryShortcutGrid categories={topCategories} />
       ) : null}
@@ -199,6 +199,7 @@ export default async function HomePage() {
           <ArrowLeft className="size-3.5" aria-hidden />
         </Link>
       </section>
-    </PageContainer>
+      </PageContainer>
+    </>
   );
 }
