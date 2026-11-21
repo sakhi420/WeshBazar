@@ -257,49 +257,46 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
           className="pointer-events-none absolute -end-12 -top-16 -z-10 size-44 rounded-full bg-primary/5 blur-2xl"
         />
         <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-x-3 gap-y-3 lg:flex lg:items-start lg:gap-4">
-          <div className="contents lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:gap-4">
-            <Avatar
-              name={profile.displayName}
-              src={profile.avatarUrl ?? null}
-              size="xl"
-              className="size-14 text-card-title ring-4 ring-white shadow-soft lg:size-16 lg:text-heading"
-            />
-            <div className="min-w-0 w-full lg:flex-1">
-              <p className="text-caption font-medium text-muted-foreground">خوش آمدی</p>
-              <h2
-                id="account-identity-title"
-                className="mt-0.5 break-words text-ui font-black leading-6 text-foreground lg:text-section"
-              >
-                {profile.displayName}
-              </h2>
-              <p className="mt-0.5 text-caption text-muted-foreground lg:mt-1 lg:text-ui" dir="ltr">
-                {profile.phone}
-              </p>
-              <div className="mt-1.5 flex flex-wrap items-center gap-1.5 lg:mt-2 lg:gap-2">
-                {profile.phoneVerified ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-caption lg:px-2.5 lg:py-1 font-semibold text-success">
-                    <BadgeCheck className="size-3.5" aria-hidden />
-                    شماره تأییدشده
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-caption lg:px-2.5 lg:py-1 font-semibold text-warning">
-                    <CircleAlert className="size-3.5" aria-hidden />
-                    شماره تأییدنشده
-                  </span>
-                )}
-                <span className="rounded-full border border-border/80 bg-white/70 px-2 py-0.5 text-caption lg:px-2.5 lg:py-1 font-medium text-muted-foreground">
-                  {formatRoleLabel(profile.role)}
+          <Avatar
+            name={profile.displayName}
+            src={profile.avatarUrl ?? null}
+            size="xl"
+            className="size-14 text-card-title ring-4 ring-white shadow-soft lg:size-16 lg:text-heading"
+          />
+          <div className="min-w-0 w-full lg:flex-1">
+            <p className="text-caption font-medium text-muted-foreground">خوش آمدی</p>
+            <h2
+              id="account-identity-title"
+              className="mt-0.5 break-words text-ui font-black leading-6 text-foreground lg:text-section"
+            >
+              {profile.displayName}
+            </h2>
+            <p className="mt-0.5 text-caption text-muted-foreground lg:mt-1 lg:text-ui" dir="ltr">
+              {profile.phone}
+            </p>
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 lg:mt-2 lg:gap-2">
+              {profile.phoneVerified ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-caption font-semibold text-success lg:px-2.5 lg:py-1">
+                  <BadgeCheck className="size-3.5" aria-hidden />
+                  شماره تأییدشده
                 </span>
-              </div>
-              <p className="mt-1.5 text-caption text-muted-foreground lg:mt-2">
-                عضو از {formatMonthYear(profile.createdAt)}
-              </p>
+              ) : (
+                <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-caption font-semibold text-warning lg:px-2.5 lg:py-1">
+                  <CircleAlert className="size-3.5" aria-hidden />
+                  شماره تأییدنشده
+                </span>
+              )}
+              <span className="rounded-full border border-border/80 bg-white/70 px-2 py-0.5 text-caption font-medium text-muted-foreground lg:px-2.5 lg:py-1">
+                {formatRoleLabel(profile.role)}
+              </span>
             </div>
+            <p className="mt-1.5 text-caption text-muted-foreground lg:mt-2">
+              عضو از {formatMonthYear(profile.createdAt)}
+            </p>
           </div>
 
-          <div className="col-span-2 min-w-0 border-t border-primary/10 pt-3 lg:ms-auto lg:w-auto lg:border-0 lg:pt-0">
-            <ProfilePhotoControls hasAvatar={Boolean(profile.avatarUrl)} />
-          </div>
+          <div className="col-span-2 min-w-0 border-t border-primary/10 pt-3 lg:col-span-1 lg:ms-auto lg:w-auto lg:border-0 lg:pt-0">
+            <ProfilePhotoControls hasAvatar={Boolean(profile.avatarUrl)} />          </div>
         </div>
 
         {!profile.phoneVerified ? (
