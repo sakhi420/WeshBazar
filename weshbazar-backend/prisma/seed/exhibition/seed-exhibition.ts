@@ -28,6 +28,7 @@ export interface ExhibitionSeedOptions {
   sellers: Record<ExhibitionSellerKey, ExhibitionSellerOwner>;
   adminUserId: string;
   normalizedAttributesBySlug: Map<string, Record<string, string | number | boolean | string[]>>;
+  attributeSchemaReferenceBySlug: Map<string, Prisma.InputJsonValue>;
   storageRoot: string;
 }
 
@@ -362,7 +363,7 @@ async function approveByAdmin(
 async function publishDraft(
   db: Database,
   input: {
-    listing: Awaited<ReturnType<Database['listing']['findUnique']>>;
+    listing: Prisma.ListingGetPayload<Record<string, never>> | null;
     sellerUserId: string;
     adminUserId: string;
     fixture: ExhibitionFixture;
@@ -466,14 +467,12 @@ export async function seedExhibitionData(
       throw new Error(`Validated attributes are missing for ${fixture.key}.`);
     }
     const searchText = buildSearchText(fixture, normalizedAttributes);
-    const attributeSchemaReference = Object.keys(normalizedAttributes).map((key) => ({
-      key,
-      type: typeof normalizedAttributes[key],
-      required: false,
-    })) as unknown as Prisma.InputJsonValue;
+    const attributeSchemaReference = options.attributeSchemaReferenceBySlug.get(fixture.slug);
+    if (!attributeSchemaReference) {
+      throw new Error(`Validated attribute schema reference is missing for ${fixture.key}.`);
+    }
 
     let listing = await db.listing.findUnique({ where: { slug: fixture.slug } });
-    const existing = listing !== null;
     if (listing) {
       if (listing.sellerAccountId !== seller.sellerAccountId) {
         throw new Error(`Fixture slug collision: ${fixture.slug} belongs to another seller.`);
@@ -603,7 +602,6 @@ export async function seedExhibitionData(
     // Existing fixtures are never reworded or reassigned; their current content
     // and revisions remain intact. The seed only repairs images/contact safety
     // and extends expired active fixtures with a RENEW revision.
-    void existing;
   }
 
   const totalListings = EXHIBITION_FIXTURES.length;
