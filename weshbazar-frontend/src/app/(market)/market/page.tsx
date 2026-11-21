@@ -7,7 +7,7 @@ import { ErrorState } from '@/components/feedback/error-state';
 import { ListingGrid } from '@/components/listings/listing-grid';
 import { CategoryShortcutGrid } from '@/components/discovery/category-shortcut-grid';
 import { HomeSearchPanel } from '@/components/discovery/home-search-panel';
-import { ApiError } from '@/lib/api';
+import { ApiError, type CursorPage } from '@/lib/api';
 import { siteConfig } from '@/config/site';
 import {
   fetchCategoriesServer,
@@ -33,7 +33,7 @@ type CategoriesResult =
   | { status: 'error'; requestId?: string };
 
 type ListingsResult =
-  | { status: 'ok'; listings: PublicListingSummary[] }
+  | { status: 'ok'; page: CursorPage<PublicListingSummary> }
   | { status: 'empty' }
   | { status: 'error'; requestId?: string };
 
@@ -56,7 +56,7 @@ async function loadLatestListings(): Promise<ListingsResult> {
   try {
     const page = await fetchListingsServer({ sort: 'newest', limit: 12 });
     if (!page.items || page.items.length === 0) return { status: 'empty' };
-    return { status: 'ok', listings: page.items };
+    return { status: 'ok', page };
   } catch (error) {
     // Any failure (network or API) is an error state — never masquerade a
     // broken backend as "no listings yet" (audit F-02).
@@ -70,8 +70,11 @@ async function loadLatestListings(): Promise<ListingsResult> {
 export default async function HomePage() {
   const [catResult, listResult] = await Promise.all([loadCategories(), loadLatestListings()]);
   const topCategories = catResult.status === 'ok' ? orderHomeCategories(catResult.categories) : [];
-  const latestCount = listResult.status === 'ok' ? listResult.listings.length : 0;
+  const latestPage = listResult.status === 'ok' ? listResult.page : null;
+  const latestCount = latestPage?.items.length ?? 0;
   const latestCountLabel = latestCount.toLocaleString('fa-AF');
+  const latestTotalLabel = latestPage?.total?.toLocaleString('fa-AF');
+  const hasMoreListings = latestPage?.hasMore ?? false;
 
   return (
     <PageContainer className="space-y-7 md:space-y-10">
@@ -97,15 +100,17 @@ export default async function HomePage() {
 
       <section aria-labelledby="latest-heading" className="space-y-4 md:space-y-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-1.5">
+          <div className="min-w-0 space-y-1.5">
             <p className="text-xs font-bold text-primary">تازه از بازار</p>
             <div className="flex flex-wrap items-center gap-2.5">
               <h2 id="latest-heading" className="text-xl font-black tracking-tight text-foreground sm:text-2xl">
                 آخرین آگهی‌ها
               </h2>
-              {listResult.status === 'ok' ? (
+              {latestPage ? (
                 <span className="inline-flex items-center rounded-full border border-primary/15 bg-primary-soft px-3 py-1 text-[11px] font-bold text-primary">
-                  {latestCountLabel} آگهی تازه
+                  {latestTotalLabel !== undefined
+                    ? `نمایش ${latestCountLabel} از ${latestTotalLabel}`
+                    : `${latestCountLabel} آگهی تازه`}
                 </span>
               ) : null}
             </div>
@@ -114,45 +119,51 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <Link
-            href={ALL_LISTINGS_HREF}
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary-soft px-4 py-2.5 text-xs font-bold text-primary transition-colors hover:border-primary/35 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-auto sm:shrink-0"
-          >
-            مشاهده همه آگهی‌ها
-            <ArrowLeft className="size-4" aria-hidden />
-          </Link>
+          {hasMoreListings ? (
+            <Link
+              href={ALL_LISTINGS_HREF}
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary-soft px-4 py-2.5 text-xs font-extrabold text-primary transition-all hover:border-primary/35 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-auto sm:shrink-0"
+            >
+              دیدن همهٔ آگهی‌ها
+              <ArrowLeft className="size-4" aria-hidden />
+            </Link>
+          ) : null}
         </div>
 
-        {listResult.status === 'ok' ? (
+        {latestPage ? (
           <>
-            <ListingGrid listings={listResult.listings} />
+            <ListingGrid listings={latestPage.items} />
 
-            <div className="relative isolate flex flex-col gap-4 overflow-hidden rounded-[1.4rem] border border-primary/15 bg-gradient-to-l from-primary-soft via-surface to-amber-50/75 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -end-8 -top-12 size-36 rounded-full bg-primary/10 blur-2xl"
-              />
-              <div className="relative flex min-w-0 items-start gap-3">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-white text-primary shadow-sm">
-                  <Search className="size-5" aria-hidden />
-                </span>
-                <div className="min-w-0">
-                  <h3 className="text-sm font-extrabold text-foreground sm:text-base">
-                    هنوز دنبال گزینهٔ مناسب می‌گردی؟
-                  </h3>
-                  <p className="mt-1 max-w-2xl text-xs leading-6 text-muted-foreground sm:text-sm">
-                    این بخش فقط پیش‌نمایشی از {latestCountLabel} آگهی تازه است؛ برای دیدن فهرست کامل و جست‌وجو میان آگهی‌ها ادامه بده.
-                  </p>
+            {hasMoreListings ? (
+              <div className="relative isolate flex flex-col gap-3 overflow-hidden rounded-[1.4rem] border border-primary/15 bg-gradient-to-l from-primary-soft/80 via-surface to-amber-50/80 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -end-8 -top-12 size-36 rounded-full bg-primary/10 blur-2xl"
+                />
+                <div className="relative flex min-w-0 items-start gap-3">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl border border-primary/10 bg-white text-primary shadow-soft">
+                    <Search className="size-5" aria-hidden />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-extrabold text-foreground sm:text-base">
+                      این‌ها فقط تازه‌ترین آگهی‌ها هستند
+                    </h3>
+                    <p className="mt-1 max-w-2xl text-xs leading-6 text-muted-foreground sm:text-sm">
+                      {latestTotalLabel !== undefined
+                        ? `از میان ${latestTotalLabel} آگهی، ${latestCountLabel} مورد تازه در این پیش‌نمایش آمده است.`
+                        : `در این بخش ${latestCountLabel} آگهی تازه را می‌بینی؛ برای دیدن ادامهٔ آگهی‌های بازار، فهرست را باز کن.`}
+                    </p>
+                  </div>
                 </div>
+                <Link
+                  href={ALL_LISTINGS_HREF}
+                  className="relative inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-xs font-extrabold text-primary-foreground shadow-soft transition-all hover:-translate-y-0.5 hover:bg-primary-dark hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  ادامهٔ دیدن آگهی‌ها
+                  <ArrowLeft className="size-4" aria-hidden />
+                </Link>
               </div>
-              <Link
-                href={ALL_LISTINGS_HREF}
-                className="relative inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                رفتن به فهرست کامل
-                <ArrowLeft className="size-4" aria-hidden />
-              </Link>
-            </div>
+            ) : null}
           </>
         ) : null}
 
