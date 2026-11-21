@@ -1,8 +1,5 @@
 /**
- * MobileBottomNav — primary tab rendering (HF-TEST-001, §103).
- *
- * Verifies the tab destinations (incl. the /categories fix), the auth-aware
- * account tab, and the admin tab gating.
+ * MobileBottomNav — primary tab rendering and active-route behavior.
  */
 
 import { render, screen } from '@testing-library/react';
@@ -46,43 +43,57 @@ describe('MobileBottomNav', () => {
     mockPathname = '/';
   });
 
-  it('links the «دسته‌ها» tab to /categories (HF-NAV-001)', () => {
+  it('shows the five primary destinations with their correct routes', () => {
     authStub('anonymous');
     render(<MobileBottomNav />);
-    expect(screen.getByRole('link', { name: 'دسته‌ها' })).toHaveAttribute('href', '/categories');
+
     expect(screen.getByRole('link', { name: 'خانه' })).toHaveAttribute('href', '/market');
     expect(screen.getByRole('link', { name: 'جستجو' })).toHaveAttribute('href', '/search');
-    expect(screen.getByRole('link', { name: 'علاقه‌مندی‌ها' })).toHaveAttribute('href', '/favorites');
-  });
-
-  it('account tab → /auth/login for a guest', () => {
-    authStub('anonymous');
-    render(<MobileBottomNav />);
+    expect(screen.getByRole('link', { name: 'دسته‌ها' })).toHaveAttribute('href', '/categories');
+    expect(screen.getByRole('link', { name: 'علاقه‌ها' })).toHaveAttribute('href', '/favorites');
     expect(screen.getByRole('link', { name: 'حساب' })).toHaveAttribute('href', '/auth/login');
+    expect(screen.getAllByRole('link')).toHaveLength(5);
   });
 
-  it('account tab → /account when signed in', () => {
+  it('routes the account tab to /account when signed in', () => {
     authStub('ready', normalUser);
     render(<MobileBottomNav />);
     expect(screen.getByRole('link', { name: 'حساب' })).toHaveAttribute('href', '/account');
   });
 
-  it('shows the admin tab for staff', () => {
+  it('keeps staff tools out of the primary tabs and marks account active on admin routes', () => {
+    mockPathname = '/admin/listings';
     authStub('ready', adminUser);
     render(<MobileBottomNav />);
-    expect(screen.getByRole('link', { name: 'مدیریت' })).toHaveAttribute('href', '/admin');
-  });
 
-  it('hides the admin tab for non-staff', () => {
-    authStub('ready', normalUser);
-    render(<MobileBottomNav />);
+    expect(screen.getAllByRole('link')).toHaveLength(5);
     expect(screen.queryByRole('link', { name: 'مدیریت' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'حساب' })).toHaveAttribute('href', '/account');
+    expect(screen.getByRole('link', { name: 'حساب' })).toHaveAttribute('aria-current', 'page');
   });
 
-  it('marks the active tab (HF-A11Y non-color indicator)', () => {
-    mockPathname = '/categories';
+  it('marks category detail routes as part of the categories destination', () => {
+    mockPathname = '/category/vehicles';
     authStub('anonymous');
     render(<MobileBottomNav />);
-    expect(screen.getByRole('link', { name: 'دسته‌ها' })).toHaveClass('border-primary');
+
+    expect(screen.getByRole('link', { name: 'دسته‌ها' })).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('marks account subroutes as active', () => {
+    mockPathname = '/my-listings';
+    authStub('ready', normalUser);
+    render(<MobileBottomNav />);
+
+    expect(screen.getByRole('link', { name: 'حساب' })).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('uses an equal five-column layout with full-width touch targets', () => {
+    authStub('anonymous');
+    render(<MobileBottomNav />);
+
+    const nav = screen.getByRole('navigation', { name: 'ناوبری اصلی' });
+    expect(nav.querySelector('ul')).toHaveClass('grid-cols-5');
+    expect(screen.getByRole('link', { name: 'خانه' })).toHaveClass('w-full', 'min-h-11');
   });
 });
