@@ -1,67 +1,111 @@
+"use client";
+
+import Image from 'next/image';
+import Link from 'next/link';
 import { Suspense } from 'react';
-import { BadgeCheck, MapPinned, Sparkles } from 'lucide-react';
+import { ArrowLeft, BadgeCheck, MapPinned, Sparkles } from 'lucide-react';
 import { LocationPicker } from '@/components/location/location-picker';
 import { SearchField } from '@/features/search/components/search-field';
 
+const HERO_IMAGES = [
+  {
+    src: 'https://images.unsplash.com/photo-1760713170685-b67abc3be5ad?auto=format&fit=crop&w=1200&q=82',
+    position: 'center 58%',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1781269986378-a2f366df4d0f?auto=format&fit=crop&w=1200&q=82',
+    position: 'center 52%',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1722151954628-c218fbb82710?auto=format&fit=crop&w=1200&q=82',
+    position: 'center 48%',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1776482128012-a47f853abd57?auto=format&fit=crop&w=1200&q=82',
+    position: 'center 55%',
+  },
+] as const;
+
 /**
- * Search-first homepage hero. The market page keeps one prominent search
- * experience; mobile spacing is tightened while desktop composition remains.
+ * Search-first homepage hero with a photographic marketplace collage.
+ * The dark teal gradient protects text contrast while the four photos hint
+ * at the range of goods available across the marketplace.
  */
 export function HomeSearchPanel() {
   return (
-    <section className="relative rounded-surface bg-primary-dark text-primary-foreground shadow-lift">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-surface" aria-hidden>
-        <div
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(
-              `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><path fill="none" stroke="#F59E0B" stroke-width="0.8" d="M20 3l2.4 14.2L37 20l-14.6 2.8L20 37l-2.4-14.2L3 20l14.6-2.8z"/></svg>`,
-            )}")`,
-            backgroundSize: '40px 40px',
-          }}
-        />
-        <div className="absolute -start-20 -top-24 h-56 w-56 rounded-full bg-primary/50 blur-3xl" />
-        <div className="absolute -end-16 bottom-0 h-48 w-48 rounded-full bg-accent/25 blur-3xl" />
+    <section className="relative isolate overflow-hidden rounded-[1.8rem] bg-[#0b514a] text-white shadow-[0_18px_50px_rgba(15,76,69,0.16)]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 grid grid-cols-2 grid-rows-2 gap-1.5 p-1.5 opacity-80 sm:gap-2 sm:p-2 lg:inset-y-0 lg:end-0 lg:w-[58%] lg:gap-2.5 lg:p-3"
+      >
+        {HERO_IMAGES.map((photo, index) => (
+          <div key={photo.src} className="relative min-h-0 overflow-hidden rounded-[1.1rem]">
+            <Image
+              src={photo.src}
+              alt=""
+              fill
+              priority={index < 2}
+              sizes="(max-width: 1023px) 50vw, 29vw"
+              className="object-cover"
+              style={{ objectPosition: photo.position }}
+            />
+          </div>
+        ))}
       </div>
 
-      <div className="relative space-y-3 px-3 py-4 md:space-y-4 md:px-6 md:py-8">
-        <p className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-caption font-medium text-accent">
-          <Sparkles className="size-3.5" aria-hidden />
-          بازار افغانستان
-        </p>
-        <h1 className="max-w-xl text-xl font-bold leading-tight md:text-display-mobile">
-          بازار خرید و فروش در افغانستان
-        </h1>
-        <p className="max-w-prose text-caption leading-5 text-white/80 md:text-body">
-          آنچه می‌خواهید را پیدا کنید؛ آنچه دارید را رایگان بفروشید. جست‌وجو، شهر، و تماس مستقیم با فروشنده.
-        </p>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0b514a]/70 via-[#0b514a]/88 to-[#0b514a] lg:bg-gradient-to-l lg:from-[#0b514a] lg:via-[#0b514a]/88 lg:to-[#0b514a]/25"
+      />
+      <div aria-hidden className="pointer-events-none absolute -start-20 -top-24 size-64 rounded-full border border-white/10" />
+      <div aria-hidden className="pointer-events-none absolute -start-8 -top-12 size-40 rounded-full border border-white/10" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-24 end-[28%] size-64 rounded-full bg-amber-400/10 blur-3xl" />
 
-        <Suspense fallback={null}>
-          <div className="rounded-surface bg-surface p-2.5 shadow-glow md:p-4">
+      <div className="relative max-w-3xl space-y-4 px-4 py-5 sm:space-y-5 sm:px-7 sm:py-7 lg:px-8 lg:py-8">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/90 backdrop-blur-sm">
+            <Sparkles className="size-3.5 text-amber-300" aria-hidden />
+            بازار آنلاین افغانستان
+          </p>
+          <h1 className="mt-3 max-w-2xl text-2xl font-black leading-[1.4] tracking-tight sm:text-3xl lg:text-4xl">
+            هر چی می‌خواهی، در ویش‌بازار پیدا کن
+          </h1>
+          <p className="mt-2 max-w-xl text-xs leading-6 text-white/80 sm:text-sm sm:leading-7">
+            از موتر و خانه تا موبایل و وسایل روزمره؛ آگهی‌ها را جست‌وجو کن یا کالایت را رایگان بفروش.
+          </p>
+        </div>
+
+        <div className="rounded-[1.25rem] border border-white/60 bg-white p-2.5 text-foreground shadow-[0_14px_38px_rgba(0,0,0,0.18)] sm:p-3">
+          <p className="mb-2 px-1 text-xs font-bold text-slate-600">چی دنبالش هستی؟</p>
+          <Suspense fallback={null}>
             <div className="flex flex-col gap-2 lg:flex-row lg:items-stretch">
               <SearchField
                 className="w-full min-w-0 flex-1"
-                placeholder="چی می‌خواهی پیدا کنی؟"
+                placeholder="مثلاً موتر، خانه یا موبایل..."
                 redirectToSearch
               />
               <LocationPicker className="w-full shrink-0 lg:w-auto" redirectToSearch />
             </div>
-          </div>
-        </Suspense>
+          </Suspense>
+        </div>
 
-        <ul className="hidden flex-wrap gap-2 text-caption text-white/85 md:flex">
-          <li className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1">
-            <BadgeCheck className="size-3.5 text-accent" aria-hidden />
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-white/85 sm:text-xs">
+          <span className="inline-flex items-center gap-1.5">
+            <BadgeCheck className="size-3.5 text-amber-300" aria-hidden />
             ثبت آگهی رایگان
-          </li>
-          <li className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1">
-            <MapPinned className="size-3.5 text-accent" aria-hidden />
-            تماس مستقیم با فروشنده
-          </li>
-          <li className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1">
-            اجناس نو و دست‌دوم
-          </li>
-        </ul>
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <MapPinned className="size-3.5 text-amber-300" aria-hidden />
+            جست‌وجو بر اساس شهر
+          </span>
+          <Link
+            href="/sell"
+            className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-3 py-1.5 font-bold text-amber-950 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b514a]"
+          >
+            کالایت را ثبت کن
+            <ArrowLeft className="size-3.5" aria-hidden />
+          </Link>
+        </div>
       </div>
     </section>
   );
