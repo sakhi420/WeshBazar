@@ -262,7 +262,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
               name={profile.displayName}
               src={profile.avatarUrl ?? null}
               size="xl"
-              className="ring-4 ring-white shadow-soft"
+              className="size-14 text-card-title ring-4 ring-white shadow-soft sm:size-16 sm:text-heading"
             />
             <div className="min-w-0 flex-1">
               <p className="text-caption font-medium text-muted-foreground">خوش آمدی</p>
@@ -339,8 +339,8 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
               {nameError ? (
                 <p id="account-display-name-error" className="text-meta text-danger">{nameError}</p>
               ) : null}
-              <div className="flex flex-wrap gap-2">
-                <Button type="submit" size="sm" disabled={updateProfile.isPending}>
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+                <Button type="submit" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={updateProfile.isPending}>
                   {updateProfile.isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Check className="size-4" aria-hidden />}
                   ذخیره نام
                 </Button>
@@ -348,6 +348,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
                   type="button"
                   variant="outline"
                   size="sm"
+                  className="min-h-11 w-full sm:min-h-9 sm:w-auto"
                   disabled={updateProfile.isPending}
                   onClick={() => {
                     setEditingName(false);
@@ -382,7 +383,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
       ) : null}
 
       <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <section aria-labelledby="account-activity-title" className="space-y-3">
             <SectionHeading
               id="account-activity-title"
@@ -482,7 +483,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
                     </p>
                   </div>
                   {sellerError ? <p role="alert" className="text-meta text-danger">{sellerError}</p> : null}
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                     <Button type="submit" size="sm" disabled={updateProfile.isPending}>
                       {updateProfile.isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Check className="size-4" aria-hidden />}
                       ذخیره پروفایل
@@ -638,7 +639,7 @@ function QuickAction({
   return (
     <Link
       href={href}
-      className="group flex min-h-[76px] min-w-0 items-center gap-3 rounded-surface border border-border bg-surface p-3 sm:min-h-32 sm:flex-col sm:items-stretch sm:justify-between sm:gap-0 sm:p-4 shadow-soft transition-all duration-small hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-4"
+      className="group flex min-h-[76px] min-w-0 items-center gap-3 rounded-surface border border-border bg-surface p-3 shadow-soft transition-all duration-small hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-32 sm:flex-col sm:items-stretch sm:justify-between sm:gap-0 sm:p-4 sm:hover:-translate-y-0.5"
     >
       <span
         className={cn(
