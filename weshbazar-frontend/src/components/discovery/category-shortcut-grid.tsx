@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -23,11 +23,9 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
   const lastFrameTimeRef = useRef(0);
   const resumeTimerRef = useRef<number | null>(null);
   const pausedRef = useRef(false);
-  const [isPaused, setIsPaused] = useState(false);
 
   const pauseMotion = useCallback(() => {
     pausedRef.current = true;
-    setIsPaused(true);
     if (resumeTimerRef.current !== null) {
       window.clearTimeout(resumeTimerRef.current);
       resumeTimerRef.current = null;
@@ -40,7 +38,6 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
     }
     resumeTimerRef.current = window.setTimeout(() => {
       pausedRef.current = false;
-      setIsPaused(false);
       lastFrameTimeRef.current = 0;
       resumeTimerRef.current = null;
     }, delay);
@@ -184,25 +181,15 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
           همه دسته‌ها
           <ArrowLeft className="size-3.5" aria-hidden />
         </Link>
-        {/* Accessible pause control; visually hidden unless keyboard-focused. */}
+        {/* Keyboard-accessible pause; invisible unless focused. */}
         <button
           type="button"
-          tabIndex={0}
-          onClick={() => {
-            if (pausedRef.current) {
-              pausedRef.current = false;
-              setIsPaused(false);
-              lastFrameTimeRef.current = 0;
-            } else {
-              pauseMotion();
-            }
-          }}
+          onClick={pauseMotion}
           onFocus={pauseMotion}
           onBlur={() => resumeMotionSoon()}
-          aria-pressed={isPaused}
           className="sr-only focus:not-sr-only focus:fixed focus:bottom-4 focus:start-4 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-ui focus:text-foreground focus:shadow-card focus:ring-2 focus:ring-primary"
         >
-          {isPaused ? 'ادامه حرکت دسته‌بندی‌ها' : 'توقف حرکت دسته‌بندی‌ها'}
+          توقف حرکت دسته‌بندی‌ها
         </button>
       </header>
 
