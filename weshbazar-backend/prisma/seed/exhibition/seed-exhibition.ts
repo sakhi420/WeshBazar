@@ -10,7 +10,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
-import type { Prisma, PrismaClient } from '../../../apps/api/src/generated/prisma/client';
+import type { Prisma } from '../../../apps/api/src/generated/prisma/client';
 import type { ListingRevisionChangeType } from '../../../apps/api/src/generated/prisma/enums';
 import { EXHIBITION_FIXTURES, type ExhibitionFixture } from './fixtures';
 import {
@@ -18,7 +18,7 @@ import {
   type ExhibitionSellerKey,
 } from './sellers';
 
-type Database = PrismaClient | Prisma.TransactionClient;
+type Database = Prisma.TransactionClient;
 
 export interface ExhibitionSellerOwner {
   userId: string;
