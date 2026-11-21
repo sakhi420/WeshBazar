@@ -85,16 +85,17 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
     const width = groupWidthRef.current;
     if (!viewport || width <= 0 || !hasOverflowRef.current) return;
 
-    // Three identical groups keep a full group of scroll room on both sides.
-    // Repositioning by exactly one group is visually indistinguishable.
+    // The duplicate groups are mounted after React commits hasOverflow=true.
+    // Until the full belt exists, the browser clamps scrollLeft to the first
+    // group and normalization must not try to move it beyond that limit.
+    if (viewport.scrollWidth < width * 2.9) return;
+
+    // Three identical groups provide room on both sides. One bounded shift is
+    // enough: the browser cannot scroll beyond the end of the three-group belt.
     if (viewport.scrollLeft >= width * 2) {
-      while (viewport.scrollLeft >= width * 2) {
-        viewport.scrollLeft -= width;
-      }
+      viewport.scrollLeft -= width;
     } else if (viewport.scrollLeft < width) {
-      while (viewport.scrollLeft < width) {
-        viewport.scrollLeft += width;
-      }
+      viewport.scrollLeft += width;
     }
   }, []);
 
@@ -120,7 +121,8 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
         groupWidthRef.current = width;
         hasOverflowRef.current = overflowing;
         setHasOverflow(overflowing);
-        viewport.scrollLeft = overflowing ? width * 1.5 : 0;
+        // Initial positioning is handled in useLayoutEffect after duplicate
+        // groups have mounted; setting scrollLeft here can be clamped too soon.
       }
     };
 
