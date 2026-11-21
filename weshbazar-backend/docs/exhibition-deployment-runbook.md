@@ -144,10 +144,11 @@ commit, pull request, issue, or deployment environment. The seeder hashes
 new passwords with the same Argon2id parameters as the application and never
 prints passwords or full phone numbers.
 
-If a phone already belongs to an active USER account, that user and its
-existing seller profile are reused without changing the password or personal
-fields. If it belongs to an ADMIN, inactive, deleted, or otherwise ineligible
-account, the command stops. Newly created users remain phone-unverified until
+If a phone already belongs to an active USER account, the supplied password
+must verify against the existing hash; otherwise the command stops without
+resetting it. A matching account and its existing seller profile are reused
+without changing the password or personal fields. If the phone belongs to an
+ADMIN, inactive, deleted, or otherwise ineligible account, the command stops. Newly created users remain phone-unverified until
 a real OTP verification occurs; the seed does not forge `phoneVerifiedAt`.
 They can sign in with their passwords, but normal phone-verified publishing
 still requires actual verification.
