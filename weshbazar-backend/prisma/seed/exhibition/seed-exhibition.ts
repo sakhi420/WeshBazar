@@ -11,6 +11,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 import type { Prisma, PrismaClient } from '../../../apps/api/src/generated/prisma/client';
+import type { ListingRevisionChangeType } from '../../../apps/api/src/generated/prisma/enums';
 import { EXHIBITION_FIXTURES, type ExhibitionFixture } from './fixtures';
 import {
   sellerKeyForFixture,
@@ -134,7 +135,7 @@ async function appendRevision(
   input: {
     listingId: string;
     version: number;
-    changeType: Prisma.ListingRevisionCreateInput['changeType'];
+    changeType: ListingRevisionChangeType;
     snapshot: Prisma.InputJsonObject;
     userId: string;
     attributeSchemaReference: Prisma.InputJsonValue;
@@ -363,7 +364,7 @@ async function approveByAdmin(
 async function publishDraft(
   db: Database,
   input: {
-    listing: Prisma.ListingGetPayload<Record<string, never>> | null;
+    listing: Prisma.ListingGetPayload<{}> | null;
     sellerUserId: string;
     adminUserId: string;
     fixture: ExhibitionFixture;
