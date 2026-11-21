@@ -35,7 +35,6 @@ export interface ExhibitionSeedOptions {
 
 const LISTING_EXPIRES_AFTER_DAYS = 30;
 const ORIGINAL_MIME_TYPE = 'image/jpeg';
-const VARIANT_MIME_TYPE = 'image/webp';
 const MAX_IMAGE_PIXELS = 25_000_000;
 const ORIGINAL_JPEG_QUALITY = 85;
 const VARIANT_WEBP_QUALITY = 80;
@@ -48,12 +47,12 @@ interface ProcessedImage {
   variants: Record<VariantName, { data: Buffer; width: number; height: number; size: number }>;
 }
 
-interface VariantDescriptor {
+type VariantDescriptor = Prisma.InputJsonObject & {
   key: string;
   width: number;
   height: number;
   size: number;
-}
+};
 
 interface ListingSnapshotSource {
   title: string;
@@ -83,15 +82,27 @@ function addDays(date: Date, days: number): Date {
 
 function flattenAttributeValues(attributes: Record<string, unknown>): string[] {
   const values: string[] = [];
+
   for (const value of Object.values(attributes)) {
     if (Array.isArray(value)) {
       for (const item of value) {
-        if (item !== null && item !== undefined) values.push(String(item));
+        if (
+          typeof item === 'string' ||
+          typeof item === 'number' ||
+          typeof item === 'boolean'
+        ) {
+          values.push(String(item));
+        }
       }
-    } else if (value !== null && value !== undefined && typeof value !== 'object') {
+    } else if (
+      typeof value === 'string' ||
+      typeof value === 'number' ||
+      typeof value === 'boolean'
+    ) {
       values.push(String(value));
     }
   }
+
   return values;
 }
 
@@ -119,7 +130,7 @@ function toSnapshot(
     pricingType: listing.pricingType,
     negotiable: listing.negotiable,
     condition: listing.condition,
-    attributes: listing.attributes as Prisma.InputJsonValue,
+    attributes: listing.attributes,
     categoryId: listing.categoryId,
     provinceId: listing.provinceId,
     cityId: listing.cityId,
@@ -369,7 +380,7 @@ async function approveByAdmin(
 async function publishDraft(
   db: Database,
   input: {
-    listing: Prisma.ListingGetPayload<{}> | null;
+    listing: Prisma.ListingGetPayload<true> | null;
     sellerUserId: string;
     adminUserId: string;
     fixture: ExhibitionFixture;
