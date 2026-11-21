@@ -254,7 +254,7 @@ async function ensureImage(
   const activeImages = await db.listingImage.findMany({
     where: { listingId, deletedAt: null },
     orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
-    select: { id: true, storageKey: true, variants: true },
+    select: { id: true, storageKey: true, variants: true, checksum: true },
   });
   if (activeImages.length > 1) {
     throw new Error(`Fixture listing ${listingId} has multiple active images; manual review is required.`);
@@ -264,6 +264,11 @@ async function ensureImage(
   const existing = activeImages[0];
 
   if (existing) {
+    if (existing.checksum !== processed.original.checksum) {
+      throw new Error(
+        `Existing image checksum does not match fixture source for listing ${listingId}; refusing to overwrite it.`,
+      );
+    }
     const variantKeys = existingVariantKeys(existing.variants);
     await writeFileSafe(storageRoot, existing.storageKey, processed.original.data);
     const variants: Record<string, VariantDescriptor> = {};
@@ -325,7 +330,7 @@ async function ensureImage(
 }
 
 async function ensureContactsDisabled(db: Database, listingId: string): Promise<void> {
-  for (const type of ['PHONE', 'WHATSAPP'] as const) {
+  for (const type of ['PHONE', 'WHATSAPP', 'TELEGRAM'] as const) {
     await db.listingContactMethod.upsert({
       where: { listingId_type: { listingId, type } },
       update: { enabled: false, valueOverride: null },
