@@ -15,7 +15,7 @@ jest.mock('@/components/location/location-picker', () => ({
 import { HomeSearchPanel } from './home-search-panel';
 
 describe('HomeSearchPanel', () => {
-  it('renders a full-width image hero with independent, responsive search controls', () => {
+  it('keeps the hero full bleed and stacks search fields until desktop width', () => {
     const { container } = render(<HomeSearchPanel />);
 
     const hero = screen.getByRole('region', { name: 'هر چی می‌خواهی، از همین‌جا پیدا کن' });
@@ -36,8 +36,8 @@ describe('HomeSearchPanel', () => {
     const controls = search.parentElement;
     expect(controls).toHaveClass('grid');
     expect(controls).toHaveClass('grid-cols-1');
-    expect(controls).toHaveClass('sm:grid-cols-[minmax(0,1fr)_13rem]');
+    expect(controls).toHaveClass('lg:grid-cols-[minmax(0,1fr)_13rem]');
+    expect(controls).not.toHaveClass('sm:grid-cols-[minmax(0,1fr)_13rem]');
     expect(search.compareDocumentPosition(location) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(controls).not.toHaveClass('bg-white');
   });
 });
