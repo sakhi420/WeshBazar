@@ -484,7 +484,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
                   </div>
                   {sellerError ? <p role="alert" className="text-meta text-danger">{sellerError}</p> : null}
                   <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
-                    <Button type="submit" size="sm" disabled={updateProfile.isPending}>
+                    <Button type="submit" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={updateProfile.isPending}>
                       {updateProfile.isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Check className="size-4" aria-hidden />}
                       ذخیره پروفایل
                     </Button>
@@ -492,6 +492,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
                       type="button"
                       variant="outline"
                       size="sm"
+                      className="min-h-11 w-full sm:min-h-9 sm:w-auto"
                       disabled={updateProfile.isPending}
                       onClick={() => {
                         setEditingSeller(false);
