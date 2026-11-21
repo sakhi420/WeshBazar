@@ -84,6 +84,31 @@ function normalizePhone(value: string, label: string): { phone: string; phoneNor
   return { phone: value.trim(), phoneNormalized: parsed.number };
 }
 
+function validatePasswordPolicy(password: string, sellerKey: string): void {
+  const minLength = Number(process.env.PASSWORD_MIN_LENGTH ?? 8);
+  const maxLength = Number(process.env.PASSWORD_MAX_LENGTH ?? 128);
+  const requireLetter = process.env.PASSWORD_REQUIRE_LETTER !== 'false';
+  const requireDigit = process.env.PASSWORD_REQUIRE_DIGIT !== 'false';
+  const requireSymbol = process.env.PASSWORD_REQUIRE_SYMBOL === 'true';
+  const requireUppercase = process.env.PASSWORD_REQUIRE_UPPERCASE === 'true';
+
+  const invalid =
+    !Number.isInteger(minLength) ||
+    !Number.isInteger(maxLength) ||
+    minLength < 1 ||
+    maxLength < minLength ||
+    password.length < minLength ||
+    password.length > maxLength ||
+    (requireLetter && !/[A-Za-z]/.test(password)) ||
+    (requireDigit && !/\d/.test(password)) ||
+    (requireSymbol && !/[^A-Za-z0-9]/.test(password)) ||
+    (requireUppercase && !/[A-Z]/.test(password));
+
+  if (invalid) {
+    throw new Error(\`Password for seller "\${sellerKey}" does not satisfy the current application password policy.\`);
+  }
+}
+
 async function readCredentials(): Promise<Credential[]> {
   try {
     await access(CREDENTIALS_PATH);
@@ -121,12 +146,7 @@ async function readCredentials(): Promise<Credential[]> {
     if (seenPhones.has(phone.phoneNormalized)) {
       throw new Error('Each seller must have a distinct Afghan phone number.');
     }
-    if (
-      row.password.length < 8 || row.password.length > 128 ||
-      !/[A-Za-z]/.test(row.password) || !/\d/.test(row.password)
-    ) {
-      throw new Error('All seller passwords must be 8–128 characters and contain letters and digits.');
-    }
+    validatePasswordPolicy(row.password, row.key);
     seenKeys.add(row.key);
     seenPhones.add(phone.phoneNormalized);
     result.push({ key: row.key as ExhibitionSellerKey, ...phone, password: row.password });
