@@ -1,5 +1,5 @@
 /**
- * ContactPage content tests (§4د). Verifies the real, owner-provided support
+ * ContactPage content tests. Verifies the real, owner-provided support
  * channels render as correct mailto/tel links.
  */
 
@@ -25,7 +25,7 @@ import ContactPage from './page';
 describe('ContactPage', () => {
   it('shows the support email as a mailto link', () => {
     render(<ContactPage />);
-    expect(screen.getByText('sakhinezhad@gmail.com')).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /sakhinezhad@gmail\.com/ })).toHaveAttribute(
       'href',
       'mailto:sakhinezhad@gmail.com',
     );
@@ -33,6 +33,9 @@ describe('ContactPage', () => {
 
   it('shows the support phone as a tel link', () => {
     render(<ContactPage />);
-    expect(screen.getByText('0701063679')).toHaveAttribute('href', 'tel:0701063679');
+    expect(screen.getByRole('link', { name: /0701063679/ })).toHaveAttribute(
+      'href',
+      'tel:0701063679',
+    );
   });
 });

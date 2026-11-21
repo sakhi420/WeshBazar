@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
   ArrowLeft,
+  ChevronDown,
   ClipboardList,
-  Compass,
   MapPin,
   MessageCircle,
   ShieldCheck,
@@ -70,6 +70,29 @@ const topics = [
     icon: ClipboardList,
     title: 'مدیریت آگهی‌ها',
     description: 'آگهی‌های ثبت‌شدهٔ خود را ببینید و مدیریت کنید.',
+  },
+] as const;
+
+const faqs = [
+  {
+    question: 'ثبت آگهی در ویش‌بازار هزینه دارد؟',
+    answer: 'خیر، ثبت آگهی در ویش‌بازار رایگان است.',
+  },
+  {
+    question: 'چطور آگهی موردنظرم را پیدا کنم؟',
+    answer: 'از بخش جست‌وجو استفاده کنید و آگهی‌ها را بر اساس شهر و دسته‌بندی محدود سازید.',
+  },
+  {
+    question: 'چگونه با فروشنده تماس بگیرم؟',
+    answer: 'راه تماس درج‌شده در صفحهٔ همان آگهی را باز کنید و پیش از معامله، جزئیات کالا را بررسی کنید.',
+  },
+  {
+    question: 'آیا ویش‌بازار پول معامله را دریافت یا نگهداری می‌کند؟',
+    answer: 'خیر، ویش‌بازار واسطهٔ مالی نیست. پرداخت و تحویل کالا مستقیماً میان خریدار و فروشنده انجام می‌شود.',
+  },
+  {
+    question: 'چطور یک آگهی مشکوک را گزارش کنم؟',
+    answer: 'از دکمهٔ «گزارش» داخل همان آگهی استفاده کنید تا تیم نظارتی بتواند مورد مشخص‌شده را بررسی کند.',
   },
 ] as const;
 
@@ -154,6 +177,32 @@ export default function HelpPage() {
                 </span>
               </span>
             </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-9" aria-labelledby="common-questions">
+        <p className="text-caption font-semibold text-primary">پاسخ‌های کوتاه و روشن</p>
+        <h2 id="common-questions" className="mt-1 text-section font-bold text-foreground">
+          پرسش‌های رایج
+        </h2>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {faqs.map(({ question, answer }) => (
+            <details
+              key={question}
+              className="group rounded-2xl border border-border bg-surface shadow-soft open:border-primary/25"
+            >
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 p-4 text-ui font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+                <span>{question}</span>
+                <ChevronDown
+                  className="size-5 shrink-0 text-primary transition-transform duration-small group-open:rotate-180"
+                  aria-hidden="true"
+                />
+              </summary>
+              <div className="border-t border-border px-4 py-3 text-ui leading-7 text-muted-foreground">
+                {answer}
+              </div>
+            </details>
           ))}
         </div>
       </section>
