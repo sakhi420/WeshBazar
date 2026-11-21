@@ -5,8 +5,9 @@
  *  - all 34 Afghan provinces and their principal cities (en/fa/ps names);
  *  - the category tree with dynamic attribute definitions and options;
  *  - the initial admin account (from `SEED_ADMIN_*` environment variables);
- *  - optional demo data (user, seller account and sample listings) when
- *    `SEED_SAMPLE_DATA=true`.
+ *  - optional small sample dataset when `SEED_SAMPLE_DATA=true`.
+ *
+ * Exhibition fixtures use the separately guarded db:seed:exhibition command.
  *
  * Run with `npm run db:seed` (maps to `prisma db seed`).
  */
@@ -18,7 +19,6 @@ import { PrismaClient } from '../apps/api/src/generated/prisma/client';
 import { PROVINCES } from './seed/locations.data';
 import { CATEGORIES } from './seed/taxonomy.data';
 import type { CategorySeed } from './seed/types';
-import { seedExhibitionData } from './seed/exhibition/seed-exhibition';
 
 const LOCALES = ['en', 'fa', 'ps'] as const;
 const LISTING_EXPIRES_AFTER_DAYS = 30;
@@ -544,9 +544,6 @@ async function main(): Promise<void> {
       await seedSampleData(prisma);
     }
 
-    if (process.env.SEED_EXHIBITION_DATA === 'true') {
-      await seedExhibitionData(prisma);
-    }
 
     console.log('✔ Seed completed.');
   } finally {

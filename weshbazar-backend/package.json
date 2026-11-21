@@ -34,7 +34,8 @@
     "prisma:migrate:status": "prisma migrate status",
     "db:seed": "prisma db seed",
     "media:migrate:neon": "tsx scripts/migrate-local-storage-to-neon.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:seed:exhibition": "tsx prisma/seed-exhibition-only.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",
