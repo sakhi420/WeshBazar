@@ -14,7 +14,8 @@ import { validateAttributeValues } from '../apps/api/src/modules/taxonomy/attrib
 import type { EffectiveAttribute } from '../apps/api/src/modules/taxonomy/attribute.types';
 import { EXHIBITION_FIXTURES } from './seed/exhibition/fixtures';
 import { EXHIBITION_SELLERS, sellerKeyForFixture, type ExhibitionSellerKey } from './seed/exhibition/sellers';
-import { seedExhibitionData, type ExhibitionSellerOwner } from './seed/exhibition/seed-exhibition';
+import type { ExhibitionSellerOwner } from './seed/exhibition/seed-exhibition';
+import { prepareExhibitionImages, seedExhibitionDataBulk } from './seed/exhibition/seed-exhibition-bulk';
 
 const EXPECTED_FIXTURES = 147;
 const ACK = 'PUBLISH_147_LISTINGS';
@@ -615,6 +616,12 @@ async function main(): Promise<void> {
       return;
     }
 
+    if (preflight.newCount !== EXPECTED_FIXTURES || preflight.existingCount !== 0 || preflight.archivedCount !== 0) {
+      throw new Error(
+        'Bulk exhibition apply requires a clean fixture state: all 147 fixtures must be new and none may be archived or pre-existing.',
+      );
+    }
+
     const stamp = new Date().toISOString().replace(/[:.]/g, '-');
     stagingRoot = path.join(STAGING_PARENT, stamp + '-' + randomUUID().slice(0, 8));
     await mkdir(stagingRoot, { recursive: true });
@@ -628,16 +635,29 @@ async function main(): Promise<void> {
       }
     }
 
+    console.log('Preparing all exhibition images before opening the database transaction...');
+    const preparedImagesBySlug = await prepareExhibitionImages(
+      EXHIBITION_FIXTURES,
+      stagingRoot,
+      (completed, total) => {
+        if (completed === total || completed % 10 === 0) {
+          console.log('Prepared exhibition images: ' + completed + '/' + total);
+        }
+      },
+    );
+    console.log('All image files are staged. Starting the short bulk database transaction...');
+
     const result = await prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT 1::int AS locked FROM (SELECT pg_advisory_xact_lock(hashtext('weshbazar:exhibition-seed:v2'))) AS advisory_lock`;
       const owners = await provisionSellers(tx, preflight, hashes);
       await assertActiveCapacity(tx, preflight, owners);
-      const seeded = await seedExhibitionData(tx, {
+      const seeded = await seedExhibitionDataBulk(tx, {
+        fixtures: EXHIBITION_FIXTURES,
         sellers: owners,
         adminUserId: preflight.adminUserId,
         normalizedAttributesBySlug: preflight.normalized,
         attributeSchemaReferenceBySlug: preflight.schemaRefs,
-        storageRoot: stagingRoot as string,
+        preparedImagesBySlug,
       });
 
       const slugs = EXHIBITION_FIXTURES.map((fixture) => fixture.slug);
