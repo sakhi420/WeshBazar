@@ -50,6 +50,32 @@ interface Preflight {
   imageBytes: number;
 }
 
+function isUnknownArray(value: unknown): value is unknown[] {
+  return Array.isArray(value);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isExhibitionSellerKey(value: string): value is ExhibitionSellerKey {
+  return Object.prototype.hasOwnProperty.call(EXHIBITION_SELLERS, value);
+}
+
+function hasControlCharacters(value: string): boolean {
+  return Array.from(value).some((character) => {
+    const code = character.codePointAt(0);
+    return (
+      code !== undefined &&
+      ((code >= 0x00 && code <= 0x08) ||
+        code === 0x0b ||
+        code === 0x0c ||
+        (code >= 0x0e && code <= 0x1f) ||
+        code === 0x7f)
+    );
+  });
+}
+
 function requiredEnv(name: string): string {
   const value = process.env[name]?.trim();
   if (!value) throw new Error(name + ' is required.');
@@ -126,30 +152,37 @@ async function readCredentials(): Promise<Credential[]> {
     throw new Error('Seller credential file is not valid JSON.');
   }
   const expected = Object.keys(EXHIBITION_SELLERS).sort();
-  if (!Array.isArray(rows) || rows.length !== expected.length) {
+  if (!isUnknownArray(rows) || rows.length !== expected.length) {
     throw new Error('Seller credential file must contain exactly five entries.');
   }
 
   const seenKeys = new Set<string>();
   const seenPhones = new Set<string>();
   const result: Credential[] = [];
-  for (const row of rows) {
+  for (const candidate of rows) {
+    if (!isRecord(candidate)) {
+      throw new Error('Credential entries must be objects.');
+    }
+
+    const { key, phone: rawPhone, password } = candidate;
     if (
-      row === null || typeof row !== 'object' ||
-      typeof row.key !== 'string' || typeof row.phone !== 'string' ||
-      typeof row.password !== 'string' || !expected.includes(row.key) ||
-      seenKeys.has(row.key)
+      typeof key !== 'string' ||
+      !isExhibitionSellerKey(key) ||
+      typeof rawPhone !== 'string' ||
+      typeof password !== 'string' ||
+      seenKeys.has(key)
     ) {
       throw new Error('Credential entries must contain unique known keys, phone, and password strings.');
     }
-    const phone = normalizePhone(row.phone, row.key);
+
+    const phone = normalizePhone(rawPhone, key);
     if (seenPhones.has(phone.phoneNormalized)) {
       throw new Error('Each seller must have a distinct Afghan phone number.');
     }
-    validatePasswordPolicy(row.password, row.key);
-    seenKeys.add(row.key);
+    validatePasswordPolicy(password, key);
+    seenKeys.add(key);
     seenPhones.add(phone.phoneNormalized);
-    result.push({ key: row.key as ExhibitionSellerKey, ...phone, password: row.password });
+    result.push({ key, ...phone, password });
   }
   if (expected.some((key) => !seenKeys.has(key))) {
     throw new Error('Credential file is missing one or more seller keys.');
@@ -316,7 +349,6 @@ async function buildPreflight(
   const maxDescriptionLength = Number(process.env.MAX_LISTING_DESCRIPTION_LENGTH ?? 5000);
   const maxAttributes = Number(process.env.MAX_LISTING_ATTRIBUTES ?? 30);
   const htmlTagPattern = /<\s*\/?\s*[a-zA-Z][^>]*>/;
-  const controlCharacters = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/;
 
   for (const fixture of EXHIBITION_FIXTURES) {
     const title = fixture.title.trim();
@@ -326,7 +358,7 @@ async function buildPreflight(
     if (title.length < minTitleLength || title.length > maxTitleLength) contentErrors.push('title length');
     if (description.length < minDescriptionLength || description.length > maxDescriptionLength) contentErrors.push('description length');
     if (htmlTagPattern.test(title) || htmlTagPattern.test(description)) contentErrors.push('HTML markup');
-    if (controlCharacters.test(title) || controlCharacters.test(description)) contentErrors.push('control characters');
+    if (hasControlCharacters(title) || hasControlCharacters(description)) contentErrors.push('control characters');
     if (Object.keys(fixture.attributes).length > maxAttributes) contentErrors.push('too many attributes');
     if (fixture.pricingType === 'PAID' && (price === null || !Number.isFinite(price) || price <= 0)) {
       contentErrors.push('PAID price must be greater than zero');
@@ -371,7 +403,7 @@ async function buildPreflight(
       }
     }
     const effective = [...attributesByKey.values()];
-    const validation = validateAttributeValues(effective, fixture.attributes as Record<string, unknown>);
+    const validation = validateAttributeValues(effective, fixture.attributes);
     if (validation.issues.length) {
       invalid.push(
         `${fixture.key}: ${validation.issues.map((issue) => issue.field + '/' + issue.rule).join(', ')}`,
@@ -379,12 +411,14 @@ async function buildPreflight(
       continue;
     }
     normalized.set(fixture.slug, validation.normalized);
-    schemaRefs.set(
-      fixture.slug,
-      effective.filter((item) => item.isActive).map((item) => ({
-        key: item.key, type: item.type, required: item.required,
-      })) as unknown as Prisma.InputJsonValue,
-    );
+    const schemaReference: Prisma.InputJsonValue = effective
+      .filter((item) => item.isActive)
+      .map((item) => ({
+        key: item.key,
+        type: item.type,
+        required: item.required,
+      }));
+    schemaRefs.set(fixture.slug, schemaReference);
   }
   if (missing.length) throw new Error('Base data validation failed:\n- ' + [...new Set(missing)].join('\n- '));
   if (invalid.length) throw new Error('Fixture attribute validation failed:\n- ' + invalid.join('\n- '));
