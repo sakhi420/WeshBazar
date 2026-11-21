@@ -87,11 +87,14 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
 
     // Three identical groups keep a full group of scroll room on both sides.
     // Repositioning by exactly one group is visually indistinguishable.
-    while (viewport.scrollLeft >= width * 2) {
-      viewport.scrollLeft -= width;
-    }
-    while (viewport.scrollLeft <= width) {
-      viewport.scrollLeft += width;
+    if (viewport.scrollLeft >= width * 2) {
+      while (viewport.scrollLeft >= width * 2) {
+        viewport.scrollLeft -= width;
+      }
+    } else if (viewport.scrollLeft < width) {
+      while (viewport.scrollLeft < width) {
+        viewport.scrollLeft += width;
+      }
     }
   }, []);
 
