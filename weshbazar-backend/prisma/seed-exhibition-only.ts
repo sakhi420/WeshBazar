@@ -307,8 +307,8 @@ async function buildPreflight(
   const minDescriptionLength = Number(process.env.MIN_LISTING_DESCRIPTION_LENGTH ?? 30);
   const maxDescriptionLength = Number(process.env.MAX_LISTING_DESCRIPTION_LENGTH ?? 5000);
   const maxAttributes = Number(process.env.MAX_LISTING_ATTRIBUTES ?? 30);
-  const htmlTagPattern = /<\\s*\\/?\\s*[a-zA-Z][^>]*>/;
-  const controlCharacters = /[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F]/;
+  const htmlTagPattern = /<\s*\/?\s*[a-zA-Z][^>]*>/;
+  const controlCharacters = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/;
 
   for (const fixture of EXHIBITION_FIXTURES) {
     const title = fixture.title.trim();
