@@ -2,27 +2,27 @@ import type { ExhibitionFixture } from './fixtures';
 
 export const EXHIBITION_SELLERS = {
   kamal: {
-    displayName: 'کمال احمدی',
+    displayName: 'کمال',
     slug: 'kamal-ahmadi',
     bio: 'آگهی‌های وسایط نقلیه و خدمات کاری',
   },
   hasan: {
-    displayName: 'حسن رضایی',
+    displayName: 'حسن',
     slug: 'hasan-rezaei',
     bio: 'آگهی‌های خانه، املاک و لوازم منزل',
   },
   mir: {
-    displayName: 'میر احمدی',
+    displayName: 'میر',
     slug: 'mir-ahmadi',
     bio: 'آگهی‌های موبایل، کمپیوتر و پوشاک',
   },
   farid: {
-    displayName: 'فرید محمدی',
+    displayName: 'فرید',
     slug: 'farid-mohammadi',
     bio: 'آگهی‌های زراعتی، تجهیزات طبی و ورزشی',
   },
   khalid: {
-    displayName: 'خالد سادات',
+    displayName: 'خالد',
     slug: 'khalid-sadat',
     bio: 'آگهی‌های کودک، کتاب و سرگرمی',
   },
