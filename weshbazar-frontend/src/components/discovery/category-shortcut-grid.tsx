@@ -28,10 +28,16 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
 
     const mobileQuery = window.matchMedia('(max-width: 1023px)');
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (!mobileQuery.matches || reducedMotionQuery.matches) return;
 
     const intervalId = window.setInterval(() => {
-      if (Date.now() < pausedUntilRef.current) return;
+      if (
+        !mobileQuery.matches ||
+        reducedMotionQuery.matches ||
+        document.visibilityState !== 'visible' ||
+        Date.now() < pausedUntilRef.current
+      ) {
+        return;
+      }
 
       const items = container.querySelectorAll<HTMLElement>('[data-category-slide]');
       if (items.length < 2) return;
