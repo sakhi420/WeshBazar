@@ -105,7 +105,7 @@ function validatePasswordPolicy(password: string, sellerKey: string): void {
     (requireUppercase && !/[A-Z]/.test(password));
 
   if (invalid) {
-    throw new Error(\`Password for seller "\${sellerKey}" does not satisfy the current application password policy.\`);
+    throw new Error('Password for seller ' + sellerKey + ' does not satisfy the current application password policy.');
   }
 }
 
