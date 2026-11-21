@@ -40,7 +40,7 @@ jest.mock('@/components/location/location-picker', () => ({
 jest.mock('@/components/discovery/home-search-panel', () => ({
   HomeSearchPanel: () => (
     <div>
-      <h1>بازار خرید و فروش در افغانستان</h1>
+      <h1>هر چی می‌خواهی، از همین‌جا پیدا کن</h1>
       <div data-testid="search-field" />
       <div data-testid="location-picker" />
     </div>
@@ -92,7 +92,7 @@ describe('HomePage (F-02 — honest error vs empty states)', () => {
   });
 
 
-  it('makes the 12 newest listings a clear preview with two paths to the full list', async () => {
+  it('uses real cursor metadata to make the 12 newest listings a clear preview', async () => {
     mockFetchListingsServer.mockResolvedValue({
       items: Array.from({ length: 12 }, (_, index) => ({ id: `l-${index + 1}` })),
       nextCursor: 'next-page',
@@ -103,16 +103,32 @@ describe('HomePage (F-02 — honest error vs empty states)', () => {
     const element = await HomePage();
     render(element);
 
-    expect(screen.getByText('۱۲ آگهی تازه')).toBeInTheDocument();
-    expect(screen.getByText(/پیش‌نمایشی از ۱۲ آگهی تازه است/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /مشاهده همه آگهی‌ها/ })).toHaveAttribute(
+    expect(screen.getByText('نمایش ۱۲ از ۲۴')).toBeInTheDocument();
+    expect(screen.getByText(/از میان ۲۴ آگهی، ۱۲ مورد تازه در این پیش‌نمایش آمده است/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /دیدن همهٔ آگهی‌ها/ })).toHaveAttribute(
       'href',
       '/search?sort=newest',
     );
-    expect(screen.getByRole('link', { name: /رفتن به فهرست کامل/ })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /ادامهٔ دیدن آگهی‌ها/ })).toHaveAttribute(
       'href',
       '/search?sort=newest',
     );
+  });
+
+  it('does not promise more listings when the cursor page has no next page', async () => {
+    mockFetchListingsServer.mockResolvedValue({
+      items: [{ id: 'l-1' }, { id: 'l-2' }, { id: 'l-3' }],
+      nextCursor: null,
+      hasMore: false,
+      total: 3,
+    });
+
+    const element = await HomePage();
+    render(element);
+
+    expect(screen.getByText('نمایش ۳ از ۳')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /دیدن همهٔ آگهی‌ها/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /ادامهٔ دیدن آگهی‌ها/ })).not.toBeInTheDocument();
   });
 
   it('keeps both the keyword field and the city control on the homepage', async () => {
