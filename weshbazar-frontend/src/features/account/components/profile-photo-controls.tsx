@@ -96,9 +96,8 @@ export function ProfilePhotoControls({ hasAvatar }: { hasAvatar: boolean }) {
             type="button"
             variant="ghost"
             size="sm"
-            className="min-h-11 w-full lg:min-h-9 lg:w-auto"
+            className="min-h-11 w-full lg:min-h-9 lg:w-auto text-danger hover:bg-danger/5 hover:text-danger"
             disabled={busy}
-            className="text-danger hover:bg-danger/5 hover:text-danger"
             onClick={handleRemove}
           >
             <Trash2 aria-hidden />
