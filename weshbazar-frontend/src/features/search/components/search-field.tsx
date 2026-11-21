@@ -227,10 +227,12 @@ export function SearchField({
       )}
     >
       <div ref={wrapperRef} className="relative w-full min-w-0 flex-1">
-        <Search
-          className="pointer-events-none absolute start-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground"
-          aria-hidden
-        />
+        {!compact ? (
+          <Search
+            className="pointer-events-none absolute start-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground"
+            aria-hidden
+          />
+        ) : null}
         <input
           type="search"
           inputMode="search"
@@ -249,7 +251,10 @@ export function SearchField({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           aria-label="جست‌وجوی آگهی‌ها"
-          className="h-control-lg w-full rounded-control border border-input bg-background ps-10 pe-12 text-body text-foreground outline-none transition-colors duration-small placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className={cn(
+            'h-control-lg w-full rounded-control border border-input bg-background pe-12 text-body text-foreground outline-none transition-colors duration-small placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+            compact ? 'ps-4' : 'ps-10',
+          )}
         />
         {value ? (
           <button
