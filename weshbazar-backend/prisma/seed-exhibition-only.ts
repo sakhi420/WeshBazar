@@ -263,8 +263,8 @@ async function buildPreflight(
   const categories = await prisma.category.findMany({
     include: { attributes: { include: { options: true } } },
   });
-  const categoryBySlug = new Map(categories.map((category) => [category.slug, category]));
-  const categoryById = new Map(categories.map((category) => [category.id, category]));
+  const categoryBySlug = new Map(categories.map((category) => [category.slug, category] as const));
+  const categoryById = new Map(categories.map((category) => [category.id, category] as const));
   const activeParentIds = new Set(
     categories.filter((item) => item.status === 'ACTIVE' && item.parentId).map((item) => item.parentId as string),
   );
@@ -274,12 +274,12 @@ async function buildPreflight(
     where: { slug: { in: provinceSlugs } },
     select: { id: true, slug: true, status: true },
   });
-  const provinceBySlug = new Map(provinces.map((item) => [item.slug, item]));
+  const provinceBySlug = new Map(provinces.map((item) => [item.slug, item] as const));
   const cities = await prisma.city.findMany({
     where: { provinceId: { in: provinces.map((item) => item.id) } },
     select: { id: true, slug: true, provinceId: true, status: true },
   });
-  const cityByKey = new Map(cities.map((item) => [item.provinceId + '/' + item.slug, item]));
+  const cityByKey = new Map(cities.map((item) => [item.provinceId + '/' + item.slug, item] as const));
 
   const normalized = new Map<string, Record<string, string | number | boolean | string[]>>();
   const schemaRefs = new Map<string, Prisma.InputJsonValue>();
@@ -358,7 +358,7 @@ async function buildPreflight(
       images: { where: { deletedAt: null }, select: { id: true } },
     },
   });
-  const existingBySlug = new Map(existing.map((item) => [item.slug, item]));
+  const existingBySlug = new Map(existing.map((item) => [item.slug, item] as const));
   let newCount = 0;
   let archivedCount = 0;
 
@@ -522,7 +522,7 @@ async function main(): Promise<void> {
       });
       if (rows.length !== EXPECTED_FIXTURES) throw new Error('Post-seed count verification failed.');
 
-      const bySlug = new Map(rows.map((row) => [row.slug, row]));
+      const bySlug = new Map(rows.map((row) => [row.slug, row] as const));
       const verifiedCounts: Record<string, number> = {};
       for (const fixture of EXHIBITION_FIXTURES) {
         const row = bySlug.get(fixture.slug);
