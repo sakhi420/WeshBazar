@@ -239,24 +239,24 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
         : 'مسدودشده';
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn('space-y-4 sm:space-y-6', className)}>
       <header className="space-y-1">
-        <p className="text-meta font-semibold text-primary">فضای شخصی ویش‌بازار</p>
+        <p className="hidden text-meta font-semibold text-primary sm:block">فضای شخصی ویش‌بازار</p>
         <h1 className="text-heading font-black tracking-tight text-foreground">حساب من</h1>
-        <p className="text-ui text-muted-foreground">
+        <p className="hidden text-ui text-muted-foreground sm:block">
           اطلاعات شخصی و فعالیت‌های خود را از همین‌جا مدیریت کن.
         </p>
       </header>
 
       <section
         aria-labelledby="account-identity-title"
-        className="relative isolate overflow-hidden rounded-surface border border-primary/10 bg-gradient-to-br from-surface via-surface to-primary-soft/70 p-4 shadow-soft sm:p-6"
+        className="relative isolate overflow-hidden rounded-surface border border-primary/10 bg-gradient-to-br from-surface via-surface to-primary-soft/70 p-3.5 shadow-soft sm:p-6"
       >
         <div
           aria-hidden
           className="pointer-events-none absolute -end-12 -top-16 -z-10 size-44 rounded-full bg-primary/5 blur-2xl"
         />
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
           <div className="flex min-w-0 flex-1 items-center gap-3.5 sm:gap-4">
             <Avatar
               name={profile.displayName}
@@ -268,42 +268,42 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
               <p className="text-caption font-medium text-muted-foreground">خوش آمدی</p>
               <h2
                 id="account-identity-title"
-                className="mt-0.5 break-words text-card-title font-black leading-7 text-foreground sm:text-section"
+                className="mt-0.5 break-words text-ui font-black leading-6 text-foreground sm:text-section"
               >
                 {profile.displayName}
               </h2>
-              <p className="mt-1 text-ui text-muted-foreground" dir="ltr">
+              <p className="mt-0.5 text-caption text-muted-foreground sm:mt-1 sm:text-ui" dir="ltr">
                 {profile.phone}
               </p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
+              <div className="mt-1.5 flex flex-wrap items-center gap-1.5 sm:mt-2 sm:gap-2">
                 {profile.phoneVerified ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2.5 py-1 text-caption font-semibold text-success">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-caption sm:px-2.5 sm:py-1 font-semibold text-success">
                     <BadgeCheck className="size-3.5" aria-hidden />
                     شماره تأییدشده
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2.5 py-1 text-caption font-semibold text-warning">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-caption sm:px-2.5 sm:py-1 font-semibold text-warning">
                     <CircleAlert className="size-3.5" aria-hidden />
                     شماره تأییدنشده
                   </span>
                 )}
-                <span className="rounded-full border border-border/80 bg-white/70 px-2.5 py-1 text-caption font-medium text-muted-foreground">
+                <span className="rounded-full border border-border/80 bg-white/70 px-2 py-0.5 text-caption sm:px-2.5 sm:py-1 font-medium text-muted-foreground">
                   {formatRoleLabel(profile.role)}
                 </span>
               </div>
-              <p className="mt-2 text-caption text-muted-foreground">
+              <p className="mt-1.5 text-caption text-muted-foreground sm:mt-2">
                 عضو از {formatMonthYear(profile.createdAt)}
               </p>
             </div>
           </div>
 
-          <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-col sm:items-end">
+          <div className="w-full border-t border-primary/10 pt-3 sm:w-auto sm:border-0 sm:pt-0">
             <ProfilePhotoControls hasAvatar={Boolean(profile.avatarUrl)} />
           </div>
         </div>
 
         {!profile.phoneVerified ? (
-          <div className="mt-4 flex flex-col gap-2 rounded-card border border-warning/25 bg-warning/5 p-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-3 flex flex-col gap-2 rounded-card sm:mt-4 border border-warning/25 bg-warning/5 p-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-ui text-foreground/90">
               برای استفادهٔ مطمئن‌تر از حساب، شمارهٔ تلفن خود را تأیید کن.
             </p>
@@ -360,14 +360,12 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
               </div>
             </form>
           ) : (
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
               <div className="min-w-0">
                 <p className="text-ui font-semibold text-foreground">نام حساب</p>
-                <p className="mt-0.5 text-caption text-muted-foreground">
-                  این نام در اطلاعات حساب شخصی تو استفاده می‌شود.
-                </p>
+                <p className="mt-0.5 hidden text-caption text-muted-foreground sm:block">این نام در اطلاعات حساب شخصی تو استفاده می‌شود.</p>
               </div>
-              <Button type="button" variant="outline" size="sm" onClick={beginNameEdit}>
+              <Button type="button" variant="outline" size="sm" className="min-h-11 sm:min-h-9" onClick={beginNameEdit}>
                 <Pencil className="size-3.5" aria-hidden />
                 ویرایش نام
               </Button>
@@ -383,7 +381,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
         </p>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
         <div className="space-y-6">
           <section aria-labelledby="account-activity-title" className="space-y-3">
             <SectionHeading
@@ -391,7 +389,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
               title="فعالیت‌های من"
               description="دسترسی سریع به کارهای روزمره"
             />
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
               <QuickAction
                 href="/my-listings"
                 title="آگهی‌های من"
@@ -413,7 +411,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
             aria-labelledby="seller-profile-title"
             className="overflow-hidden rounded-surface border border-border bg-surface shadow-soft"
           >
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-4 sm:px-5">
+            <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-border px-3.5 py-3.5 sm:gap-3 sm:px-5 sm:py-4">
               <div className="flex min-w-0 items-center gap-3">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-card bg-primary-soft text-primary">
                   <Store className="size-5" aria-hidden />
@@ -439,7 +437,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
               </span>
             </div>
 
-            <div className="space-y-4 p-4 sm:p-5">
+            <div className="space-y-3 p-3.5 sm:space-y-4 sm:p-5">
               {editingSeller ? (
                 <form onSubmit={saveSeller} noValidate className="space-y-3">
                   <div className="space-y-1.5">
@@ -506,7 +504,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
                 </form>
               ) : (
                 <>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <Avatar
                       name={profile.seller.displayName}
                       src={profile.avatarUrl ?? null}
@@ -520,7 +518,7 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
                         صفحهٔ فروشنده در ویش‌بازار
                       </p>
                     </div>
-                    <Button type="button" variant="outline" size="sm" onClick={beginSellerEdit}>
+                    <Button type="button" variant="outline" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" onClick={beginSellerEdit}>
                       <Pencil className="size-3.5" aria-hidden />
                       ویرایش
                     </Button>
@@ -640,23 +638,23 @@ function QuickAction({
   return (
     <Link
       href={href}
-      className="group flex min-h-32 min-w-0 flex-col justify-between rounded-surface border border-border bg-surface p-3.5 shadow-soft transition-all duration-small hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-4"
+      className="group flex min-h-[76px] min-w-0 items-center gap-3 rounded-surface border border-border bg-surface p-3 sm:min-h-32 sm:flex-col sm:items-stretch sm:justify-between sm:gap-0 sm:p-4 shadow-soft transition-all duration-small hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-4"
     >
       <span
         className={cn(
-          'flex size-10 items-center justify-center rounded-card',
+          'flex size-10 shrink-0 items-center justify-center rounded-card',
           tone === 'primary' ? 'bg-primary-soft text-primary' : 'bg-accent/10 text-accent-dark',
         )}
       >
         {icon}
       </span>
-      <span className="mt-3 min-w-0">
-        <span className="block truncate text-ui font-bold text-foreground">{title}</span>
-        <span className="mt-1 block text-caption leading-5 text-muted-foreground">
+      <span className="min-w-0 flex-1 sm:mt-3">
+        <span className="block break-words text-ui font-bold text-foreground sm:truncate">{title}</span>
+        <span className="mt-0.5 block text-caption leading-5 text-muted-foreground sm:mt-1">
           {description}
         </span>
       </span>
-      <span className="mt-2 flex justify-end text-muted-foreground transition-colors group-hover:text-primary">
+      <span className="ms-auto shrink-0 text-muted-foreground transition-colors group-hover:text-primary sm:mt-2 sm:flex sm:justify-end">
         <ChevronLeft className="size-4" aria-hidden />
       </span>
     </Link>
@@ -678,7 +676,7 @@ function AccountLink({
     <li>
       <Link
         href={href}
-        className="flex min-h-[68px] items-center gap-3 px-4 py-3 transition-colors duration-small hover:bg-primary-soft/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+        className="flex min-h-[64px] items-center gap-3 px-3 py-3 sm:min-h-[68px] sm:px-4 transition-colors duration-small hover:bg-primary-soft/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
       >
         <span className="flex size-9 shrink-0 items-center justify-center rounded-control bg-primary-soft/70 text-primary">
           {icon}
