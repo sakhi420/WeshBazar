@@ -1,45 +1,43 @@
 import type { ExhibitionFixture } from './fixtures';
 
 export const EXHIBITION_SELLERS = {
-  kamal: {
-    displayName: 'کمال',
-    slug: 'kamal',
-    bio: 'آگهی‌های وسایط نقلیه و خدمات کاری',
+  pamir: {
+    displayName: 'بازار موتر پامیر',
+    slug: 'pamir-motor-market',
+    bio: 'آگهی‌های موتر، موتورسایکل، بایسکل و پرزه‌جات وسایط',
   },
-  hasan: {
-    displayName: 'حسن',
-    slug: 'hasan',
-    bio: 'آگهی‌های خانه، املاک و لوازم منزل',
+  ariana: {
+    displayName: 'خانه و املاک آریانا',
+    slug: 'ariana-properties',
+    bio: 'آگهی‌های خانه، زمین، دکان، دفتر و لوازم منزل',
   },
-  mir: {
-    displayName: 'میر',
-    slug: 'mir',
-    bio: 'آگهی‌های موبایل، کمپیوتر و پوشاک',
+  novin: {
+    displayName: 'فروشگاه تجهیزات نوین',
+    slug: 'novin-equipment',
+    bio: 'آگهی‌های تجهیزات دیجیتال، ورزشی و کالاهای متفرقه',
   },
-  farid: {
-    displayName: 'فرید',
-    slug: 'farid',
-    bio: 'آگهی‌های زراعتی، تجهیزات طبی و ورزشی',
+  family: {
+    displayName: 'فروشگاه خانواده',
+    slug: 'family-store',
+    bio: 'آگهی‌های لوازم کودک، کتاب، بازی و پوشاک خانواده',
   },
-  khalid: {
-    displayName: 'خالد',
-    slug: 'khalid',
-    bio: 'آگهی‌های کودک، کتاب و سرگرمی',
+  services: {
+    displayName: 'بازار خدمات و زراعت',
+    slug: 'services-agriculture-market',
+    bio: 'آگهی‌های خدمات، کار، زراعت، دامداری و تجهیزات طبی',
   },
 } as const;
 
 export type ExhibitionSellerKey = keyof typeof EXHIBITION_SELLERS;
 
-const VEHICLES_AND_JOBS = new Set([
+const VEHICLES = new Set([
   'cars',
   'motorcycles',
   'bicycles',
   'vehicle-parts',
-  'jobs',
-  'services',
 ]);
 
-const HOMES_AND_FURNITURE = new Set([
+const HOMES_AND_PROPERTY = new Set([
   'properties-for-rent',
   'properties-for-sale',
   'shops-offices',
@@ -48,57 +46,46 @@ const HOMES_AND_FURNITURE = new Set([
   'garden-outdoor',
 ]);
 
-const TECH_AND_FASHION = new Set([
+const MODERN_EQUIPMENT = new Set([
+  'sports-equipment',
+  'gaming',
+  'laptops-computers',
   'mobile-phones',
   'tablets',
-  'laptops-computers',
   'tvs-audio',
-  'gaming',
+  'miscellaneous',
+]);
+
+const FAMILY_GOODS = new Set([
+  'baby-gear',
+  'books',
+  'toys-games',
   'mens-clothing',
   'womens-clothing',
   'watches-jewelry',
 ]);
 
-const AGRICULTURE_AND_MEDICAL = new Set([
+const SERVICES_AND_AGRICULTURE = new Set([
+  'jobs',
+  'services',
   'livestock',
   'pets',
   'farm-tools',
   'medical-equipment',
 ]);
 
-const KIDS_AND_BOOKS = new Set([
-  'toys-games',
-  'baby-gear',
-  'books',
-]);
-
-function fixtureOrdinal(fixture: ExhibitionFixture): number {
-  const match = fixture.slug.match(/-(\d{3})$/);
-  return match ? Number(match[1]) : 0;
-}
-
 /**
- * Keeps related products on the same seller profile while distributing the
- * 147 fixtures as 30 / 30 / 29 / 30 / 28 (all below the 50-active-listing cap).
+ * Assigns all 147 exhibition fixtures to the five approved public store names.
+ * The resulting counts are 18 / 27 / 36 / 31 / 35, each below the 50-listing cap.
  */
 export function sellerKeyForFixture(fixture: ExhibitionFixture): ExhibitionSellerKey {
   const { categorySlug } = fixture;
-  const ordinal = fixtureOrdinal(fixture);
 
-  if (VEHICLES_AND_JOBS.has(categorySlug)) return 'kamal';
-  if (HOMES_AND_FURNITURE.has(categorySlug)) return 'hasan';
-  if (TECH_AND_FASHION.has(categorySlug)) return 'mir';
-  if (AGRICULTURE_AND_MEDICAL.has(categorySlug)) return 'farid';
-  if (KIDS_AND_BOOKS.has(categorySlug)) return 'khalid';
-
-  if (categorySlug === 'sports-equipment') {
-    return ordinal >= 1 && ordinal <= 5 ? 'farid' : 'khalid';
-  }
-  if (categorySlug === 'miscellaneous') {
-    if (ordinal >= 1 && ordinal <= 3) return 'hasan';
-    if (ordinal >= 4 && ordinal <= 8) return 'mir';
-    if (ordinal >= 9 && ordinal <= 10) return 'farid';
-  }
+  if (VEHICLES.has(categorySlug)) return 'pamir';
+  if (HOMES_AND_PROPERTY.has(categorySlug)) return 'ariana';
+  if (MODERN_EQUIPMENT.has(categorySlug)) return 'novin';
+  if (FAMILY_GOODS.has(categorySlug)) return 'family';
+  if (SERVICES_AND_AGRICULTURE.has(categorySlug)) return 'services';
 
   throw new Error(
     `No exhibition seller assignment for fixture "${fixture.key}" (${categorySlug}).`,
