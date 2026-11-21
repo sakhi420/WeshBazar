@@ -183,7 +183,7 @@ sequence. Expired active fixtures receive a RENEW revision and a fresh expiry.
 
 The five seller profiles are attached to their own logins. The administrator
 account is used only as the moderation actor; its password and account fields
-are not updated. Fixture PHONE and WHATSAPP contact methods remain disabled so
+are not updated. Fixture PHONE, WHATSAPP, and TELEGRAM contact methods remain disabled so
 the login phone numbers are not exposed as seller contact details.
 
 ### Neon Object Storage
