@@ -58,6 +58,27 @@ password resets fail closed until a real SMS gateway is configured. Restrict
 write access separately if the exhibition must be read-only. Never use a fake
 OTP or mock SMS provider on the public deployment.
 
+Bahar Future support is implemented as a separate provider, but this exhibition
+configuration intentionally remains `disabled`. Enable it only after the
+Bahar Future account is approved, the prepaid balance is funded, the sender ID
+(if used) is registered with the required operators, and real delivery has
+been verified on the target Afghan mobile networks. Then set the following in
+Render's private environment settings (never in Git):
+
+```env
+SMS_PROVIDER=bahar-future
+BAHAR_FUTURE_USERNAME=<account username>
+BAHAR_FUTURE_PASSWORD=<account password>
+BAHAR_FUTURE_SENDER_ID=<optional approved sender ID>
+```
+
+The provider posts URL-encoded form fields over HTTPS so credentials are not
+placed in the request URL. It retries only the vendor-documented HTTP 500
+response; it does not automatically retry ambiguous network timeouts, to avoid
+accidentally billing or sending a duplicate code. Delivery receipts (DLR) are
+not enabled because they require a separate callback endpoint; the frozen
+WeshBazar API contract is not changed by this integration.
+
 ## Frontend environment
 
 Set these in Netlify, replacing the example origins with the actual service URLs:

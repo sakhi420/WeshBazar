@@ -131,6 +131,14 @@ export interface AppConfig {
       maxRetries: number;
       messageTemplate: string;
     };
+    smsBaharFuture: {
+      username?: string;
+      password?: string;
+      sender?: string;
+      timeoutMs: number;
+      maxRetries: number;
+      messageTemplate: string;
+    };
     moderation: string;
   };
 }
