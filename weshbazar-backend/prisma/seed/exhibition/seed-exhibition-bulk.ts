@@ -218,7 +218,7 @@ function buildSearchText(
   return [fixture.title, fixture.description, ...flattenAttributeValues(attributes)]
     .join(' ')
     .toLowerCase()
-    .replace(/\\s+/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
