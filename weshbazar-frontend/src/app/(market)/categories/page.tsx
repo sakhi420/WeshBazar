@@ -4,8 +4,8 @@ import { CategoriesBrowser } from '@/components/discovery/categories-browser';
 import { EmptyState } from '@/components/feedback/empty-state';
 import { ErrorState } from '@/components/feedback/error-state';
 import { PageContainer } from '@/components/layout/page-container';
-import { PageHeading } from '@/components/layout/page-heading';
 import { fetchCategoryTreeServer } from '@/features/categories';
+import type { CategoryNode } from '@/features/categories';
 import { ApiError } from '@/lib/api';
 
 export const metadata: Metadata = {
