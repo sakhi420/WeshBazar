@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { LayoutGrid, Pause, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -12,7 +12,7 @@ interface CategoryShortcutGridProps {
   className?: string;
 }
 
-type MarqueeStyle = React.CSSProperties & {
+type MarqueeStyle = CSSProperties & {
   '--category-marquee-duration': string;
 };
 
@@ -124,9 +124,10 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
         <button
           type="button"
           onClick={handleToggleMotion}
+          onFocus={() => setIsPaused(true)}
           aria-label={isPaused ? 'ادامه حرکت دسته‌بندی‌ها' : 'توقف حرکت دسته‌بندی‌ها'}
           aria-pressed={isPaused}
-          className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring xl:hidden"
+          className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-primary-soft hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring xl:hidden motion-reduce:hidden"
         >
           {isPaused ? <Play className="size-3.5" aria-hidden /> : <Pause className="size-3.5" aria-hidden />}
           {isPaused ? 'ادامه' : 'توقف'}
@@ -147,7 +148,6 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
         className={cn(
           'category-marquee-viewport no-scrollbar w-full overflow-x-auto overflow-y-hidden overscroll-x-contain touch-pan-x',
           'xl:hidden',
-          className,
         )}
       >
         <div
@@ -156,7 +156,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
             {
               '--category-marquee-duration': `${duration}s`,
               animationPlayState: isPaused || isHovered ? 'paused' : 'running',
-            } as MarqueeStyle & React.CSSProperties
+            } as MarqueeStyle
           }
         >
           <div
