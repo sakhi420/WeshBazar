@@ -6,6 +6,7 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 const outputDirectory = path.join(projectRoot, 'public', 'images', 'welcome');
 const timeoutMs = 30_000;
 const minimumBytes = 10_000;
+const allowMissing = process.argv.includes('--allow-missing');
 
 /**
  * Pexels permits free use of these photos on websites and apps.
@@ -121,5 +122,9 @@ main().catch((error) => {
   process.stderr.write(
     '[welcome-images] The page was left unchanged. Check build network access to images.pexels.com and retry.\n',
   );
-  process.exitCode = 1;
+  if (!allowMissing) {
+    process.exitCode = 1;
+  } else {
+    process.stderr.write('[welcome-images] Continuing development without missing local images.\n');
+  }
 });
