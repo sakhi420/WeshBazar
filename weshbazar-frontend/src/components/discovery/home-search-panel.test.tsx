@@ -1,26 +1,33 @@
 import { render, screen } from '@testing-library/react';
 
 jest.mock('@/features/search/components/search-field', () => ({
-  SearchField: () => <div data-testid="search-field" />,
+  SearchField: () => <form data-testid="search-field" />,
 }));
 jest.mock('@/components/location/location-picker', () => ({
-  LocationPicker: () => <div data-testid="location-picker" />,
+  LocationPicker: () => <button type="button" data-testid="location-picker">انتخاب شهر</button>,
 }));
 
 import { HomeSearchPanel } from './home-search-panel';
 
 describe('HomeSearchPanel', () => {
-  it('keeps the compact keyword search and city picker together in a responsive row', () => {
+  it('places both usable search controls before the decorative photo collage', () => {
     const { container } = render(<HomeSearchPanel />);
 
     expect(screen.getByRole('heading', { name: 'هر چی می‌خواهی، از همین‌جا پیدا کن' })).toBeInTheDocument();
-    expect(screen.getByTestId('search-field')).toBeInTheDocument();
-    expect(screen.getByTestId('location-picker')).toBeInTheDocument();
 
-    const controls = screen.getByTestId('search-field').parentElement;
+    const search = screen.getByTestId('search-field');
+    const location = screen.getByTestId('location-picker');
+    expect(search).toBeInTheDocument();
+    expect(location).toBeInTheDocument();
+
+    const controls = search.parentElement;
     expect(controls).toHaveClass('grid');
-    expect(controls).toHaveClass('gap-2');
-    expect(controls).toHaveClass('sm:grid-cols-[minmax(0,1fr)_auto]');
-    expect(container).toBeTruthy();
+    expect(controls).toHaveClass('grid-cols-1');
+    expect(controls).toHaveClass('sm:grid-cols-[minmax(0,1fr)_9.5rem]');
+    expect(search.compareDocumentPosition(location) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    const image = container.querySelector('img[alt="موتر برای خرید و فروش"]');
+    expect(image).toBeInTheDocument();
+    expect(location.compareDocumentPosition(image as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });
