@@ -37,12 +37,12 @@ export function CategoriesBrowser({ tree }: CategoriesBrowserProps) {
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState(tree[0]?.id ?? '');
   const normalizedSearch = normalizeCategoryText(search);
-  const searchTerms = normalizedSearch.split(' ').filter(Boolean);
 
   const selectedCategory = tree.find((category) => category.id === selectedId) ?? tree[0];
   const totalSubcategories = tree.reduce((total, category) => total + category.children.length, 0);
 
   const searchResults = useMemo<CategorySearchResult[]>(() => {
+    const searchTerms = normalizedSearch.split(' ').filter(Boolean);
     if (searchTerms.length === 0) return [];
 
     return tree.flatMap((root) => {
@@ -198,8 +198,8 @@ export function CategoriesBrowser({ tree }: CategoriesBrowserProps) {
         </section>
       ) : (
         <section className="overflow-hidden rounded-[1.75rem] border border-border/80 bg-surface shadow-[0_16px_48px_rgba(15,76,69,0.055)]">
-          <div className="grid lg:grid-cols-[minmax(0,1fr)_280px]">
-            <aside className="min-w-0 border-b border-border/70 bg-muted/20 p-3 sm:p-4 lg:order-last lg:border-b-0 lg:border-l">
+          <div className="grid lg:grid-cols-[280px_minmax(0,1fr)]">
+            <aside className="min-w-0 border-b border-border/70 bg-muted/20 p-3 sm:p-4 lg:border-b-0 lg:border-l">
               <div className="mb-3 flex items-center justify-between gap-3 px-1 sm:px-2">
                 <div>
                   <p className="text-[11px] font-bold text-primary">از اینجا شروع کن</p>
