@@ -15,9 +15,12 @@ jest.mock('@/components/location/location-picker', () => ({
 import { HomeSearchPanel } from './home-search-panel';
 
 describe('HomeSearchPanel', () => {
-  it('places the hero content and responsive search controls over one optimized Kabul background image', () => {
+  it('renders a full-width image hero with independent, responsive search controls', () => {
     const { container } = render(<HomeSearchPanel />);
 
+    const hero = screen.getByRole('region', { name: 'هر چی می‌خواهی، از همین‌جا پیدا کن' });
+    expect(hero).toHaveClass('w-full');
+    expect(hero).not.toHaveClass('rounded-[1.5rem]');
     expect(screen.getByRole('heading', { name: 'هر چی می‌خواهی، از همین‌جا پیدا کن' })).toBeInTheDocument();
 
     const background = container.querySelector('img[alt=""]');
@@ -33,7 +36,8 @@ describe('HomeSearchPanel', () => {
     const controls = search.parentElement;
     expect(controls).toHaveClass('grid');
     expect(controls).toHaveClass('grid-cols-1');
-    expect(controls).toHaveClass('sm:grid-cols-[minmax(0,1fr)_12rem]');
+    expect(controls).toHaveClass('sm:grid-cols-[minmax(0,1fr)_13rem]');
     expect(search.compareDocumentPosition(location) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(controls).not.toHaveClass('bg-white');
   });
 });
