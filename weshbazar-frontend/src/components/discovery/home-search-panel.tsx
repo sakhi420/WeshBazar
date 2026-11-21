@@ -12,7 +12,7 @@ export function HomeSearchPanel() {
   return (
     <section
       aria-labelledby="home-hero-title"
-      className="relative isolate w-full min-h-[410px] overflow-hidden bg-[#172521] sm:min-h-[450px] lg:min-h-[500px]"
+      className="relative isolate min-h-[390px] w-full overflow-hidden bg-[#172521] sm:min-h-[440px] lg:min-h-[480px]"
     >
       <div aria-hidden className="absolute inset-0">
         <Image
@@ -27,34 +27,34 @@ export function HomeSearchPanel() {
 
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-black/30"
+        className="pointer-events-none absolute inset-0 bg-[#073b37]/10"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-l from-black/65 via-black/30 to-black/10"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-l from-[#092f2b]/65 via-[#092f2b]/25 to-transparent"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/35 to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/20 to-transparent"
       />
 
-      <div className="relative mx-auto flex min-h-[410px] w-full max-w-[1440px] flex-col justify-center gap-6 px-4 py-10 sm:min-h-[450px] sm:gap-7 sm:px-8 sm:py-12 lg:min-h-[500px] lg:px-12">
+      <div className="relative mx-auto flex min-h-[390px] w-full max-w-[1440px] flex-col justify-center gap-5 px-4 py-8 sm:min-h-[440px] sm:gap-6 sm:px-8 sm:py-10 lg:min-h-[480px] lg:px-12">
         <h1
           id="home-hero-title"
-          className="max-w-4xl text-balance text-[1.9rem] font-black leading-[1.4] tracking-tight text-white drop-shadow-lg sm:text-4xl sm:leading-[1.35] lg:text-5xl"
+          className="max-w-4xl text-balance text-[1.7rem] font-black leading-[1.4] tracking-tight text-white drop-shadow-md sm:text-4xl sm:leading-[1.35] lg:text-5xl"
         >
           هر چی می‌خواهی، از همین‌جا پیدا کن
         </h1>
 
         <Suspense
           fallback={
-            <div className="grid w-full max-w-4xl gap-3 sm:grid-cols-[minmax(0,1fr)_13rem]">
-              <div className="h-14 animate-pulse rounded-xl bg-white/85" />
-              <div className="h-14 animate-pulse rounded-xl bg-white/85" />
+            <div className="grid w-full max-w-4xl grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_13rem]">
+              <div className="h-14 animate-pulse rounded-xl bg-white/90" />
+              <div className="h-14 animate-pulse rounded-xl bg-white/90" />
             </div>
           }
         >
-          <div className="grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_13rem] sm:items-stretch">
+          <div className="grid w-full max-w-4xl grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_13rem] lg:items-stretch">
             <SearchField
               className="w-full min-w-0"
               placeholder="چی می‌خواهی پیدا کنی؟"
@@ -62,7 +62,7 @@ export function HomeSearchPanel() {
               compact
             />
             <LocationPicker
-              className="w-full min-w-0 sm:w-52"
+              className="w-full min-w-0 lg:w-52"
               redirectToSearch
             />
           </div>
