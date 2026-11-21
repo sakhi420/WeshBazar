@@ -357,7 +357,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
                 dir="rtl"
                 aria-hidden="true"
                 inert
-                className="flex w-max shrink-0 items-start gap-3 pe-3"
+                className="flex w-max shrink-0 items-start gap-2.5 pe-3"
               >
                 {renderCategoryLinks(true)}
               </div>
