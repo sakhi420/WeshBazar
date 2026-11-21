@@ -28,7 +28,6 @@ import {
   ShieldCheck,
   Store,
   Tag,
-  UserRound,
   X,
 } from 'lucide-react';
 import { ErrorState } from '@/components/feedback/error-state';
