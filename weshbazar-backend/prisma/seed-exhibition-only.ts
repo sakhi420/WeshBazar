@@ -629,7 +629,7 @@ async function main(): Promise<void> {
     }
 
     const result = await prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('weshbazar:exhibition-seed:v2'))`;
+      await tx.$queryRaw`SELECT 1::int AS locked FROM (SELECT pg_advisory_xact_lock(hashtext('weshbazar:exhibition-seed:v2'))) AS advisory_lock`;
       const owners = await provisionSellers(tx, preflight, hashes);
       await assertActiveCapacity(tx, preflight, owners);
       const seeded = await seedExhibitionData(tx, {
