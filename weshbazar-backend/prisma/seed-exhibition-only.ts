@@ -172,11 +172,11 @@ function assertFixtureIntegrity(): void {
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
   const expectedCounts: Record<ExhibitionSellerKey, number> = {
-    kamal: 30,
-    hasan: 30,
-    mir: 29,
-    farid: 30,
-    khalid: 28,
+    pamir: 18,
+    ariana: 27,
+    novin: 36,
+    family: 31,
+    services: 35,
   };
   for (const key of Object.keys(EXHIBITION_SELLERS) as ExhibitionSellerKey[]) {
     const count = counts.get(key) ?? 0;
@@ -254,6 +254,14 @@ async function buildPreflight(
     const sellerAccount = user?.sellerAccount ?? null;
     if (sellerAccount && sellerAccount.status !== 'ACTIVE') {
       throw new Error(`Existing seller profile "${credential.key}" is inactive.`);
+    }
+    if (sellerAccount && (
+      sellerAccount.displayName !== profile.displayName ||
+      sellerAccount.slug !== profile.slug
+    )) {
+      throw new Error(
+        `Existing seller profile "${credential.key}" has a different public identity; it will not be renamed automatically.`,
+      );
     }
     if (!sellerAccount) {
       const slugOwner = await prisma.sellerAccount.findUnique({
@@ -477,8 +485,16 @@ async function provisionSellers(
           bio: item.bio, type: 'INDIVIDUAL', status: 'ACTIVE',
         },
       });
-    } else if (sellerAccount.status !== 'ACTIVE') {
-      throw new Error('Seller profile became inactive: ' + item.key);
+    } else {
+      if (sellerAccount.status !== 'ACTIVE') {
+        throw new Error('Seller profile became inactive: ' + item.key);
+      }
+      if (
+        sellerAccount.displayName !== item.displayName ||
+        sellerAccount.slug !== item.slug
+      ) {
+        throw new Error('Seller profile public identity changed after preflight: ' + item.key);
+      }
     }
 
     result[item.key] = { userId: user.id, sellerAccountId: sellerAccount.id };
