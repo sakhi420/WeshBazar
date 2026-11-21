@@ -23,6 +23,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
   const lastFrameTimeRef = useRef(0);
   const resumeTimerRef = useRef<number | null>(null);
   const pausedRef = useRef(false);
+  const startLoopRef = useRef<(() => void) | null>(null);
 
   const pauseMotion = useCallback(() => {
     pausedRef.current = true;
@@ -30,6 +31,11 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
       window.clearTimeout(resumeTimerRef.current);
       resumeTimerRef.current = null;
     }
+    if (animationFrameRef.current !== null) {
+      window.cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+    lastFrameTimeRef.current = 0;
   }, []);
 
   const resumeMotionSoon = useCallback((delay = RESUME_DELAY_MS) => {
@@ -40,6 +46,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
       pausedRef.current = false;
       lastFrameTimeRef.current = 0;
       resumeTimerRef.current = null;
+      startLoopRef.current?.();
     }, delay);
   }, []);
 
@@ -63,6 +70,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
     if (!viewport || !firstGroup) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mobileViewport = window.matchMedia('(max-width: 1023px)');
     let disposed = false;
 
     const measure = () => {
@@ -71,26 +79,25 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
 
       if (Math.abs(width - groupWidthRef.current) > 1) {
         groupWidthRef.current = width;
-        // Start in the middle copy so manual scrolling has room in both
-        // directions before the invisible wrap-around normalizes the offset.
         viewport.scrollLeft = width;
       }
     };
 
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(firstGroup);
+    const canRun = () =>
+      !disposed &&
+      !pausedRef.current &&
+      !reducedMotion.matches &&
+      mobileViewport.matches &&
+      document.visibilityState === 'visible';
 
     const tick = (time: number) => {
-      if (disposed) return;
+      if (!canRun()) {
+        animationFrameRef.current = null;
+        lastFrameTimeRef.current = 0;
+        return;
+      }
 
-      const canAnimate =
-        !pausedRef.current &&
-        !reducedMotion.matches &&
-        document.visibilityState === 'visible' &&
-        window.matchMedia('(max-width: 1023px)').matches;
-
-      if (canAnimate && lastFrameTimeRef.current > 0) {
+      if (lastFrameTimeRef.current > 0) {
         const deltaSeconds = Math.min((time - lastFrameTimeRef.current) / 1000, 0.05);
         viewport.scrollLeft += MARQUEE_SPEED * deltaSeconds;
         normalizeScrollPosition();
@@ -100,17 +107,50 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
       animationFrameRef.current = window.requestAnimationFrame(tick);
     };
 
-    animationFrameRef.current = window.requestAnimationFrame(tick);
+    const startLoop = () => {
+      if (animationFrameRef.current === null && canRun()) {
+        lastFrameTimeRef.current = 0;
+        animationFrameRef.current = window.requestAnimationFrame(tick);
+      }
+    };
+
+    startLoopRef.current = startLoop;
+
+    const syncEnvironment = () => {
+      if (canRun()) {
+        startLoop();
+      } else if (animationFrameRef.current !== null) {
+        window.cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+        lastFrameTimeRef.current = 0;
+      }
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(firstGroup);
+    mobileViewport.addEventListener('change', syncEnvironment);
+    reducedMotion.addEventListener('change', syncEnvironment);
+    document.addEventListener('visibilitychange', syncEnvironment);
+    window.addEventListener('resize', syncEnvironment);
+    syncEnvironment();
 
     return () => {
       disposed = true;
       observer.disconnect();
+      mobileViewport.removeEventListener('change', syncEnvironment);
+      reducedMotion.removeEventListener('change', syncEnvironment);
+      document.removeEventListener('visibilitychange', syncEnvironment);
+      window.removeEventListener('resize', syncEnvironment);
       if (animationFrameRef.current !== null) {
         window.cancelAnimationFrame(animationFrameRef.current);
       }
       if (resumeTimerRef.current !== null) {
         window.clearTimeout(resumeTimerRef.current);
       }
+      animationFrameRef.current = null;
+      resumeTimerRef.current = null;
+      startLoopRef.current = null;
     };
   }, [categories.length, normalizeScrollPosition]);
 
