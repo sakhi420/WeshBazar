@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { Suspense } from 'react';
-import { MapPinned, Search, Sparkles } from 'lucide-react';
 import { LocationPicker } from '@/components/location/location-picker';
 import { SearchField } from '@/features/search/components/search-field';
 
@@ -13,90 +12,61 @@ export function HomeSearchPanel() {
   return (
     <section
       aria-labelledby="home-hero-title"
-      className="relative isolate min-h-[430px] overflow-hidden rounded-[1.5rem] border border-primary/15 shadow-card sm:min-h-[410px] sm:rounded-[2rem] lg:min-h-[450px]"
+      className="relative isolate w-full min-h-[410px] overflow-hidden bg-[#172521] sm:min-h-[450px] lg:min-h-[500px]"
     >
-      <div aria-hidden className="absolute inset-0 bg-[#073b37]">
+      <div aria-hidden className="absolute inset-0">
         <Image
           src={HERO_BACKGROUND}
           alt=""
           fill
           priority
-          sizes="(max-width: 1280px) 100vw, 1200px"
-          className="object-cover"
-          style={{ objectPosition: 'center 46%' }}
+          sizes="100vw"
+          className="object-cover object-[center_48%] sm:object-center"
         />
       </div>
+
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#073b37]/95 via-[#0F766E]/80 to-[#073b37]/65"
+        className="pointer-events-none absolute inset-0 bg-black/30"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_82%_12%,rgba(245,158,11,0.24),transparent_42%)]"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-l from-black/65 via-black/30 to-black/10"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-32 -start-24 size-80 rounded-full bg-primary/25 blur-3xl"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/35 to-transparent"
       />
 
-      <div className="relative mx-auto flex min-h-[430px] w-full max-w-5xl flex-col justify-center gap-5 px-4 py-6 sm:min-h-[410px] sm:gap-6 sm:px-7 sm:py-8 lg:min-h-[450px] lg:px-10">
-        <div className="relative z-10 max-w-3xl space-y-3 sm:space-y-4">
-          <p className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/95 px-3 py-1.5 text-[11px] font-extrabold text-primary shadow-soft backdrop-blur-sm sm:text-xs">
-            <Sparkles className="size-3.5 text-accent" aria-hidden />
-            بازار آنلاین افغانستان
-          </p>
+      <div className="relative mx-auto flex min-h-[410px] w-full max-w-[1440px] flex-col justify-center gap-6 px-4 py-10 sm:min-h-[450px] sm:gap-7 sm:px-8 sm:py-12 lg:min-h-[500px] lg:px-12">
+        <h1
+          id="home-hero-title"
+          className="max-w-4xl text-balance text-[1.9rem] font-black leading-[1.4] tracking-tight text-white drop-shadow-lg sm:text-4xl sm:leading-[1.35] lg:text-5xl"
+        >
+          هر چی می‌خواهی، از همین‌جا پیدا کن
+        </h1>
 
-          <div className="space-y-2">
-            <h1
-              id="home-hero-title"
-              className="max-w-3xl text-[1.8rem] font-black leading-[1.35] tracking-tight text-white drop-shadow-sm sm:text-3xl sm:leading-[1.4] lg:text-[2.8rem]"
-            >
-              هر چی می‌خواهی، از همین‌جا پیدا کن
-            </h1>
-            <p className="max-w-2xl text-xs leading-7 text-white/90 sm:text-sm sm:leading-8 lg:text-base">
-              موتر، خانه، موبایل و نیازهای روزمره را در آگهی‌های ویش‌بازار جست‌وجو کن.
-            </p>
-          </div>
-
-          <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-white/85 sm:text-xs">
-            <MapPinned className="size-4 text-[#FBBF24]" aria-hidden />
-            جست‌وجو بر اساس ولایت و شهر
-          </p>
-        </div>
-
-        <div className="relative z-10 w-full max-w-3xl rounded-[1.25rem] border border-white/75 bg-white/95 p-3 shadow-[0_18px_55px_rgba(3,35,33,0.26)] backdrop-blur-xl sm:rounded-[1.5rem] sm:p-4">
-          <div className="mb-2.5 flex items-center justify-between gap-2 px-0.5 sm:mb-3 sm:px-1">
-            <p className="flex items-center gap-1.5 text-xs font-extrabold text-foreground sm:text-sm">
-              <Search className="size-4 text-primary" aria-hidden />
-              چی دنبالش هستی؟
-            </p>
-            <span className="text-[10px] font-medium text-muted-foreground sm:text-[11px]">
-              جست‌وجو در آگهی‌ها
-            </span>
-          </div>
-
-          <Suspense
-            fallback={
-              <div className="grid gap-2.5 sm:grid-cols-[minmax(0,1fr)_12rem]">
-                <div className="h-12 animate-pulse rounded-xl bg-muted/30" />
-                <div className="h-12 animate-pulse rounded-xl bg-muted/30" />
-              </div>
-            }
-          >
-            <div className="grid min-w-0 grid-cols-1 gap-2.5 sm:grid-cols-[minmax(0,1fr)_12rem] sm:items-stretch">
-              <SearchField
-                className="w-full min-w-0"
-                placeholder="مثلاً موتر، خانه یا موبایل..."
-                redirectToSearch
-                compact
-              />
-              <LocationPicker
-                className="w-full min-w-0 sm:w-48"
-                redirectToSearch
-              />
+        <Suspense
+          fallback={
+            <div className="grid w-full max-w-4xl gap-3 sm:grid-cols-[minmax(0,1fr)_13rem]">
+              <div className="h-14 animate-pulse rounded-xl bg-white/85" />
+              <div className="h-14 animate-pulse rounded-xl bg-white/85" />
             </div>
-          </Suspense>
-        </div>
+          }
+        >
+          <div className="grid w-full max-w-4xl grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_13rem] sm:items-stretch">
+            <SearchField
+              className="w-full min-w-0"
+              placeholder="چی می‌خواهی پیدا کنی؟"
+              redirectToSearch
+              compact
+            />
+            <LocationPicker
+              className="w-full min-w-0 sm:w-52"
+              redirectToSearch
+            />
+          </div>
+        </Suspense>
       </div>
     </section>
   );
