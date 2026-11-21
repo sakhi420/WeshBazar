@@ -41,6 +41,11 @@ const nextConfig = {
         port: '3000',
         pathname: '/media/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
     ],
   },
   async rewrites() {
