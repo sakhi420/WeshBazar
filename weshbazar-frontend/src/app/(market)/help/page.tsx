@@ -122,7 +122,7 @@ export default function HelpPage() {
             const body = (
               <>
                 <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-caption font-bold text-primary-foreground shadow-soft">
-                  {String(index + 1).replace(/[0-9]/g, (digit) => '۰۱۲۳۴۵۶۷۸۹'[Number(digit)])}
+                  {['۱', '۲', '۳', '۴', '۵'][index] ?? index + 1}
                 </span>
                 <h3 className="mt-4 text-card-title font-bold text-foreground">{title}</h3>
                 <p className="mt-2 text-ui leading-7 text-muted-foreground">{text}</p>
