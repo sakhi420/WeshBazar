@@ -11,7 +11,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 import type { Prisma } from '../../../apps/api/src/generated/prisma/client';
-import { EXHIBITION_FIXTURES, type ExhibitionFixture } from './fixtures';
+import type { ExhibitionFixture } from './fixtures';
 import { sellerKeyForFixture, type ExhibitionSellerKey } from './sellers';
 import type { ExhibitionSellerOwner } from './seed-exhibition';
 
@@ -245,7 +245,7 @@ function buildSnapshot(input: {
     pricingType: input.fixture.pricingType,
     negotiable: input.fixture.negotiable,
     condition: input.fixture.condition,
-    attributes: input.attributes as Prisma.InputJsonObject,
+    attributes: input.attributes,
     categoryId: input.categoryId,
     provinceId: input.provinceId,
     cityId: input.cityId,
@@ -346,7 +346,7 @@ export async function seedExhibitionDataBulk(
       negotiable: fixture.negotiable,
       condition: fixture.condition,
       status: 'ACTIVE',
-      attributes: attributes as Prisma.InputJsonObject,
+      attributes,
       publishedAt: now,
       expiresAt,
       version: activeVersion,
