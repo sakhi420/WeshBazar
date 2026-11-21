@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   ArrowLeft,
   ArrowUpLeft,
@@ -332,29 +333,29 @@ function CategoryPhotoCard({
         category.className,
       )}
     >
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-20 scale-100 bg-cover transition-transform duration-700 ease-out group-hover:scale-110"
-        style={{
-          backgroundImage: `url("${category.image}")`,
-          backgroundPosition: category.position,
-        }}
+      <Image
+        src={category.image}
+        alt=""
+        fill
+        sizes="(max-width: 767px) 50vw, (max-width: 1279px) 33vw, 25vw"
+        style={{ objectPosition: category.position }}
+        className="z-0 object-cover transition-transform duration-700 ease-out group-hover:scale-110"
       />
       <div
         aria-hidden
         className={cn(
-          'absolute inset-0 -z-10',
+          'absolute inset-0 z-10',
           index === 0
             ? 'bg-gradient-to-t from-[#071f1b]/95 via-[#071f1b]/35 to-transparent'
             : 'bg-gradient-to-t from-[#071f1b]/95 via-[#071f1b]/30 to-[#071f1b]/5',
         )}
       />
 
-      <span className="absolute end-3 top-3 flex size-9 items-center justify-center rounded-xl border border-white/30 bg-white/15 text-white shadow-lg backdrop-blur-md transition-all duration-300 group-hover:rotate-[-8deg] group-hover:bg-accent group-hover:text-primary-dark sm:end-4 sm:top-4 sm:size-10">
+      <span className="absolute end-3 top-3 z-20 flex size-9 items-center justify-center rounded-xl border border-white/30 bg-white/15 text-white shadow-lg backdrop-blur-md transition-all duration-300 group-hover:rotate-[-8deg] group-hover:bg-accent group-hover:text-primary-dark sm:end-4 sm:top-4 sm:size-10">
         <Icon aria-hidden className="size-5" />
       </span>
 
-      <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3.5 sm:p-4 lg:p-5">
+      <span className="absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-2 p-3.5 sm:p-4 lg:p-5">
         <span className="min-w-0 text-start">
           <span className="block text-sm font-black leading-6 text-white sm:text-lg">{category.title}</span>
           <span className="mt-0.5 block text-[10px] font-medium leading-5 text-white/75 sm:text-xs">
@@ -455,16 +456,18 @@ function SellerInvitation() {
   return (
     <section className="container py-14 sm:py-16 lg:py-20">
       <div className="relative isolate min-h-[410px] overflow-hidden rounded-[1.8rem] bg-[#102b28] text-white shadow-lift sm:min-h-[360px] lg:min-h-[400px]">
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-20 bg-cover bg-[center_40%]"
-          style={{ backgroundImage: `url("${photos.seller}")` }}
+        <Image
+          src={photos.seller}
+          alt=""
+          fill
+          sizes="(max-width: 767px) 100vw, 1280px"
+          className="z-0 object-cover object-[center_40%]"
         />
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-gradient-to-t from-[#071c1a]/95 via-[#071c1a]/70 to-[#071c1a]/20 lg:bg-gradient-to-l lg:from-[#071c1a]/95 lg:via-[#071c1a]/65 lg:to-[#071c1a]/10"
+          className="absolute inset-0 z-10 bg-gradient-to-t from-[#071c1a]/95 via-[#071c1a]/70 to-[#071c1a]/20 lg:bg-gradient-to-l lg:from-[#071c1a]/95 lg:via-[#071c1a]/65 lg:to-[#071c1a]/10"
         />
-        <div className="flex min-h-[410px] flex-col justify-end p-6 sm:min-h-[360px] sm:p-9 lg:min-h-[400px] lg:max-w-[650px] lg:justify-center lg:p-12">
+        <div className="relative z-20 flex min-h-[410px] flex-col justify-end p-6 sm:min-h-[360px] sm:p-9 lg:min-h-[400px] lg:max-w-[650px] lg:justify-center lg:p-12">
           <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-extrabold text-white backdrop-blur-md">
             <Store aria-hidden className="size-4 text-accent" />
             برای فروشندگان
