@@ -18,6 +18,14 @@ const MIME_TYPES: Record<string, string> = {
   '.webp': 'image/webp',
 };
 
+function writeOutput(message: string): void {
+  process.stdout.write(message + '\n');
+}
+
+function writeError(message: string): void {
+  process.stderr.write(message + '\n');
+}
+
 async function collectFiles(root: string, current = root): Promise<LocalFile[]> {
   const entries = await readdir(current, { withFileTypes: true });
   const files: LocalFile[] = [];
@@ -86,12 +94,12 @@ async function main(): Promise<void> {
   let totalBytes = 0;
   for (const file of files) totalBytes += (await readFile(file.absolutePath)).byteLength;
 
-  console.log('Found ' + files.length + ' files (' + (totalBytes / 1024 / 1024).toFixed(2) + ' MiB).');
-  console.log('Source: ' + storageRoot);
-  console.log('Local files will not be deleted.');
+  writeOutput('Found ' + files.length + ' files (' + (totalBytes / 1024 / 1024).toFixed(2) + ' MiB).');
+  writeOutput('Source: ' + storageRoot);
+  writeOutput('Local files will not be deleted.');
 
   if (dryRun) {
-    console.log('Dry run only; no uploads were made.');
+    writeOutput('Dry run only; no uploads were made.');
     return;
   }
 
@@ -121,17 +129,18 @@ async function main(): Promise<void> {
         failures.push(file.key + ': ' + (error instanceof Error ? error.message : String(error)));
       }
     }));
-    console.log('Uploaded ' + uploaded + '/' + files.length + ' files.');
+    writeOutput('Uploaded ' + uploaded + '/' + files.length + ' files.');
   }
 
   if (failures.length > 0) {
-    for (const failure of failures) console.error('- ' + failure);
+    for (const failure of failures) writeError('- ' + failure);
     throw new Error('Migration incomplete. Keep local files and retry.');
   }
-  console.log('✔ Uploaded ' + uploaded + ' files. Local originals were preserved.');
+  writeOutput('✔ Uploaded ' + uploaded + ' files. Local originals were preserved.');
 }
 
 main().catch((error: unknown) => {
-  console.error('✖ Neon Object Storage migration failed:', error);
+  const details = error instanceof Error ? error.stack ?? error.message : String(error);
+  writeError('✖ Neon Object Storage migration failed: ' + details);
   process.exitCode = 1;
 });
