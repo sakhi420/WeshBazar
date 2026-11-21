@@ -273,23 +273,18 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
     <section
       aria-labelledby="categories-heading"
       className={cn(
-        'relative space-y-3 overflow-hidden rounded-[1.5rem] border border-border/70 bg-surface/75 p-3 shadow-soft backdrop-blur-sm sm:rounded-[1.75rem] sm:p-4',
+        'relative w-full space-y-3',
         className,
       )}
     >
-      <header className="flex items-center justify-between gap-2.5">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
-            <LayoutGrid className="size-[18px]" aria-hidden />
-          </span>
-          <div className="min-w-0">
-            <h2 id="categories-heading" className="text-sm font-extrabold tracking-tight text-foreground sm:text-base">
-              از کدام بخش شروع کنیم؟
-            </h2>
-            <p className="mt-0.5 text-[10px] font-medium text-muted-foreground sm:text-xs">
-              {categories.length.toLocaleString('fa-AF')} دسته برای گشت‌وگذار
-            </p>
-          </div>
+      <header className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h2 id="categories-heading" className="text-base font-black tracking-tight text-foreground sm:text-lg">
+            دسته‌بندی‌ها
+          </h2>
+          <p className="mt-0.5 text-[10px] font-medium text-muted-foreground sm:text-xs">
+            {categories.length.toLocaleString('fa-AF')} دسته برای گشت‌وگذار
+          </p>
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5">
@@ -332,7 +327,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
         onScroll={normalizeScrollPosition}
         className={cn(
           'category-marquee-viewport no-scrollbar w-full overflow-x-auto overflow-y-hidden overscroll-x-contain',
-          'touch-pan-x select-none xl:hidden',
+          'touch-manipulation select-none xl:hidden',
         )}
       >
         <div className="flex w-max items-start">
