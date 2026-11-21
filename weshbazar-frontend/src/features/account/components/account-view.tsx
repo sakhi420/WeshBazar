@@ -296,7 +296,8 @@ function AccountDashboard({ profile, className }: { profile: MyProfile; classNam
           </div>
 
           <div className="col-span-2 min-w-0 border-t border-primary/10 pt-3 lg:col-span-1 lg:ms-auto lg:w-auto lg:border-0 lg:pt-0">
-            <ProfilePhotoControls hasAvatar={Boolean(profile.avatarUrl)} />          </div>
+            <ProfilePhotoControls hasAvatar={Boolean(profile.avatarUrl)} />
+          </div>
         </div>
 
         {!profile.phoneVerified ? (
