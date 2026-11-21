@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { AccountView } from './account-view';
 
 const mockMutate = jest.fn();
@@ -36,7 +37,7 @@ jest.mock('next/link', () => {
     ...rest
   }: {
     href: string;
-    children?: React.ReactNode;
+    children?: ReactNode;
     [key: string]: unknown;
   }) {
     return <a href={href} {...rest}>{children}</a>;
@@ -70,7 +71,7 @@ jest.mock('@/components/ui/button', () => ({
     type = 'button',
     ...rest
   }: {
-    children?: React.ReactNode;
+    children?: ReactNode;
     type?: 'button' | 'submit' | 'reset';
     [key: string]: unknown;
   }) => <button type={type} {...rest}>{children}</button>,
