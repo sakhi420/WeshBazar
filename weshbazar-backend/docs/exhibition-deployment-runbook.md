@@ -103,8 +103,10 @@ rewrites.
 - Browse home, search, category, listing details and seller pages on a phone
   using mobile data.
 - Confirm original and variant images load without authentication.
-- Sign in with a pre-seeded, phone-verified exhibition account. Do not put its
-  password in this repository or on the event poster.
+- Sign in with a pre-seeded exhibition account and confirm the storefront pages
+  show the five approved public names. Seeded users remain phone-unverified;
+  do not claim they have passed OTP verification. Do not put passwords in this
+  repository or on the event poster.
 - Check Netlify and Neon Object Storage usage after the public demo.
 - Keep local PostgreSQL and media backups until cloud copies are verified.
 
@@ -116,9 +118,22 @@ Do not use `npm run db:seed`: the general seed also upserts the administrator
 account and may refresh its password from environment values.
 
 The exhibition seed creates five independent USER logins and five public
-INDIVIDUAL seller profiles. The 147 stable fixtures are grouped by product
-type and assigned as 30 / 30 / 29 / 30 / 28 listings. No new API endpoint,
-database migration, or OpenAPI change is involved.
+INDIVIDUAL seller profiles. The public storefront names and fixture allocation
+are fixed as follows:
+
+| Public seller profile | Listings | Credential key |
+| --- | ---: | --- |
+| بازار موتر پامیر | 18 | `pamir` |
+| خانه و املاک آریانا | 27 | `ariana` |
+| فروشگاه تجهیزات نوین | 36 | `novin` |
+| فروشگاه خانواده | 31 | `family` |
+| بازار خدمات و زراعت | 35 | `services` |
+| **Total** | **147** | |
+
+The login phone/password pairs are associated with these credential keys in
+the same order supplied by the project owner; they do not determine the public
+storefront names. No new API endpoint, database migration, or OpenAPI change
+is involved.
 
 ### Local credentials
 
@@ -130,11 +145,11 @@ Its required shape is:
 
 ```json
 [
-  { "key": "kamal", "phone": "AF_PHONE_1", "password": "LOCAL_PASSWORD_1" },
-  { "key": "hasan", "phone": "AF_PHONE_2", "password": "LOCAL_PASSWORD_2" },
-  { "key": "mir", "phone": "AF_PHONE_3", "password": "LOCAL_PASSWORD_3" },
-  { "key": "farid", "phone": "AF_PHONE_4", "password": "LOCAL_PASSWORD_4" },
-  { "key": "khalid", "phone": "AF_PHONE_5", "password": "LOCAL_PASSWORD_5" }
+  { "key": "pamir", "phone": "AF_PHONE_1", "password": "LOCAL_PASSWORD_1" },
+  { "key": "ariana", "phone": "AF_PHONE_2", "password": "LOCAL_PASSWORD_2" },
+  { "key": "novin", "phone": "AF_PHONE_3", "password": "LOCAL_PASSWORD_3" },
+  { "key": "family", "phone": "AF_PHONE_4", "password": "LOCAL_PASSWORD_4" },
+  { "key": "services", "phone": "AF_PHONE_5", "password": "LOCAL_PASSWORD_5" }
 ]
 ```
 
