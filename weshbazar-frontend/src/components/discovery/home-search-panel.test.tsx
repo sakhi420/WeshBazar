@@ -10,7 +10,7 @@ jest.mock('@/components/location/location-picker', () => ({
 import { HomeSearchPanel } from './home-search-panel';
 
 describe('HomeSearchPanel', () => {
-  it('renders the homepage message and a compact search/location row', () => {
+  it('keeps the compact keyword search and city picker together in a responsive row', () => {
     const { container } = render(<HomeSearchPanel />);
 
     expect(screen.getByRole('heading', { name: 'هر چی می‌خواهی، از همین‌جا پیدا کن' })).toBeInTheDocument();
