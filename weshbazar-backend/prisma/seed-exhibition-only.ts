@@ -171,9 +171,20 @@ function assertFixtureIntegrity(): void {
     const key = sellerKeyForFixture(fixture);
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
+  const expectedCounts: Record<ExhibitionSellerKey, number> = {
+    kamal: 30,
+    hasan: 30,
+    mir: 29,
+    farid: 30,
+    khalid: 28,
+  };
   for (const key of Object.keys(EXHIBITION_SELLERS) as ExhibitionSellerKey[]) {
     const count = counts.get(key) ?? 0;
-    if (count === 0 || count > 50) throw new Error(`Seller allocation ${key} is outside the valid 1–50 range.`);
+    if (count !== expectedCounts[key] || count > 50) {
+      throw new Error(
+        `Seller allocation ${key} changed unexpectedly: expected ${expectedCounts[key]}, found ${count}.`,
+      );
+    }
   }
 }
 
@@ -561,7 +572,7 @@ async function main(): Promise<void> {
           slug: true, sellerAccountId: true, status: true, deletedAt: true, expiresAt: true,
           images: { where: { deletedAt: null }, select: { id: true } },
           contactMethods: {
-            where: { type: { in: ['PHONE', 'WHATSAPP'] } }, select: { enabled: true },
+            where: { type: { in: ['PHONE', 'WHATSAPP', 'TELEGRAM'] } }, select: { enabled: true },
           },
         },
       });
