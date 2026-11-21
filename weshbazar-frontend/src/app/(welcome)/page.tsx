@@ -87,11 +87,11 @@ function Hero() {
       <div aria-hidden className="absolute inset-0 -z-20">
         <div
           className="absolute inset-0 bg-cover bg-[center_34%] lg:hidden"
-          style={{ backgroundImage: \`url("\${photos.heroMobile}")\` }}
+          style={{ backgroundImage: `url("${photos.heroMobile}")` }}
         />
         <div
           className="absolute inset-0 hidden bg-cover bg-[center_48%] lg:block"
-          style={{ backgroundImage: \`url("\${photos.heroWide}")\` }}
+          style={{ backgroundImage: `url("${photos.heroWide}")` }}
         />
       </div>
 
@@ -325,7 +325,7 @@ function CategoryPhotoCard({
 
   return (
     <Link
-      href={\`/category/\${category.slug}\`}
+      href={`/category/${category.slug}`}
       className={cn(
         'group relative isolate block overflow-hidden rounded-[1.35rem] bg-[#263c39] text-white shadow-card transition-all duration-300',
         'hover:-translate-y-1 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
@@ -336,7 +336,7 @@ function CategoryPhotoCard({
         aria-hidden
         className="absolute inset-0 -z-20 scale-100 bg-cover transition-transform duration-700 ease-out group-hover:scale-110"
         style={{
-          backgroundImage: \`url("\${category.image}")\`,
+          backgroundImage: `url("${category.image}")`,
           backgroundPosition: category.position,
         }}
       />
@@ -458,7 +458,7 @@ function SellerInvitation() {
         <div
           aria-hidden
           className="absolute inset-0 -z-20 bg-cover bg-[center_40%]"
-          style={{ backgroundImage: \`url("\${photos.seller}")\` }}
+          style={{ backgroundImage: `url("${photos.seller}")` }}
         />
         <div
           aria-hidden
