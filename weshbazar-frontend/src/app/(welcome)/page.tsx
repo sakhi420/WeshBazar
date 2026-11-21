@@ -47,22 +47,14 @@ export const metadata: Metadata = {
  * Pexels permits free use on websites and apps; attribution is appreciated.
  */
 const photos = {
-  heroMobile:
-    'https://images.pexels.com/photos/34271392/pexels-photo-34271392/free-photo-of-charming-shopkeeper-in-middle-eastern-bazaar.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  heroWide:
-    'https://images.pexels.com/photos/37863204/pexels-photo-37863204/free-photo-of-bustling-small-shop-with-assorted-products.jpeg?auto=compress&cs=tinysrgb&w=2200',
-  seller:
-    'https://images.pexels.com/photos/37115597/pexels-photo-37115597/free-photo-of-local-shopkeeper-in-a-busy-marketplace.jpeg?auto=compress&cs=tinysrgb&w=1600',
-  vehicles:
-    'https://images.pexels.com/photos/40895082/pexels-photo-40895082/free-photo-of-car-dealership-consultation-with-customers-in-showroom.jpeg?auto=compress&cs=tinysrgb&w=1200',
-  realEstate:
-    'https://images.pexels.com/photos/7587880/pexels-photo-7587880.jpeg?auto=compress&cs=tinysrgb&w=1000',
-  electronics:
-    'https://images.pexels.com/photos/20259184/pexels-photo-20259184/free-photo-of-display-of-electronics.jpeg?auto=compress&cs=tinysrgb&w=1000',
-  home:
-    'https://images.pexels.com/photos/7511701/pexels-photo-7511701.jpeg?auto=compress&cs=tinysrgb&w=1000',
-  fashion:
-    'https://images.pexels.com/photos/5490963/pexels-photo-5490963.jpeg?auto=compress&cs=tinysrgb&w=1000',
+  heroMobile: '/images/welcome/hero-mobile.jpg',
+  heroWide: '/images/welcome/hero-wide.jpg',
+  seller: '/images/welcome/seller.jpg',
+  vehicles: '/images/welcome/vehicles.jpg',
+  realEstate: '/images/welcome/real-estate.jpg',
+  electronics: '/images/welcome/electronics.jpg',
+  home: '/images/welcome/home.jpg',
+  fashion: '/images/welcome/fashion.jpg',
 } as const;
 
 export default function WelcomePage() {
