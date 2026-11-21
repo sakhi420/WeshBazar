@@ -1,30 +1,54 @@
 /**
- * Safe, exhibition-only listing seed.
- *
- * Dry-run is the default. This command never seeds locations, taxonomy, users,
- * passwords, or sample accounts. It only targets the existing ADMIN seller and
- * the 147 stable exhibition fixture slugs.
- *
- * Before --apply, the caller must explicitly allow the exact Neon DB hostname
- * and provide a one-time acknowledgement. Images are written into an isolated
- * ignored local folder, then copied to Neon with media:migrate:neon.
+ * Guarded exhibition seeder. Dry-run is the default.
+ * Real phone/password pairs are read only from the ignored local JSON file.
  */
 import 'dotenv/config';
-import { access, stat } from 'node:fs/promises';
+import { argon2id, hash as argon2Hash } from 'argon2';
+import { access, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { randomUUID } from 'node:crypto';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { PrismaPg } from '@prisma/adapter-pg';
-import sharp from 'sharp';
-import { PrismaClient } from '../apps/api/src/generated/prisma/client';
+import { PrismaClient, type Prisma } from '../apps/api/src/generated/prisma/client';
+import { validateAttributeValues } from '../apps/api/src/modules/taxonomy/attribute-validation';
+import type { EffectiveAttribute } from '../apps/api/src/modules/taxonomy/attribute.types';
 import { EXHIBITION_FIXTURES } from './seed/exhibition/fixtures';
-import { seedExhibitionData } from './seed/exhibition/seed-exhibition';
+import { EXHIBITION_SELLERS, sellerKeyForFixture, type ExhibitionSellerKey } from './seed/exhibition/sellers';
+import { seedExhibitionData, type ExhibitionSellerOwner } from './seed/exhibition/seed-exhibition';
 
-const EXPECTED_FIXTURE_COUNT = 147;
-const APPLY_ACKNOWLEDGEMENT = 'PUBLISH_147_LISTINGS';
-const ISOLATED_STORAGE_ROOT = path.resolve(
-  process.cwd(),
-  'apps/api/var/exhibition-seed-storage',
-);
+const EXPECTED_FIXTURES = 147;
+const ACK = 'PUBLISH_147_LISTINGS';
+const CREDENTIALS_PATH = path.resolve(process.cwd(), 'prisma/exhibition-seller-credentials.local.json');
+const STAGING_PARENT = path.resolve(process.cwd(), 'apps/api/var/exhibition-seed-storage');
+const ARGON2_OPTIONS = { type: argon2id, memoryCost: 19_456, timeCost: 2, parallelism: 1 } as const;
+
+interface Credential {
+  key: ExhibitionSellerKey;
+  phone: string;
+  phoneNormalized: string;
+  password: string;
+}
+interface SellerPlan {
+  key: ExhibitionSellerKey;
+  credential: Credential;
+  displayName: string;
+  slug: string;
+  bio: string;
+  existingUserId: string | null;
+  existingSellerId: string | null;
+  activeCount: number;
+  fixtureCount: number;
+}
+interface Preflight {
+  adminUserId: string;
+  sellers: SellerPlan[];
+  normalized: Map<string, Record<string, string | number | boolean | string[]>>;
+  schemaRefs: Map<string, Prisma.InputJsonValue>;
+  existingCount: number;
+  newCount: number;
+  archivedCount: number;
+  imageBytes: number;
+}
 
 function requiredEnv(name: string): string {
   const value = process.env[name]?.trim();
@@ -32,11 +56,10 @@ function requiredEnv(name: string): string {
   return value;
 }
 
-function parseArguments(): { apply: boolean } {
+function parseArgs(): { apply: boolean } {
   const args = process.argv.slice(2);
-  const unsupported = args.filter((arg) => arg !== '--apply' && arg !== '--dry-run');
-  if (unsupported.length > 0) {
-    throw new Error('Unsupported argument(s): ' + unsupported.join(', '));
+  if (args.some((item) => item !== '--apply' && item !== '--dry-run')) {
+    throw new Error('Only --dry-run and --apply are supported.');
   }
   if (args.includes('--apply') && args.includes('--dry-run')) {
     throw new Error('Use either --apply or --dry-run, not both.');
@@ -44,303 +67,482 @@ function parseArguments(): { apply: boolean } {
   return { apply: args.includes('--apply') };
 }
 
-function validateDatabaseTarget(): string {
-  const databaseUrl = requiredEnv('DATABASE_URL');
-  const actualHost = new URL(databaseUrl).hostname.toLowerCase();
-  const expectedHost = requiredEnv('EXHIBITION_SEED_EXPECTED_DATABASE_HOST').toLowerCase();
-
-  if (!actualHost.endsWith('.neon.tech')) {
-    throw new Error('Refusing to seed a non-Neon database host: ' + actualHost);
+function validateTarget(): string {
+  const host = new URL(requiredEnv('DATABASE_URL')).hostname.toLowerCase();
+  const expected = requiredEnv('EXHIBITION_SEED_EXPECTED_DATABASE_HOST').toLowerCase();
+  if (!host.endsWith('.neon.tech') || host !== expected) {
+    throw new Error('Database host does not match the explicitly allowed Neon hostname.');
   }
-  if (actualHost !== expectedHost) {
-    throw new Error(
-      'Database host mismatch. DATABASE_URL points to "' + actualHost +
-      '", but EXHIBITION_SEED_EXPECTED_DATABASE_HOST is "' + expectedHost + '".',
-    );
-  }
-  return actualHost;
+  return host;
 }
 
-function normalizeAdminPhone(): string {
-  const raw = process.env.SEED_ADMIN_PHONE?.trim() || '+93700000000';
-  const parsed = parsePhoneNumberFromString(raw);
-  if (!parsed || !parsed.isValid()) {
-    throw new Error('SEED_ADMIN_PHONE must be a valid Afghan E.164 phone number.');
+function normalizePhone(value: string, label: string): { phone: string; phoneNormalized: string } {
+  const parsed = parsePhoneNumberFromString(value.trim(), 'AF');
+  if (!parsed || !parsed.isValid() || parsed.country !== 'AF') {
+    throw new Error('Invalid Afghan phone number for seller ' + label + '.');
   }
-  const normalized = parsed.number;
-  // Keep the existing exhibition seeder's lookup identical to this preflight.
-  process.env.SEED_ADMIN_PHONE = normalized;
-  return normalized;
+  return { phone: value.trim(), phoneNormalized: parsed.number };
+}
+
+async function readCredentials(): Promise<Credential[]> {
+  try {
+    await access(CREDENTIALS_PATH);
+  } catch {
+    throw new Error(
+      'Create prisma/exhibition-seller-credentials.local.json locally from the five phone/password pairs. ' +
+      'The file is git-ignored; never add it to Git.',
+    );
+  }
+
+  let rows: unknown;
+  try {
+    rows = JSON.parse(await readFile(CREDENTIALS_PATH, 'utf8')) as unknown;
+  } catch {
+    throw new Error('Seller credential file is not valid JSON.');
+  }
+  const expected = Object.keys(EXHIBITION_SELLERS).sort();
+  if (!Array.isArray(rows) || rows.length !== expected.length) {
+    throw new Error('Seller credential file must contain exactly five entries.');
+  }
+
+  const seenKeys = new Set<string>();
+  const seenPhones = new Set<string>();
+  const result: Credential[] = [];
+  for (const row of rows) {
+    if (
+      row === null || typeof row !== 'object' ||
+      typeof row.key !== 'string' || typeof row.phone !== 'string' ||
+      typeof row.password !== 'string' || !expected.includes(row.key) ||
+      seenKeys.has(row.key)
+    ) {
+      throw new Error('Credential entries must contain unique known keys, phone, and password strings.');
+    }
+    const phone = normalizePhone(row.phone, row.key);
+    if (seenPhones.has(phone.phoneNormalized)) {
+      throw new Error('Each seller must have a distinct Afghan phone number.');
+    }
+    if (
+      row.password.length < 8 || row.password.length > 128 ||
+      !/[A-Za-z]/.test(row.password) || !/\d/.test(row.password)
+    ) {
+      throw new Error('All seller passwords must be 8–128 characters and contain letters and digits.');
+    }
+    seenKeys.add(row.key);
+    seenPhones.add(phone.phoneNormalized);
+    result.push({ key: row.key as ExhibitionSellerKey, ...phone, password: row.password });
+  }
+  if (expected.some((key) => !seenKeys.has(key))) {
+    throw new Error('Credential file is missing one or more seller keys.');
+  }
+  return result.sort((a, b) => expected.indexOf(a.key) - expected.indexOf(b.key));
 }
 
 function assertFixtureIntegrity(): void {
-  if (EXHIBITION_FIXTURES.length !== EXPECTED_FIXTURE_COUNT) {
-    throw new Error(
-      'Expected ' + EXPECTED_FIXTURE_COUNT + ' exhibition fixtures, found ' +
-      EXHIBITION_FIXTURES.length + '. Review the seed before applying.',
-    );
+  if (EXHIBITION_FIXTURES.length !== EXPECTED_FIXTURES) {
+    throw new Error(`Expected ${EXPECTED_FIXTURES} fixtures, found ${EXHIBITION_FIXTURES.length}.`);
   }
-
   const slugs = EXHIBITION_FIXTURES.map((fixture) => fixture.slug);
-  if (new Set(slugs).size !== slugs.length) {
-    throw new Error('Duplicate fixture slugs detected.');
+  const images = EXHIBITION_FIXTURES.map((fixture) => fixture.imageFile);
+  if (new Set(slugs).size !== slugs.length || new Set(images).size !== images.length) {
+    throw new Error('Duplicate listing slugs or image references detected.');
   }
-
-  const imageFiles = EXHIBITION_FIXTURES.map((fixture) => fixture.imageFile);
-  if (new Set(imageFiles).size !== imageFiles.length) {
-    throw new Error('Duplicate fixture image references detected.');
+  const counts = new Map<ExhibitionSellerKey, number>();
+  for (const fixture of EXHIBITION_FIXTURES) {
+    const key = sellerKeyForFixture(fixture);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  for (const key of Object.keys(EXHIBITION_SELLERS) as ExhibitionSellerKey[]) {
+    const count = counts.get(key) ?? 0;
+    if (count === 0 || count > 50) throw new Error(`Seller allocation ${key} is outside the valid 1–50 range.`);
   }
 }
 
-async function main(): Promise<void> {
-  const { apply } = parseArguments();
-  const databaseHost = validateDatabaseTarget();
-  const adminPhone = normalizeAdminPhone();
+function toEffectiveAttribute(attribute: {
+  id: string; categoryId: string; key: string; label: string; type: EffectiveAttribute['type'];
+  required: boolean; filterable: boolean; searchable: boolean; unit: string | null;
+  placeholder: string | null; minValue: { toString(): string } | null;
+  maxValue: { toString(): string } | null; minLength: number | null; maxLength: number | null;
+  pattern: string | null; sortOrder: number; isActive: boolean;
+  options: Array<{ value: string; label: string; isActive: boolean; sortOrder: number }>;
+}): EffectiveAttribute {
+  return {
+    id: attribute.id, categoryId: attribute.categoryId, key: attribute.key,
+    label: attribute.label, type: attribute.type, required: attribute.required,
+    filterable: attribute.filterable, searchable: attribute.searchable,
+    unit: attribute.unit, placeholder: attribute.placeholder,
+    minValue: attribute.minValue === null ? null : Number(attribute.minValue),
+    maxValue: attribute.maxValue === null ? null : Number(attribute.maxValue),
+    minLength: attribute.minLength, maxLength: attribute.maxLength,
+    pattern: attribute.pattern, sortOrder: attribute.sortOrder, isActive: attribute.isActive,
+    options: attribute.options.map((option) => ({
+      value: option.value, label: option.label, isActive: option.isActive, sortOrder: option.sortOrder,
+    })),
+  };
+}
+
+async function buildPreflight(
+  prisma: PrismaClient,
+  credentials: Credential[],
+): Promise<Preflight> {
   assertFixtureIntegrity();
 
-  if (apply && process.env.EXHIBITION_SEED_CONFIRM !== APPLY_ACKNOWLEDGEMENT) {
-    throw new Error(
-      'Apply refused. Set EXHIBITION_SEED_CONFIRM=' + APPLY_ACKNOWLEDGEMENT +
-      ' explicitly before running with --apply.',
+  const adminPhone = normalizePhone(process.env.SEED_ADMIN_PHONE?.trim() || '+93700000000', 'administrator').phoneNormalized;
+  const admin = await prisma.user.findUnique({
+    where: { phoneNormalized: adminPhone },
+    include: { sellerAccount: true },
+  });
+  if (!admin || admin.role !== 'ADMIN' || admin.status !== 'ACTIVE' || admin.deletedAt !== null) {
+    throw new Error('Existing active administrator account was not found; no admin account will be created or changed.');
+  }
+  if (!admin.sellerAccount || admin.sellerAccount.status !== 'ACTIVE') {
+    throw new Error('Existing administrator seller profile is missing or inactive.');
+  }
+
+  const sellers: SellerPlan[] = [];
+  const userIds = new Set<string>();
+  for (const credential of credentials) {
+    const profile = EXHIBITION_SELLERS[credential.key];
+    const user = await prisma.user.findUnique({
+      where: { phoneNormalized: credential.phoneNormalized },
+      include: { sellerAccount: true },
+    });
+    if (user && (
+      user.id === admin.id || user.role !== 'USER' || user.status !== 'ACTIVE' || user.deletedAt !== null
+    )) {
+      throw new Error(`Existing account for seller "${credential.key}" is not an eligible active USER; it will not be overwritten.`);
+    }
+    if (user && userIds.has(user.id)) throw new Error('Two seller phones resolve to the same user.');
+    if (user) userIds.add(user.id);
+
+    const sellerAccount = user?.sellerAccount ?? null;
+    if (sellerAccount && sellerAccount.status !== 'ACTIVE') {
+      throw new Error(`Existing seller profile "${credential.key}" is inactive.`);
+    }
+    if (!sellerAccount) {
+      const slugOwner = await prisma.sellerAccount.findUnique({
+        where: { slug: profile.slug }, select: { ownerUserId: true },
+      });
+      if (slugOwner && slugOwner.ownerUserId !== user?.id) {
+        throw new Error(`Public seller slug collision for "${credential.key}".`);
+      }
+    }
+
+    const activeCount = sellerAccount
+      ? await prisma.listing.count({
+          where: { sellerAccountId: sellerAccount.id, status: 'ACTIVE', deletedAt: null },
+        })
+      : 0;
+    sellers.push({
+      key: credential.key, credential, displayName: profile.displayName, slug: profile.slug,
+      bio: profile.bio, existingUserId: user?.id ?? null,
+      existingSellerId: sellerAccount?.id ?? null, activeCount,
+      fixtureCount: EXHIBITION_FIXTURES.filter((fixture) => sellerKeyForFixture(fixture) === credential.key).length,
+    });
+  }
+
+  const categories = await prisma.category.findMany({
+    include: { attributes: { include: { options: true } } },
+  });
+  const categoryBySlug = new Map(categories.map((category) => [category.slug, category]));
+  const categoryById = new Map(categories.map((category) => [category.id, category]));
+  const activeParentIds = new Set(
+    categories.filter((item) => item.status === 'ACTIVE' && item.parentId).map((item) => item.parentId as string),
+  );
+
+  const provinceSlugs = [...new Set(EXHIBITION_FIXTURES.map((fixture) => fixture.provinceSlug))];
+  const provinces = await prisma.province.findMany({
+    where: { slug: { in: provinceSlugs } },
+    select: { id: true, slug: true, status: true },
+  });
+  const provinceBySlug = new Map(provinces.map((item) => [item.slug, item]));
+  const cities = await prisma.city.findMany({
+    where: { provinceId: { in: provinces.map((item) => item.id) } },
+    select: { id: true, slug: true, provinceId: true, status: true },
+  });
+  const cityByKey = new Map(cities.map((item) => [item.provinceId + '/' + item.slug, item]));
+
+  const normalized = new Map<string, Record<string, string | number | boolean | string[]>>();
+  const schemaRefs = new Map<string, Prisma.InputJsonValue>();
+  const missing: string[] = [];
+  const invalid: string[] = [];
+
+  for (const fixture of EXHIBITION_FIXTURES) {
+    const category = categoryBySlug.get(fixture.categorySlug);
+    const province = provinceBySlug.get(fixture.provinceSlug);
+    const city = province ? cityByKey.get(province.id + '/' + fixture.citySlug) : undefined;
+    if (!category || category.status !== 'ACTIVE' || activeParentIds.has(category.id)) {
+      missing.push(`category ${fixture.categorySlug} is missing, inactive, or not a leaf`);
+      continue;
+    }
+    if (!province || province.status !== 'ACTIVE') {
+      missing.push(`province ${fixture.provinceSlug} is missing or inactive`);
+      continue;
+    }
+    if (!city || city.status !== 'ACTIVE') {
+      missing.push(`city ${fixture.provinceSlug}/${fixture.citySlug} is missing or inactive`);
+      continue;
+    }
+
+    const chain: typeof categories = [];
+    let current: (typeof categories)[number] | undefined = category;
+    while (current) {
+      chain.unshift(current);
+      current = current.parentId ? categoryById.get(current.parentId) : undefined;
+    }
+    if (chain.some((item) => item.status !== 'ACTIVE')) {
+      missing.push(`category ancestry for ${fixture.categorySlug} contains an inactive node`);
+      continue;
+    }
+
+    const attributesByKey = new Map<string, EffectiveAttribute>();
+    for (const node of chain) {
+      for (const attribute of [...node.attributes].sort((a, b) => a.sortOrder - b.sortOrder)) {
+        attributesByKey.set(attribute.key, toEffectiveAttribute(attribute));
+      }
+    }
+    const effective = [...attributesByKey.values()];
+    const validation = validateAttributeValues(effective, fixture.attributes as Record<string, unknown>);
+    if (validation.issues.length) {
+      invalid.push(
+        `${fixture.key}: ${validation.issues.map((issue) => issue.field + '/' + issue.rule).join(', ')}`,
+      );
+      continue;
+    }
+    normalized.set(fixture.slug, validation.normalized);
+    schemaRefs.set(
+      fixture.slug,
+      effective.filter((item) => item.isActive).map((item) => ({
+        key: item.key, type: item.type, required: item.required,
+      })) as unknown as Prisma.InputJsonValue,
     );
   }
+  if (missing.length) throw new Error('Base data validation failed:\n- ' + [...new Set(missing)].join('\n- '));
+  if (invalid.length) throw new Error('Fixture attribute validation failed:\n- ' + invalid.join('\n- '));
 
   const assetsRoot = path.resolve(process.cwd(), 'prisma/seed/exhibition/assets');
   await access(assetsRoot);
+  let imageBytes = 0;
+  for (const fixture of EXHIBITION_FIXTURES) {
+    const assetPath = path.resolve(assetsRoot, fixture.imageFile);
+    if (!assetPath.startsWith(assetsRoot + path.sep)) throw new Error('Unsafe fixture asset path.');
+    const stat = await readFile(assetPath);
+    if (!stat.byteLength) throw new Error('Empty fixture image: ' + fixture.imageFile);
+    imageBytes += stat.byteLength;
+  }
 
-  const assetChecks = await Promise.all(
-    EXHIBITION_FIXTURES.map(async (fixture) => {
-      const filePath = path.join(assetsRoot, fixture.imageFile);
-      const fileStat = await stat(filePath);
-      if (!fileStat.isFile()) throw new Error('Fixture asset is not a file: ' + fixture.imageFile);
-      const metadata = await sharp(filePath, { limitInputPixels: 25_000_000 }).metadata();
-      if (
-        !metadata.width ||
-        !metadata.height ||
-        metadata.width * metadata.height > 25_000_000
-      ) {
-        throw new Error('Fixture image dimensions are invalid: ' + fixture.imageFile);
+  const slugs = EXHIBITION_FIXTURES.map((fixture) => fixture.slug);
+  const existing = await prisma.listing.findMany({
+    where: { slug: { in: slugs } },
+    select: {
+      slug: true, sellerAccountId: true, status: true, deletedAt: true,
+      images: { where: { deletedAt: null }, select: { id: true } },
+    },
+  });
+  const existingBySlug = new Map(existing.map((item) => [item.slug, item]));
+  let newCount = 0;
+  let archivedCount = 0;
+
+  for (const fixture of EXHIBITION_FIXTURES) {
+    const row = existingBySlug.get(fixture.slug);
+    if (!row) { newCount += 1; continue; }
+    const plan = sellers.find((item) => item.key === sellerKeyForFixture(fixture));
+    if (!plan?.existingSellerId || row.sellerAccountId !== plan.existingSellerId) {
+      throw new Error(`Fixture slug collision: ${fixture.slug} belongs to a different seller; no ownership change will be made.`);
+    }
+    if (row.deletedAt !== null || !['ACTIVE', 'ARCHIVED'].includes(row.status)) {
+      throw new Error(`Fixture ${fixture.slug} has unsupported/deleted status ${row.status}.`);
+    }
+    if (row.images.length > 1) throw new Error(`Fixture ${fixture.slug} has multiple active images.`);
+    if (row.status === 'ARCHIVED') archivedCount += 1;
+  }
+
+  for (const seller of sellers) {
+    const alreadyActive = EXHIBITION_FIXTURES.filter((fixture) =>
+      sellerKeyForFixture(fixture) === seller.key &&
+      existingBySlug.get(fixture.slug)?.status === 'ACTIVE',
+    ).length;
+    const toActivate = seller.fixtureCount - alreadyActive;
+    if (seller.activeCount + toActivate > 50) {
+      throw new Error(
+        `Seller "${seller.key}" exceeds the active limit: ${seller.activeCount} existing + ${toActivate} exhibition (max 50).`,
+      );
+    }
+  }
+
+  return {
+    adminUserId: admin.id, sellers, normalized, schemaRefs,
+    existingCount: existing.length, newCount, archivedCount, imageBytes,
+  };
+}
+
+async function provisionSellers(
+  tx: Prisma.TransactionClient,
+  preflight: Preflight,
+  passwordHashes: Map<ExhibitionSellerKey, string>,
+): Promise<Record<ExhibitionSellerKey, ExhibitionSellerOwner>> {
+  const result = {} as Record<ExhibitionSellerKey, ExhibitionSellerOwner>;
+  for (const item of preflight.sellers) {
+    let user = await tx.user.findUnique({ where: { phoneNormalized: item.credential.phoneNormalized } });
+    if (!user) {
+      const passwordHash = passwordHashes.get(item.key);
+      if (!passwordHash) throw new Error('Missing hash for new seller ' + item.key + '.');
+      user = await tx.user.create({
+        data: {
+          phone: item.credential.phone,
+          phoneNormalized: item.credential.phoneNormalized,
+          passwordHash,
+          displayName: item.displayName,
+          role: 'USER',
+          status: 'ACTIVE',
+          phoneVerifiedAt: null,
+        },
+      });
+    } else if (user.role !== 'USER' || user.status !== 'ACTIVE' || user.deletedAt !== null) {
+      throw new Error(`Seller ${item.key} changed state after preflight; no account data was modified.`);
+    }
+
+    let sellerAccount = await tx.sellerAccount.findUnique({ where: { ownerUserId: user.id } });
+    if (!sellerAccount) {
+      const slugCollision = await tx.sellerAccount.findUnique({
+        where: { slug: item.slug }, select: { ownerUserId: true },
+      });
+      if (slugCollision && slugCollision.ownerUserId !== user.id) {
+        throw new Error('Seller slug collision appeared for ' + item.key + '.');
       }
-      return { size: fileStat.size, width: metadata.width, height: metadata.height };
-    }),
-  );
-  const missingOrEmptyAssets = assetChecks.filter((asset) => asset.size <= 0).length;
-  if (missingOrEmptyAssets > 0) throw new Error('Empty exhibition image assets detected.');
+      sellerAccount = await tx.sellerAccount.create({
+        data: {
+          ownerUserId: user.id, displayName: item.displayName, slug: item.slug,
+          bio: item.bio, type: 'INDIVIDUAL', status: 'ACTIVE',
+        },
+      });
+    } else if (sellerAccount.status !== 'ACTIVE') {
+      throw new Error('Seller profile became inactive: ' + item.key);
+    }
 
-  const adapter = new PrismaPg({ connectionString: requiredEnv('DATABASE_URL') });
-  const prisma = new PrismaClient({ adapter });
+    result[item.key] = { userId: user.id, sellerAccountId: sellerAccount.id };
+  }
+  return result;
+}
+
+async function main(): Promise<void> {
+  const { apply } = parseArgs();
+  const databaseHost = validateTarget();
+  const credentials = await readCredentials();
+  assertFixtureIntegrity();
+  if (apply && process.env.EXHIBITION_SEED_CONFIRM !== ACK) {
+    throw new Error('Apply refused; explicitly set EXHIBITION_SEED_CONFIRM=PUBLISH_147_LISTINGS.');
+  }
+
+  const prisma = new PrismaClient({
+    adapter: new PrismaPg({ connectionString: requiredEnv('DATABASE_URL') }),
+  });
+  let stagingRoot: string | null = null;
+  let markerPath: string | null = null;
 
   try {
-    const admin = await prisma.user.findUnique({
-      where: { phoneNormalized: adminPhone },
-      include: { sellerAccount: true },
-    });
-
-    if (!admin || admin.role !== 'ADMIN' || admin.status !== 'ACTIVE' || admin.deletedAt) {
-      throw new Error(
-        'The existing active ADMIN account was not found for ' + adminPhone +
-        '. This command will not create or modify an admin account.',
-      );
-    }
-    if (!admin.sellerAccount || admin.sellerAccount.status !== 'ACTIVE') {
-      throw new Error('The existing ADMIN seller account is missing or inactive.');
-    }
-
-    const categorySlugs = [...new Set(EXHIBITION_FIXTURES.map((fixture) => fixture.categorySlug))];
-    const provinceSlugs = [...new Set(EXHIBITION_FIXTURES.map((fixture) => fixture.provinceSlug))];
-    const [categories, provinces] = await Promise.all([
-      prisma.category.findMany({
-        where: { slug: { in: categorySlugs } },
-        select: { id: true, slug: true },
-      }),
-      prisma.province.findMany({
-        where: { slug: { in: provinceSlugs } },
-        select: { id: true, slug: true },
-      }),
-    ]);
-
-    const categorySet = new Set(categories.map((category) => category.slug));
-    const categoryIdBySlug = new Map(
-      categories.map((category) => [category.slug, category.id] as const),
-    );
-    const provinceMap = new Map(provinces.map((province) => [province.slug, province]));
-    const missingCategories = categorySlugs.filter((slug) => !categorySet.has(slug));
-    const missingProvinces = provinceSlugs.filter((slug) => !provinceMap.has(slug));
-
-    const categoryAttributes = await prisma.categoryAttribute.findMany({
-      where: { categoryId: { in: categories.map((category) => category.id) }, isActive: true },
-      select: {
-        categoryId: true,
-        key: true,
-        type: true,
-        options: { where: { isActive: true }, select: { value: true } },
-      },
-    });
-    const selectableByCategory = new Map<string, Map<string, string[]>>();
-    for (const attribute of categoryAttributes) {
-      if (attribute.type !== 'SELECT') continue;
-      const selectable = selectableByCategory.get(attribute.categoryId) ?? new Map<string, string[]>();
-      selectable.set(attribute.key, attribute.options.map((option) => option.value));
-      selectableByCategory.set(attribute.categoryId, selectable);
-    }
-
-    const invalidSelections: string[] = [];
-    for (const fixture of EXHIBITION_FIXTURES) {
-      const categoryId = categoryIdBySlug.get(fixture.categorySlug);
-      if (!categoryId) continue;
-      const selectable = selectableByCategory.get(categoryId);
-      for (const [key, value] of Object.entries(fixture.attributes)) {
-        const allowed = selectable?.get(key);
-        if (allowed && !allowed.includes(String(value))) {
-          invalidSelections.push(fixture.key + ':' + key + '=' + String(value));
-        }
-      }
-    }
-
-    if (invalidSelections.length > 0) {
-      throw new Error('Invalid category SELECT attributes: ' + invalidSelections.join(', '));
-    }
-
-    const cityPairs = new Map<string, { provinceSlug: string; citySlug: string }>();
-    for (const fixture of EXHIBITION_FIXTURES) {
-      cityPairs.set(fixture.provinceSlug + '/' + fixture.citySlug, {
-        provinceSlug: fixture.provinceSlug,
-        citySlug: fixture.citySlug,
-      });
-    }
-
-    const missingCities: string[] = [];
-    for (const pair of cityPairs.values()) {
-      const province = provinceMap.get(pair.provinceSlug);
-      if (!province) {
-        missingCities.push(pair.provinceSlug + '/' + pair.citySlug);
-        continue;
-      }
-      const city = await prisma.city.findUnique({
-        where: {
-          provinceId_slug: {
-            provinceId: province.id,
-            slug: pair.citySlug,
-          },
-        },
-        select: { id: true },
-      });
-      if (!city) missingCities.push(pair.provinceSlug + '/' + pair.citySlug);
-    }
-
-    if (missingCategories.length || missingProvinces.length || missingCities.length) {
-      throw new Error(
-        'Base data is incomplete. Missing categories: [' + missingCategories.join(', ') +
-        ']; provinces: [' + missingProvinces.join(', ') +
-        ']; cities: [' + missingCities.join(', ') + ']. Run no automatic base seed here.',
-      );
-    }
-
-    const fixtureSlugs = EXHIBITION_FIXTURES.map((fixture) => fixture.slug);
-    const existingListings = await prisma.listing.findMany({
-      where: { slug: { in: fixtureSlugs } },
-      select: {
-        slug: true,
-        sellerAccountId: true,
-        status: true,
-        deletedAt: true,
-        images: {
-          where: { deletedAt: null },
-          select: { id: true },
-        },
-      },
-    });
-
-    const foreignListings = existingListings.filter(
-      (listing) => listing.sellerAccountId !== admin.sellerAccount!.id,
-    );
-    if (foreignListings.length > 0) {
-      throw new Error(
-        'Fixture slug collision with listings owned by another seller: ' +
-        foreignListings.map((listing) => listing.slug).join(', '),
-      );
-    }
-
-    const nonActiveListings = existingListings.filter(
-      (listing) => listing.status !== 'ACTIVE' || listing.deletedAt !== null,
-    );
-    if (nonActiveListings.length > 0) {
-      throw new Error(
-        'Refusing to reactivate or overwrite archived/non-active fixture listings: ' +
-        nonActiveListings.map((listing) => listing.slug).join(', '),
-      );
-    }
-
-    const newListings = EXPECTED_FIXTURE_COUNT - existingListings.length;
-    const existingWithoutImages = existingListings.filter(
-      (listing) => listing.images.length === 0,
-    ).length;
-    const listingsNeedingImages = newListings + existingWithoutImages;
-    const totalAssetBytes = assetChecks.reduce((sum, asset) => sum + asset.size, 0);
-
+    const preflight = await buildPreflight(prisma, credentials);
     console.log('Exhibition seed preflight');
     console.log('Database host: ' + databaseHost);
-    console.log('Existing seller: ' + admin.sellerAccount.slug + ' (existing ADMIN account)');
-    console.log('Fixtures: ' + EXPECTED_FIXTURE_COUNT);
-    console.log('New listings: ' + newListings);
-    console.log('Existing active fixture listings: ' + existingListings.length);
-    console.log('Listings requiring an image: ' + listingsNeedingImages);
-    console.log('Image source files: ' + assetChecks.length + ' (' +
-      (totalAssetBytes / 1024 / 1024).toFixed(2) + ' MiB)');
-    console.log('Local image output: ' + ISOLATED_STORAGE_ROOT);
-    console.log('Contact methods: disabled for fixture listings (admin phone is not published).');
+    console.log('Fixtures: ' + EXPECTED_FIXTURES);
+    console.log('New listings: ' + preflight.newCount);
+    console.log('Existing fixtures: ' + preflight.existingCount);
+    console.log('Archived fixtures to restore via seller flow: ' + preflight.archivedCount);
+    console.log('Source image files: ' + EXPECTED_FIXTURES + ' (' +
+      (preflight.imageBytes / 1024 / 1024).toFixed(2) + ' MiB)');
+    console.log('Seller profiles:');
+    for (const seller of preflight.sellers) {
+      console.log(
+        `- ${seller.displayName}: ${seller.fixtureCount}; ` +
+        (seller.existingUserId ? 'existing account reused; password unchanged' : 'new login will be created'),
+      );
+    }
+    console.log('New accounts remain phone-unverified until a real OTP check.');
+    console.log('PHONE/WHATSAPP contacts disabled; admin phone is never published by this seed.');
+    console.log('Administrator password and account fields are not modified.');
 
     if (!apply) {
       console.log('DRY RUN ONLY — database and object storage were not changed.');
-      console.log('After reviewing this report, use --apply with the required acknowledgement.');
       return;
     }
 
-    process.env.LOCAL_STORAGE_PATH = ISOLATED_STORAGE_ROOT;
-    await seedExhibitionData(prisma, { contactsEnabled: false });
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    stagingRoot = path.join(STAGING_PARENT, stamp + '-' + randomUUID().slice(0, 8));
+    await mkdir(stagingRoot, { recursive: true });
+    markerPath = path.join(stagingRoot, '.seed-in-progress');
+    await writeFile(markerPath, 'Seed is running; do not upload this directory yet.\n', { flag: 'wx' });
 
-    const seededListings = await prisma.listing.findMany({
-      where: { slug: { in: fixtureSlugs } },
-      select: {
-        slug: true,
-        sellerAccountId: true,
-        status: true,
-        deletedAt: true,
-        images: { where: { deletedAt: null }, select: { id: true } },
-        contactMethods: {
-          where: { type: { in: ['PHONE', 'WHATSAPP'] } },
-          select: { enabled: true },
-        },
-      },
-    });
-
-    const invalidListings = seededListings.filter(
-      (listing) =>
-        listing.sellerAccountId !== admin.sellerAccount!.id ||
-        listing.status !== 'ACTIVE' ||
-        listing.deletedAt !== null ||
-        listing.images.length === 0 ||
-        listing.contactMethods.some((method) => method.enabled),
-    );
-
-    if (seededListings.length !== EXPECTED_FIXTURE_COUNT || invalidListings.length > 0) {
-      throw new Error(
-        'Post-seed verification failed. Found ' + seededListings.length +
-        ' fixture listings; invalid: ' + invalidListings.map((listing) => listing.slug).join(', '),
-      );
+    const hashes = new Map<ExhibitionSellerKey, string>();
+    for (const seller of preflight.sellers) {
+      if (!seller.existingUserId) {
+        hashes.set(seller.key, await argon2Hash(seller.credential.password, ARGON2_OPTIONS));
+      }
     }
 
-    const imageCount = seededListings.reduce((sum, listing) => sum + listing.images.length, 0);
-    console.log('Verified: ' + seededListings.length + ' ACTIVE listings under the existing ADMIN seller.');
-    console.log('Verified: ' + imageCount + ' image records are attached.');
-    console.log('Verified: fixture PHONE/WHATSAPP contacts are disabled.');
-    console.log('Next: run media:migrate:neon -- --dry-run with LOCAL_STORAGE_PATH set to the isolated folder.');
+    const result = await prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('weshbazar:exhibition-seed:v2'))`;
+      const owners = await provisionSellers(tx, preflight, hashes);
+      const seeded = await seedExhibitionData(tx, {
+        sellers: owners,
+        adminUserId: preflight.adminUserId,
+        normalizedAttributesBySlug: preflight.normalized,
+        attributeSchemaReferenceBySlug: preflight.schemaRefs,
+        storageRoot: stagingRoot as string,
+      });
+
+      const slugs = EXHIBITION_FIXTURES.map((fixture) => fixture.slug);
+      const rows = await tx.listing.findMany({
+        where: { slug: { in: slugs } },
+        select: {
+          slug: true, sellerAccountId: true, status: true, deletedAt: true, expiresAt: true,
+          images: { where: { deletedAt: null }, select: { id: true } },
+          contactMethods: {
+            where: { type: { in: ['PHONE', 'WHATSAPP'] } }, select: { enabled: true },
+          },
+        },
+      });
+      if (rows.length !== EXPECTED_FIXTURES) throw new Error('Post-seed count verification failed.');
+
+      const bySlug = new Map(rows.map((row) => [row.slug, row]));
+      const verifiedCounts: Record<string, number> = {};
+      for (const fixture of EXHIBITION_FIXTURES) {
+        const row = bySlug.get(fixture.slug);
+        const owner = owners[sellerKeyForFixture(fixture)];
+        if (
+          !row || row.sellerAccountId !== owner.sellerAccountId ||
+          row.status !== 'ACTIVE' || row.deletedAt !== null ||
+          !row.expiresAt || row.expiresAt.getTime() <= Date.now() ||
+          row.images.length !== 1 || row.contactMethods.some((item) => item.enabled)
+        ) {
+          throw new Error('Post-seed verification failed for ' + fixture.key + '.');
+        }
+        const key = sellerKeyForFixture(fixture);
+        verifiedCounts[key] = (verifiedCounts[key] ?? 0) + 1;
+      }
+      if (Object.values(verifiedCounts).reduce((sum, item) => sum + item, 0) !== EXPECTED_FIXTURES) {
+        throw new Error('Per-seller listing count verification failed.');
+      }
+      return { ...seeded, verifiedCounts };
+    }, { maxWait: 15_000, timeout: 600_000 });
+
+    await rm(markerPath, { force: true });
+    markerPath = null;
+    console.log('Seed transaction committed.');
+    console.log(`Verified ${result.listings} listings and ${result.images} image records.`);
+    for (const [key, count] of Object.entries(result.verifiedCounts)) {
+      console.log(`- ${EXHIBITION_SELLERS[key as ExhibitionSellerKey].displayName}: ${count}`);
+    }
+    console.log('Image staging directory: ' + stagingRoot);
+    console.log('Only after this process exits successfully, run media:migrate:neon -- --dry-run with this exact directory.');
+  } catch (error) {
+    if (stagingRoot) await rm(stagingRoot, { recursive: true, force: true });
+    throw error;
   } finally {
+    if (markerPath) await rm(markerPath, { force: true });
     await prisma.$disconnect();
   }
 }
 
 main().catch((error: unknown) => {
-  console.error('Exhibition seed failed:', error);
+  console.error('Exhibition seed failed:', error instanceof Error ? error.message : String(error));
   process.exitCode = 1;
 });
