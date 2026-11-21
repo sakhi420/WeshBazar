@@ -25,6 +25,8 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
   const lastFrameTimeRef = useRef(0);
   const resumeTimerRef = useRef<number | null>(null);
   const pausedRef = useRef(false);
+  const userPausedRef = useRef(false);
+  const [userPaused, setUserPaused] = useState(false);
   const startLoopRef = useRef<(() => void) | null>(null);
 
   const pauseMotion = useCallback(() => {
@@ -45,12 +47,38 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
       window.clearTimeout(resumeTimerRef.current);
     }
     resumeTimerRef.current = window.setTimeout(() => {
+      if (userPausedRef.current) return;
       pausedRef.current = false;
       lastFrameTimeRef.current = 0;
       resumeTimerRef.current = null;
       startLoopRef.current?.();
     }, delay);
   }, []);
+
+  const toggleUserPause = useCallback(() => {
+    const nextPaused = !userPausedRef.current;
+    userPausedRef.current = nextPaused;
+    setUserPaused(nextPaused);
+
+    if (nextPaused) {
+      pauseMotion();
+      return;
+    }
+
+    pausedRef.current = false;
+    if (resumeTimerRef.current !== null) {
+      window.clearTimeout(resumeTimerRef.current);
+      resumeTimerRef.current = null;
+    }
+    lastFrameTimeRef.current = 0;
+    startLoopRef.current?.();
+  }, [pauseMotion]);
+
+  const pauseForKeyboard = useCallback(() => {
+    userPausedRef.current = true;
+    setUserPaused(true);
+    pauseMotion();
+  }, [pauseMotion]);
 
   const normalizeScrollPosition = useCallback(() => {
     const viewport = viewportRef.current;
@@ -96,6 +124,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
     const canRun = () =>
       !disposed &&
       !pausedRef.current &&
+      !userPausedRef.current &&
       !reducedMotion.matches &&
       hasOverflowRef.current &&
       mobileViewport.matches &&
@@ -242,15 +271,15 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
           همه دسته‌ها
           <ArrowLeft className="size-3.5" aria-hidden />
         </Link>
-        {/* Keyboard-accessible pause; invisible unless focused. */}
+        {/* Text-only pause/resume control, revealed only on keyboard focus. */}
         <button
           type="button"
-          onClick={pauseMotion}
-          onFocus={pauseMotion}
-          onBlur={() => resumeMotionSoon()}
+          onClick={toggleUserPause}
+          aria-pressed={userPaused}
+          aria-label={userPaused ? 'ادامه حرکت دسته‌بندی‌ها' : 'توقف حرکت دسته‌بندی‌ها'}
           className="sr-only focus:not-sr-only focus:fixed focus:bottom-4 focus:start-4 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-ui focus:text-foreground focus:shadow-card focus:ring-2 focus:ring-primary"
         >
-          توقف حرکت دسته‌بندی‌ها
+          {userPaused ? 'ادامه حرکت دسته‌بندی‌ها' : 'توقف حرکت دسته‌بندی‌ها'}
         </button>
       </header>
 
@@ -268,8 +297,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
         }}
         onMouseEnter={pauseMotion}
         onMouseLeave={() => resumeMotionSoon(1200)}
-        onFocusCapture={pauseMotion}
-        onBlurCapture={() => resumeMotionSoon()}
+        onFocusCapture={pauseForKeyboard}
         onScroll={normalizeScrollPosition}
         className={cn(
           'category-marquee-viewport no-scrollbar w-full overflow-x-auto overflow-y-hidden overscroll-x-contain',
