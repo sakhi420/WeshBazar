@@ -79,7 +79,7 @@ export function ProfilePhotoControls({ hasAvatar }: { hasAvatar: boolean }) {
 
   return (
     <div className="mt-0 w-full sm:w-auto">
-      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-2 sm:flex sm:flex-wrap">
         <Button
           type="button"
           variant="outline"
