@@ -22,10 +22,7 @@ describe('HomeSearchPanel', () => {
 
     const background = container.querySelector('img[alt=""]');
     expect(background).toBeInTheDocument();
-    expect(background).toHaveAttribute(
-      'src',
-      expect.stringContaining('images.pexels.com/photos/38407564'),
-    );
+    expect(background?.getAttribute('src')).toContain('images.pexels.com/photos/38407564');
     expect(container.querySelectorAll('img')).toHaveLength(1);
 
     const search = screen.getByTestId('search-field');
