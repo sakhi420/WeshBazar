@@ -47,10 +47,10 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
       window.clearTimeout(resumeTimerRef.current);
     }
     resumeTimerRef.current = window.setTimeout(() => {
+      resumeTimerRef.current = null;
       if (userPausedRef.current) return;
       pausedRef.current = false;
       lastFrameTimeRef.current = 0;
-      resumeTimerRef.current = null;
       startLoopRef.current?.();
     }, delay);
   }, []);
