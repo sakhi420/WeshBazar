@@ -96,23 +96,9 @@ export default async function HomePage() {
         />
       </section>
 
-      {/* Category discovery — subtle panel with a mobile auto-advancing carousel */}
+      {/* Category navigation — clean, unboxed continuous mobile marquee */}
       {catResult.status === 'ok' ? (
-        <section
-          aria-labelledby="categories-heading"
-          className="space-y-3 rounded-2xl bg-primary-soft/25 px-3 py-3 sm:space-y-3 sm:px-4 sm:py-4"
-        >
-          <h2
-            id="categories-heading"
-            className="flex items-center gap-2 text-ui font-semibold text-foreground"
-          >
-            <span className="flex size-8 items-center justify-center rounded-full bg-primary-soft text-primary">
-              <LayoutGrid className="size-4" aria-hidden />
-            </span>
-            دسته‌بندی‌ها
-          </h2>
-          <CategoryShortcutGrid categories={topCategories} />
-        </section>
+        <CategoryShortcutGrid categories={topCategories} />
       ) : null}
       {catResult.status === 'empty' ? (
         <EmptyState
