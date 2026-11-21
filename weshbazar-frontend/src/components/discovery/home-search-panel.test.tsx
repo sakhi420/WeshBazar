@@ -1,5 +1,10 @@
 import { render, screen } from '@testing-library/react';
 
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: ({ alt }: { alt: string }) => <img alt={alt} />,
+}));
+
 jest.mock('@/features/search/components/search-field', () => ({
   SearchField: () => <form data-testid="search-field" />,
 }));
