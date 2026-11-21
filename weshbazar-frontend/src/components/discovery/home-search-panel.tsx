@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Suspense } from 'react';
 import { MapPinned, Search, Sparkles } from 'lucide-react';
 import { LocationPicker } from '@/components/location/location-picker';
@@ -14,11 +15,17 @@ export function HomeSearchPanel() {
       aria-labelledby="home-hero-title"
       className="relative isolate min-h-[430px] overflow-hidden rounded-[1.5rem] border border-primary/15 shadow-card sm:min-h-[410px] sm:rounded-[2rem] lg:min-h-[450px]"
     >
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url("${HERO_BACKGROUND}")`, backgroundPosition: 'center 46%' }}
-      />
+      <div aria-hidden className="absolute inset-0 bg-[#073b37]">
+        <Image
+          src={HERO_BACKGROUND}
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 1280px) 100vw, 1200px"
+          className="object-cover"
+          style={{ objectPosition: 'center 46%' }}
+        />
+      </div>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#073b37]/95 via-[#0F766E]/80 to-[#073b37]/65"
