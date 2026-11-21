@@ -10,17 +10,17 @@ jest.mock('@/components/location/location-picker', () => ({
 import { HomeSearchPanel } from './home-search-panel';
 
 describe('HomeSearchPanel', () => {
-  it('stacks keyword search above the city control below the lg breakpoint', () => {
+  it('renders the homepage message and a compact search/location row', () => {
     const { container } = render(<HomeSearchPanel />);
 
-    expect(screen.getByRole('heading', { name: 'هر چی می‌خواهی، در ویش‌بازار پیدا کن' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'هر چی می‌خواهی، از همین‌جا پیدا کن' })).toBeInTheDocument();
     expect(screen.getByTestId('search-field')).toBeInTheDocument();
     expect(screen.getByTestId('location-picker')).toBeInTheDocument();
 
-    const row = screen.getByTestId('search-field').parentElement;
-    expect(row).toHaveClass('flex-col');
-    expect(row).toHaveClass('lg:flex-row');
-    expect(row?.className ?? '').not.toMatch(/\bmd:flex-row\b/);
+    const controls = screen.getByTestId('search-field').parentElement;
+    expect(controls).toHaveClass('grid');
+    expect(controls).toHaveClass('gap-2');
+    expect(controls).toHaveClass('sm:grid-cols-[minmax(0,1fr)_auto]');
     expect(container).toBeTruthy();
   });
 });
