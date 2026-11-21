@@ -225,7 +225,7 @@ export function CategoriesBrowser({ tree }: CategoriesBrowserProps) {
 
               <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
                 {featuredCategories.map((category, index) => {
-                  const cover = FEATURED_COVERS[category.slug];
+                  const cover = FEATURED_COVERS[category.slug]!;
 
                   return (
                     <article
@@ -302,7 +302,7 @@ export function CategoriesBrowser({ tree }: CategoriesBrowserProps) {
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 {otherCategories.map((category, index) => {
                   const Icon = categoryIcon(category.iconKey);
-                  const accent = SOFT_ACCENTS[index % SOFT_ACCENTS.length];
+                  const accent = SOFT_ACCENTS[index % SOFT_ACCENTS.length]!;
 
                   return (
                     <article
