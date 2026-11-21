@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { readdir, readFile } from 'node:fs/promises';
+import { access, readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   NeonObjectStorageProvider,
@@ -54,6 +54,12 @@ async function main(): Promise<void> {
   const matches: Array<{ root: string; files: LocalFile[] }> = [];
   for (const candidate of [...new Set(candidates)]) {
     try {
+      try {
+        await access(path.join(candidate, '.seed-in-progress'));
+        throw new Error('Exhibition seeding is still in progress for this directory. Wait for the seed process to finish.');
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+      }
       const files = await collectFiles(candidate);
       if (files.length > 0) matches.push({ root: candidate, files });
     } catch (error) {
