@@ -176,7 +176,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
             <span className="relative flex size-[52px] shrink-0 items-center justify-center rounded-full border border-primary/10 bg-gradient-to-br from-white to-primary-soft text-primary shadow-[0_3px_12px_rgba(15,118,110,0.08)] transition-all duration-200 group-hover:-translate-y-0.5 group-hover:border-primary/25 group-hover:shadow-[0_7px_18px_rgba(15,118,110,0.14)]">
               <Icon className="size-[23px]" strokeWidth={1.7} aria-hidden />
             </span>
-            <span className="line-clamp-2 min-h-9 text-[11px] font-medium leading-[18px] text-foreground/90 transition-colors group-hover:text-primary">
+            <span className="line-clamp-2 min-h-9 text-[12px] font-medium leading-[18px] text-foreground/90 transition-colors group-hover:text-primary">
               {category.name}
             </span>
           </Link>
@@ -190,7 +190,7 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
         <span className="flex size-[52px] shrink-0 items-center justify-center rounded-full border border-accent/20 bg-gradient-to-br from-white to-amber-50 text-accent-dark shadow-[0_3px_12px_rgba(245,158,11,0.10)] transition-all duration-200 group-hover:-translate-y-0.5 group-hover:shadow-[0_7px_18px_rgba(245,158,11,0.16)]">
           <LayoutGrid className="size-[22px]" strokeWidth={1.7} aria-hidden />
         </span>
-        <span className="line-clamp-2 min-h-9 text-[11px] font-semibold leading-[18px] text-accent-dark">
+        <span className="line-clamp-2 min-h-9 text-[12px] font-semibold leading-[18px] text-accent-dark">
           همه دسته‌ها
         </span>
       </Link>
