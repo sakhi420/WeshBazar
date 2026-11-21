@@ -91,6 +91,30 @@ describe('HomePage (F-02 — honest error vs empty states)', () => {
     expect(screen.queryByText('آگهی‌ها بارگذاری نشد')).not.toBeInTheDocument();
   });
 
+
+  it('makes the 12 newest listings a clear preview with two paths to the full list', async () => {
+    mockFetchListingsServer.mockResolvedValue({
+      items: Array.from({ length: 12 }, (_, index) => ({ id: `l-${index + 1}` })),
+      nextCursor: 'next-page',
+      hasMore: true,
+      total: 24,
+    });
+
+    const element = await HomePage();
+    render(element);
+
+    expect(screen.getByText('۱۲ آگهی تازه')).toBeInTheDocument();
+    expect(screen.getByText(/پیش‌نمایشی از ۱۲ آگهی تازه است/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /مشاهده همه آگهی‌ها/ })).toHaveAttribute(
+      'href',
+      '/search?sort=newest',
+    );
+    expect(screen.getByRole('link', { name: /رفتن به فهرست کامل/ })).toHaveAttribute(
+      'href',
+      '/search?sort=newest',
+    );
+  });
+
   it('keeps both the keyword field and the city control on the homepage', async () => {
     mockFetchListingsServer.mockResolvedValue({
       items: [{ id: 'l-1' }],
