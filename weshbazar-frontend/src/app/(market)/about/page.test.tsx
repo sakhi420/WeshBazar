@@ -36,6 +36,6 @@ describe('AboutPage', () => {
 
   it('links to the safety guide', () => {
     render(<AboutPage />);
-    expect(screen.getByRole('link', { name: 'نکات ایمنی' })).toHaveAttribute('href', '/help/safety');
+    expect(screen.getByRole('link', { name: /نکات ایمنی/ })).toHaveAttribute('href', '/help/safety');
   });
 });
