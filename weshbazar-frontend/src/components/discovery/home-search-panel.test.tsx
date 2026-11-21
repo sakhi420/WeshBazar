@@ -13,7 +13,7 @@ describe('HomeSearchPanel', () => {
   it('stacks keyword search above the city control below the lg breakpoint', () => {
     const { container } = render(<HomeSearchPanel />);
 
-    expect(screen.getByRole('heading', { name: 'بازار خرید و فروش در افغانستان' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'هر چی می‌خواهی، در ویش‌بازار پیدا کن' })).toBeInTheDocument();
     expect(screen.getByTestId('search-field')).toBeInTheDocument();
     expect(screen.getByTestId('location-picker')).toBeInTheDocument();
 
