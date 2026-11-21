@@ -111,53 +111,112 @@ rewrites.
 
 ## Exhibition listing seed
 
-Use the dedicated exhibition command from the `weshbazar-backend` directory.
-Do not use `npm run db:seed` for this operation: the general seed also upserts
-the administrator account and refreshes its password from environment values.
+Run the dedicated exhibition command from the `weshbazar-backend` directory.
+Do not use `npm run db:seed`: the general seed also upserts the administrator
+account and may refresh its password from environment values.
 
-The dedicated command:
+The exhibition seed creates five independent USER logins and five public
+INDIVIDUAL seller profiles. The 147 stable fixtures are grouped by product
+type and assigned as 30 / 30 / 29 / 30 / 28 listings. No new API endpoint,
+database migration, or OpenAPI change is involved.
 
-- defaults to read-only preflight (`npm run db:seed:exhibition`);
-- only accepts the exact Neon hostname supplied through
-  `EXHIBITION_SEED_EXPECTED_DATABASE_HOST`;
-- requires `--apply` plus
-  `EXHIBITION_SEED_CONFIRM=PUBLISH_147_LISTINGS` before writing;
-- uses the existing active administrator and its existing seller account;
-- touches only the 147 fixture slugs, not manually created listings;
-- does not create users or change the administrator password;
-- disables PHONE and WHATSAPP contact methods for fixture listings so the
-  administrator's login phone is not published automatically;
-- writes the generated image files to the isolated, ignored directory
-  `apps/api/var/exhibition-seed-storage`.
+### Local credentials
 
-PowerShell, from the backend directory:
+Create this file locally:
+
+`prisma/exhibition-seller-credentials.local.json`
+
+Its required shape is:
+
+```json
+[
+  { "key": "kamal", "phone": "AF_PHONE_1", "password": "LOCAL_PASSWORD_1" },
+  { "key": "hasan", "phone": "AF_PHONE_2", "password": "LOCAL_PASSWORD_2" },
+  { "key": "mir", "phone": "AF_PHONE_3", "password": "LOCAL_PASSWORD_3" },
+  { "key": "farid", "phone": "AF_PHONE_4", "password": "LOCAL_PASSWORD_4" },
+  { "key": "khalid", "phone": "AF_PHONE_5", "password": "LOCAL_PASSWORD_5" }
+]
+```
+
+Replace the placeholders with the five phone/password pairs supplied by the
+project owner. The file is ignored by Git. Never paste its contents into a
+commit, pull request, issue, or deployment environment. The seeder hashes
+new passwords with the same Argon2id parameters as the application and never
+prints passwords or full phone numbers.
+
+If a phone already belongs to an active USER account, that user and its
+existing seller profile are reused without changing the password or personal
+fields. If it belongs to an ADMIN, inactive, deleted, or otherwise ineligible
+account, the command stops. Newly created users remain phone-unverified until
+a real OTP verification occurs; the seed does not forge `phoneVerifiedAt`.
+They can sign in with their passwords, but normal phone-verified publishing
+still requires actual verification.
+
+### Dry run and apply
+
+Set the exact Neon database hostname, then run the read-only preflight:
 
 ```powershell
 $env:EXHIBITION_SEED_EXPECTED_DATABASE_HOST = "ep-spring-glade-a70s8q2q-pooler.ap-southeast-2.aws.neon.tech"
 npm run db:seed:exhibition
 ```
 
-Review the dry-run report first. To apply the seed:
+Review all five seller counts, base-category/location checks, attribute
+validation, existing slug ownership, and the 50-active-listing limit. The
+command does not modify the database in dry-run mode.
+
+After reviewing the full report, explicitly authorize the write:
 
 ```powershell
 $env:EXHIBITION_SEED_CONFIRM = "PUBLISH_147_LISTINGS"
 npm run db:seed:exhibition -- --apply
 ```
 
-Then upload only those isolated image files to Neon Object Storage:
+The apply run takes a PostgreSQL advisory lock and commits all account,
+listing, revision, moderation, contact, and image-record writes in one
+transaction. A failure rolls the database transaction back and removes that
+run's local staging directory. Listings are built as DRAFT, submitted, and
+approved before the transaction commits; incomplete listings are never made
+public. Archived fixture listings follow the restore/submit/approve revision
+sequence. Expired active fixtures receive a RENEW revision and a fresh expiry.
+
+The five seller profiles are attached to their own logins. The administrator
+account is used only as the moderation actor; its password and account fields
+are not updated. Fixture PHONE and WHATSAPP contact methods remain disabled so
+the login phone numbers are not exposed as seller contact details.
+
+### Neon Object Storage
+
+After the seed command has exited successfully, copy the exact staging
+directory printed at the end of its output. The seed writes a temporary
+`.seed-in-progress` marker while it is running; the media migration refuses
+to upload a directory that still contains this marker.
 
 ```powershell
-$env:LOCAL_STORAGE_PATH = Join-Path (Get-Location) "apps\api\var\exhibition-seed-storage"
+$env:LOCAL_STORAGE_PATH = "PASTE_THE_EXACT_STAGING_DIRECTORY_FROM_THE_SEED_OUTPUT"
 npm run media:migrate:neon -- --dry-run
+```
+
+Verify that the dry-run reports the expected files (one original plus three
+WebP variants per listing image). Then upload:
+
+```powershell
 npm run media:migrate:neon
 ```
 
-Review the dry-run file count before uploading. The upload command preserves the
-local originals. Do not switch the public site to this data until the uploaded
-original and WebP variant URLs have been checked.
+The upload command preserves local originals. Do not run it in another
+terminal until the seed command has fully exited. Verify original and
+thumbnail/medium/large public URLs in an incognito browser before considering
+the media copy complete.
 
-## Retention
+### Safety and rollback
 
-Do not automatically destroy Neon, Neon Object Storage, or hosting services on
-22 December. Listing expiration is a separate lifecycle rule. Keep the demo
-infrastructure until a manual post-event review and verified backup.
+Never delete or overwrite manually created listings. Fixture slugs are stable;
+a slug owned by a different seller stops the seed. Existing seller passwords
+are never overwritten. Do not publish login phone numbers through listing
+contact methods. Archived-image cleanup remains disabled.
+
+If a seed fails before commit, the database transaction rolls back. If a
+completed exhibition needs to be taken down later, archive only the 147
+fixture slugs and retain their image history according to the listing
+retention policy; do not hard-delete user or listing rows.
