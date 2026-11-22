@@ -131,6 +131,14 @@ export function configuration(): AppConfig {
         maxRetries: env.SMS_GATEWAY_MAX_RETRIES,
         messageTemplate: env.SMS_MESSAGE_TEMPLATE,
       },
+      smsBaharFuture: {
+        username: env.BAHAR_FUTURE_USERNAME,
+        password: env.BAHAR_FUTURE_PASSWORD,
+        sender: env.BAHAR_FUTURE_SENDER_ID,
+        timeoutMs: env.BAHAR_FUTURE_TIMEOUT_MS,
+        maxRetries: env.BAHAR_FUTURE_MAX_RETRIES,
+        messageTemplate: env.SMS_MESSAGE_TEMPLATE,
+      },
       moderation: env.MODERATION_PROVIDER,
     },
   };

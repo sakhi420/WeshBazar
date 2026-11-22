@@ -179,7 +179,7 @@ weshbazar-backend/
 │   │   │   ├── auth/ users/ sellers/ taxonomy/ locations/
 │   │   │   ├── listings/ media/ contacts/ favorites/ reports/
 │   │   │   └── admin/ audit/ analytics/ health/ jobs/
-│   │   ├── providers/        # ports & adapters: search (pg_trgm), sms (mock), storage (local)
+│   │   ├── providers/        # ports & adapters: search (pg_trgm), SMS (mock/HTTP/Bahar Future), storage
 │   │   ├── scripts/         # generate-openapi.ts
 │   │   ├── app.module.ts     # root module (APP_FILTER/INTERCEPTOR/PIPE wiring)
 │   │   ├── bootstrap.ts     # shared Fastify/transport config (helmet, cookie, multipart, CORS, Swagger, request IDs)

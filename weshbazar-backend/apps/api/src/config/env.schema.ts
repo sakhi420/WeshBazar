@@ -153,7 +153,7 @@ export const envSchema = z
     JOBS_CLEAN_ARCHIVED_LISTING_IMAGES_INTERVAL_SECONDS: intEnv(21_600).pipe(z.number().min(5)),
 
     // Providers
-    SMS_PROVIDER: z.enum(['mock', 'http', 'disabled']).default('mock'),
+    SMS_PROVIDER: z.enum(['mock', 'http', 'bahar-future', 'disabled']).default('mock'),
     MODERATION_PROVIDER: z.string().min(1).default('noop'),
 
     // SMS gateway (only required when SMS_PROVIDER=http)
@@ -165,6 +165,13 @@ export const envSchema = z
     SMS_GATEWAY_TIMEOUT_MS: intEnv(10_000).pipe(z.number().int().min(100).max(60_000)),
     SMS_GATEWAY_MAX_RETRIES: intEnv(2).pipe(z.number().int().min(0).max(5)),
     SMS_MESSAGE_TEMPLATE: z.string().min(1).default('وزبازار: کد تأیید شما {code} است'),
+
+    // Bahar Future SMS gateway (required only when SMS_PROVIDER=bahar-future).
+    BAHAR_FUTURE_USERNAME: optionalString,
+    BAHAR_FUTURE_PASSWORD: optionalString,
+    BAHAR_FUTURE_SENDER_ID: optionalString,
+    BAHAR_FUTURE_TIMEOUT_MS: intEnv(10_000).pipe(z.number().int().min(100).max(60_000)),
+    BAHAR_FUTURE_MAX_RETRIES: intEnv(2).pipe(z.number().int().min(0).max(3)),
 
     // Logging / docs
     LOG_LEVEL: z
@@ -198,9 +205,30 @@ export const envSchema = z
       }
     }
 
-    // The `http` provider has a real delivery dependency; refuse to boot on a
-    // half-configured gateway so a misconfiguration fails at startup, not on
-    // the first user's verification attempt.
+    // Real providers have delivery dependencies; fail at startup rather than
+    // discovering missing configuration on the first verification attempt.
+    if (env.SMS_PROVIDER === 'bahar-future') {
+      for (const [variable, value] of [
+        ['BAHAR_FUTURE_USERNAME', env.BAHAR_FUTURE_USERNAME],
+        ['BAHAR_FUTURE_PASSWORD', env.BAHAR_FUTURE_PASSWORD],
+      ] as const) {
+        if (!value) {
+          ctx.addIssue({
+            code: 'custom',
+            path: [variable],
+            message: variable + ' is required when SMS_PROVIDER=bahar-future',
+          });
+        }
+      }
+      if (env.BAHAR_FUTURE_SENDER_ID && !/^([A-Za-z0-9]{1,11}|\d{6,15})$/.test(env.BAHAR_FUTURE_SENDER_ID)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['BAHAR_FUTURE_SENDER_ID'],
+          message: 'BAHAR_FUTURE_SENDER_ID must be a registered alphanumeric ID (up to 11 characters) or a numeric sender number',
+        });
+      }
+    }
+
     if (env.SMS_PROVIDER === 'http') {
       if (!env.SMS_GATEWAY_URL) {
         ctx.addIssue({
