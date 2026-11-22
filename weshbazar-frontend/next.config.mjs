@@ -30,7 +30,28 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    remotePatterns: [mediaRemotePattern()],
+    // Keep the configured public media host and the local API origin allowed.
+    // With a Cloudflare tunnel exposing only Next.js, the Next image optimizer
+    // runs on this machine and can fetch media from the local backend.
+    remotePatterns: [
+      mediaRemotePattern(),
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/media/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.pexels.com',
+        pathname: '/photos/**',
+      },
+    ],
   },
   async rewrites() {
     // Reverse proxy for the frozen API: browser calls stay same-origin

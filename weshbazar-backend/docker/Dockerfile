@@ -26,7 +26,12 @@ COPY tsconfig.json ./
 COPY apps/api ./apps/api
 
 # Generate Prisma Client and compile the application.
-RUN npx prisma generate && npm run build
+# Prisma's config requires a datasource URL while loading, even though
+# `prisma generate` does not connect to the database. Supply build-only
+# localhost placeholders so no production credentials enter the image.
+RUN DATABASE_URL_UNPOOLED="postgresql://build:build@127.0.0.1:5432/build?schema=public" \
+    DATABASE_URL="postgresql://build:build@127.0.0.1:5432/build?schema=public" \
+    npx prisma generate && npm run build
 
 # --- Stage 2: production dependencies ----------------------------------------
 FROM node:24-bookworm-slim AS prod-deps
@@ -35,7 +40,12 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
-RUN npm ci --omit=dev && npm cache clean --force
+# The root prepare script invokes Husky, which is a devDependency and is
+# intentionally absent from this production-only install. Remove that script
+# from this temporary image copy; keep dependency lifecycle scripts enabled.
+RUN npm pkg delete scripts.prepare \
+    && npm ci --omit=dev \
+    && npm cache clean --force
 
 # --- Stage 3: runtime ---------------------------------------------------------
 FROM node:24-bookworm-slim AS runtime
@@ -47,7 +57,7 @@ WORKDIR /app
 
 # Run as the unprivileged node user.
 COPY --from=prod-deps --chown=node:node /app/node_modules ./node_modules
-COPY --from=prod-deps --chown=node:node /app/apps/api/node_modules ./apps/api/node_modules
+# npm workspaces hoists production dependencies into the root node_modules.
 COPY --from=build --chown=node:node /app/package.json ./package.json
 COPY --from=build --chown=node:node /app/apps/api/package.json ./apps/api/package.json
 COPY --from=build --chown=node:node /app/apps/api/dist ./apps/api/dist

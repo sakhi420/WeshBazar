@@ -1,17 +1,21 @@
-import { Suspense } from 'react';
+'use client';
+
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Plus, Search } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/brand-logo';
 import { Button } from '@/components/ui/button';
 import { HeaderAuthActions } from '@/components/layout/header-auth-actions';
-import { LocationPicker } from '@/components/location/location-picker';
-import { SearchField } from '@/features/search/components/search-field';
 
 /**
- * Mobile header (master prompt §101): top bar + always-visible keyword field.
- * The desktop header already owns search at `lg+`; this bar is `lg:hidden`.
+ * Shared mobile app header.
+ * The marketplace home already presents a prominent search panel; internal
+ * routes get a small search shortcut instead of a second full search row.
  */
 export function MobileHeader() {
+  const pathname = usePathname();
+  const showSearchShortcut = pathname !== '/market';
+
   return (
     <header className="sticky top-0 z-header border-b border-border bg-surface/90 shadow-soft backdrop-blur-md lg:hidden">
       <div className="flex h-header items-center justify-between px-4">
@@ -23,7 +27,14 @@ export function MobileHeader() {
           <BrandLogo height={28} priority />
         </Link>
 
-        <nav className="flex items-center gap-1">
+        <nav aria-label="اقدام‌های اصلی" className="flex items-center gap-1">
+          {showSearchShortcut ? (
+            <Button asChild variant="ghost" size="icon" aria-label="جستجو">
+              <Link href="/search">
+                <Search aria-hidden />
+              </Link>
+            </Button>
+          ) : null}
           <Button asChild variant="accent" size="icon" aria-label="ثبت آگهی">
             <Link href="/sell">
               <Plus aria-hidden />
@@ -31,19 +42,6 @@ export function MobileHeader() {
           </Button>
           <HeaderAuthActions />
         </nav>
-      </div>
-      <div className="flex items-stretch gap-2 px-4 pb-3">
-        <Suspense fallback={<div className="h-control-lg min-w-0 flex-1 rounded-control bg-muted/40" />}>
-          <SearchField
-            compact
-            redirectToSearch
-            className="min-w-0 flex-1"
-            placeholder="چی می‌خواهی پیدا کنی؟"
-          />
-        </Suspense>
-        <Suspense fallback={<div className="h-control-lg w-28 shrink-0 rounded-control bg-muted/40" />}>
-          <LocationPicker inline redirectToSearch />
-        </Suspense>
       </div>
     </header>
   );

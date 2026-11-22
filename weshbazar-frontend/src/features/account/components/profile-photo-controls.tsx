@@ -78,25 +78,26 @@ export function ProfilePhotoControls({ hasAvatar }: { hasAvatar: boolean }) {
   }
 
   return (
-    <div className="mt-2">
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="mt-0 w-full lg:w-auto">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-2 lg:flex lg:flex-wrap">
         <Button
           type="button"
           variant="outline"
           size="sm"
+          className="min-h-11 w-full lg:min-h-9 lg:w-auto"
           disabled={busy}
           onClick={() => inputRef.current?.click()}
         >
           {busy ? <Loader2 aria-hidden className="animate-spin" /> : <ImagePlus aria-hidden />}
-          تغییر عکس پروفایل
+          تغییر عکس
         </Button>
         {hasAvatar ? (
           <Button
             type="button"
             variant="ghost"
             size="sm"
+            className="min-h-11 w-full lg:min-h-9 lg:w-auto text-danger hover:bg-danger/5 hover:text-danger"
             disabled={busy}
-            className="text-danger hover:bg-danger/5 hover:text-danger"
             onClick={handleRemove}
           >
             <Trash2 aria-hidden />
@@ -104,8 +105,8 @@ export function ProfilePhotoControls({ hasAvatar }: { hasAvatar: boolean }) {
           </Button>
         ) : null}
       </div>
-      <p className="mt-1 text-caption text-muted-foreground">
-        JPEG، PNG یا WebP تا ۵ مگابایت. عکس شما برای همهٔ خریداران نمایش داده می‌شود.
+      <p className="mt-1 text-caption text-muted-foreground lg:text-end">
+        JPEG، PNG یا WebP · حداکثر ۵ مگابایت
       </p>
       {error ? (
         <p role="alert" className="mt-1 text-meta text-danger">

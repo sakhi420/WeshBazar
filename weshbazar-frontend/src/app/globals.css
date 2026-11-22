@@ -2,43 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * WeshBazar semantic color tokens (master prompt §10).
- * Stored as HSL channel triplets so Tailwind opacity modifiers work.
- * Reference via the Tailwind theme (bg-primary, text-foreground, ...),
- * never as raw hex in components.
- */
 @layer base {
   :root {
     /* Brand */
-    --primary: 175 77% 26%; /* #0F766E Primary Teal */
-    --primary-dark: 173 62% 11%; /* #0B2F2B Primary Dark */
-    --primary-soft: 172 43% 93%; /* #E6F5F3 Primary Soft */
+    --primary: 175 77% 26%;
+    --primary-dark: 173 62% 11%;
+    --primary-soft: 172 43% 93%;
     --primary-foreground: 0 0% 100%;
-    --accent: 38 92% 50%; /* #F59E0B Brand Orange */
-    --accent-dark: 32 95% 44%; /* #D97706 Orange Dark */
+    --accent: 38 92% 50%;
+    --accent-dark: 32 95% 44%;
     --accent-foreground: 173 62% 11%;
 
     /* Neutrals */
-    --foreground: 173 62% 11%; /* #0B2F2B Text */
-    --secondary: 215 16% 47%; /* #64748B Secondary */
+    --foreground: 173 62% 11%;
+    --secondary: 215 16% 47%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 215 20% 65%; /* #94A3B8 Muted */
+    --muted: 215 20% 65%;
     --muted-foreground: 215 16% 47%;
-    --border: 214 32% 91%; /* #E2E8F0 Border */
-    --input: 215 16% 47%; /* #64748B Input — ≥3:1 non-text contrast (F-20) */
-    --background: 210 40% 98%; /* #F8FAFC Background */
-    --surface: 0 0% 100%; /* #FFFFFF Surface */
+    --border: 214 32% 91%;
+    --input: 215 16% 47%;
+    --background: 210 40% 98%;
+    --surface: 0 0% 100%;
     --ring: 175 77% 26%;
 
     /* Status */
-    --success: 142 72% 29%; /* #15803D */
-    --danger: 0 72% 51%; /* #DC2626 */
-    --warning: 26 90% 37%; /* #B45309 */
-    --info: 201 96% 32%; /* #0369A1 */
+    --success: 142 72% 29%;
+    --danger: 0 72% 51%;
+    --warning: 26 90% 37%;
+    --info: 201 96% 32%;
 
     /* Brand channels */
-    --whatsapp: 142 70% 49%; /* #25D366 WhatsApp brand green */
+    --whatsapp: 142 70% 49%;
   }
 
   * {
@@ -46,15 +40,12 @@
   }
 
   html {
-    /* fa-AF + RTL is set on <html> in the root layout; enforce sensible text. */
     -webkit-text-size-adjust: 100%;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     text-rendering: optimizeLegibility;
-    /* Warm canvas (§10): faint teal + amber atmosphere over the flat base,
-       so the page reads as a cohesive surface rather than default white-grey. */
     background-image:
       radial-gradient(56rem 36rem at 88% -8%, hsl(var(--primary) / 0.07), transparent 60%),
       radial-gradient(48rem 30rem at -6% -4%, hsl(var(--accent) / 0.06), transparent 55%);
@@ -66,7 +57,6 @@
     color: hsl(var(--foreground));
   }
 
-  /* Subtle scrollbar (WebKit) to match the soft surface treatment. */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -83,7 +73,6 @@
     background-color: hsl(var(--muted) / 0.8);
   }
 
-  /* §15 Motion — respect reduced-motion globally. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -97,10 +86,6 @@
 }
 
 @layer utilities {
-  /*
-   * §8 Bidi isolation for phone numbers, URLs, emails, model names, handles,
-   * codes, and mixed English/Persian strings embedded in RTL text.
-   */
   .bidi-isolate {
     unicode-bidi: isolate;
   }
@@ -109,12 +94,10 @@
     unicode-bidi: isolate;
   }
 
-  /* Logical-property helpers to keep components direction-aware (§8). */
   .flip-rtl:where([dir='rtl'] *) {
     transform: scaleX(-1);
   }
 
-  /* Hide horizontal carousel scrollbars while keeping the row scrollable. */
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -122,13 +105,15 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* Soft edge fade keeps the moving category strip visually light. */
+  .category-marquee-viewport {
+    mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
+  }
 }
 
-/*
- * Welcome landing — gentle, low-amplitude float for decorative SVG chips.
- * The global `prefers-reduced-motion` rule above collapses these to near-zero
- * duration, so they are fully disabled for users who opt out of motion.
- */
+/* Welcome landing — decorative motion; reduced motion is handled above. */
 @keyframes wb-float {
   0%,
   100% {

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { AppConfig } from '../../config/config.types';
+import { DisabledSmsProvider } from './disabled-sms.provider';
 import { HttpSmsProvider } from './http-sms.provider';
 import { MockSmsProvider } from './mock-sms.provider';
 import { SMS_PROVIDER, type SmsProvider } from './sms.provider';
@@ -16,13 +17,15 @@ import { SMS_PROVIDER, type SmsProvider } from './sms.provider';
   providers: [
     MockSmsProvider,
     HttpSmsProvider,
+    DisabledSmsProvider,
     {
       provide: SMS_PROVIDER,
-      inject: [ConfigService, MockSmsProvider, HttpSmsProvider],
+      inject: [ConfigService, MockSmsProvider, HttpSmsProvider, DisabledSmsProvider],
       useFactory: (
         configService: ConfigService<AppConfig, true>,
         mock: MockSmsProvider,
         http: HttpSmsProvider,
+        disabled: DisabledSmsProvider,
       ): SmsProvider => {
         const provider = configService.get('providers.sms', { infer: true });
         switch (provider) {
@@ -35,6 +38,8 @@ import { SMS_PROVIDER, type SmsProvider } from './sms.provider';
             return mock;
           case 'http':
             return http;
+          case 'disabled':
+            return disabled;
           default:
             throw new Error(`Unsupported SMS_PROVIDER "${provider}".`);
         }

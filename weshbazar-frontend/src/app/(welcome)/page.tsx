@@ -1,15 +1,25 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
-  ArrowDown,
   ArrowLeft,
-  Handshake,
+  ArrowUpLeft,
+  CarFront,
+  Compass,
+  Eye,
+  House,
+  Laptop,
+  MessageCircle,
+  PhoneCall,
+  Search,
   ShieldCheck,
-  ShoppingCart,
+  Shirt,
+  Sofa,
+  Sparkles,
+  Store,
   Tag,
-  type LucideIcon,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
@@ -28,539 +38,493 @@ export const metadata: Metadata = {
   },
 };
 
-const faNumber = new Intl.NumberFormat('fa-AF');
-function toFa(value: number): string {
-  return faNumber.format(value);
-}
-
 /**
- * Homepage art assets. Per the design review, Hero + Seller keep the original
- * raster art (superior illustration quality); Trust + CTA use the kit's
- * independent, transparent SVG illustrations. `width`/`height` record the
- * files' intrinsic px sizes so aspect ratios are preserved (no crop/stretch).
+ * Free Pexels photography used as visual backgrounds:
+ * - Hero: Ahmet Özcan, "Charming Shopkeeper in a Middle Eastern Bazaar"
+ * - Wide shop: Valentina Lara, "Bustling Small Shop with Assorted Products"
+ * - Seller: Nowrin Sanjana, "Local Shopkeeper in a Busy Marketplace"
+ * - Category photos: Pexels contributors (see category photo URLs).
+ * Pexels permits free use on websites and apps; attribution is appreciated.
  */
-const art = {
-  hero: { src: '/images/homepage/hero-art.webp', width: 580, height: 450 },
-  processSeller: { src: '/images/homepage/process-seller-art.webp', width: 310, height: 255 },
-  trustShield: {
-    src: '/images/weshbazar-svg/illustrations/trust-shield.svg',
-    width: 520,
-    height: 410,
-  },
-  ctaProducts: {
-    src: '/images/weshbazar-svg/illustrations/cta-products.svg',
-    width: 760,
-    height: 390,
-  },
-} as const;
-
-/** Section icons pulled from the kit's `icons/` folder (120×120 transparent SVG). */
-const sectionIcon = {
-  pin: '/images/weshbazar-svg/icons/pin.svg',
-  users: '/images/weshbazar-svg/icons/users.svg',
-  scale: '/images/weshbazar-svg/icons/scale.svg',
-  search: '/images/weshbazar-svg/icons/search.svg',
-  listing: '/images/weshbazar-svg/icons/listing.svg',
-  handshake: '/images/weshbazar-svg/icons/handshake.svg',
-  lock: '/images/weshbazar-svg/icons/lock.svg',
-  shieldCheck: '/images/weshbazar-svg/icons/shield-check.svg',
+const photos = {
+  heroMobile: '/images/welcome/hero-mobile.jpg',
+  heroWide: '/images/welcome/hero-wide.jpg',
+  seller: '/images/welcome/seller.jpg',
+  vehicles: '/images/welcome/vehicles.jpg',
+  realEstate: '/images/welcome/real-estate.jpg',
+  electronics: '/images/welcome/electronics.jpg',
+  home: '/images/welcome/home.jpg',
+  fashion: '/images/welcome/fashion.jpg',
 } as const;
 
 export default function WelcomePage() {
   return (
     <>
       <Hero />
-      <WhyWeshBazar />
+      <QuickSearch />
+      <CategoryDiscovery />
       <HowItWorks />
-      <TrustSafety />
-      <CtaBanner />
+      <SellerInvitation />
+      <SafetyNote />
     </>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Hero                                                               */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* Full-bleed hero                                                            */
+/* -------------------------------------------------------------------------- */
 
 function Hero() {
   return (
-    <section className="relative isolate overflow-x-clip bg-gradient-to-b from-primary-soft via-primary-soft/55 to-background">
-      <SectionBackdrop />
-
-      <div className="container relative grid items-center gap-10 py-10 lg:grid-cols-2 lg:gap-8 lg:py-20">
-        {/* Copy — first child renders on the right in RTL */}
-        <div className="max-w-xl animate-fade-up">
-          <Eyebrow>بازار بزرگ آنلاین افغانستان</Eyebrow>
-          <h1 className="mt-5 text-[2.75rem] font-extrabold leading-[1.1] tracking-tight text-foreground sm:text-[3.25rem] lg:text-[3.75rem]">
-            ویش‌بازار
-          </h1>
-          <p className="mt-3 text-card-title font-semibold text-primary sm:text-section">
-            بازار خرید و فروش آسان در افغانستان
-          </p>
-          <p className="mt-4 max-w-prose text-body leading-8 text-muted-foreground">
-            هر آنچه نیاز دارید، جست‌وجو کنید؛ هر آنچه برای فروش دارید، معرفی کنید.
-          </p>
-
-          <div className="mt-7 flex flex-wrap items-center gap-3">
-            <EnterMarketCta variant="accent" size="lg" className="font-semibold">
-              ورود به ویش‌بازار
-              <ArrowLeft aria-hidden />
-            </EnterMarketCta>
-            <a
-              href="#how"
-              className="group inline-flex items-center gap-2 rounded-control border border-input bg-surface px-5 py-3 text-ui font-medium text-foreground transition-colors duration-small hover:bg-primary-soft hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            >
-              بیشتر بدانید
-              <ArrowDown aria-hidden className="size-4 transition-transform duration-small group-hover:translate-y-0.5" />
-            </a>
-          </div>
-        </div>
-
-        {/* Art — second child renders on the left in RTL */}
-        <div className="animate-fade-up" style={{ animationDelay: '120ms' }}>
-          <HeroArt />
-        </div>
-      </div>
-
-      {/* Curved wave joining the white section below */}
-      <HeroWave />
-    </section>
-  );
-}
-
-function HeroArt() {
-  return (
-    <div aria-hidden className="relative mx-auto w-full max-w-[620px]">
-      {/* layered soft glow so the illustration melts into the hero (no cut-and-paste look) */}
-      <div className="pointer-events-none absolute -inset-12 rounded-[3rem] bg-gradient-to-bl from-primary/25 via-primary-soft/40 to-accent/10 blur-2xl" />
-      <div className="pointer-events-none absolute bottom-10 start-0 h-44 w-44 rounded-full bg-accent/20 blur-3xl" />
-      <div className="pointer-events-none absolute -top-4 end-8 h-36 w-36 rounded-full bg-primary/20 blur-3xl" />
-
-      {/* Raster hero blended into the hero gradient — soft edge mask, no crop */}
-      <div className="relative aspect-[58/45] w-full [mask-image:radial-gradient(ellipse_115%_115%_at_50%_45%,#000_62%,transparent_97%)] [-webkit-mask-image:radial-gradient(ellipse_115%_115%_at_50%_45%,#000_62%,transparent_97%)]">
-        <Image
-          src={art.hero.src}
-          alt="تصویر هنری بازار آنلاین ویش‌بازار"
-          fill
-          sizes="(max-width: 1024px) 100vw, 620px"
-          priority
-          className="object-contain mix-blend-multiply"
+    <section className="relative isolate overflow-hidden bg-[#102b28] text-white">
+      <div aria-hidden className="absolute inset-0 -z-20">
+        <div
+          className="absolute inset-0 bg-cover bg-[center_34%] lg:hidden"
+          style={{ backgroundImage: `url("${photos.heroMobile}")` }}
+        />
+        <div
+          className="absolute inset-0 hidden bg-cover bg-[center_48%] lg:block"
+          style={{ backgroundImage: `url("${photos.heroWide}")` }}
         />
       </div>
 
-      <BrandStar className="absolute -top-1 start-16 h-7 w-7 text-accent/60 animate-wb-float-slow" />
-
-      <FloatingChip
-        icon={ShoppingCart}
-        label="سبد خرید"
-        className="absolute -top-5 start-0 animate-wb-float"
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-[#071c1a] via-[#092a26]/75 to-[#092a26]/15 lg:bg-gradient-to-l lg:from-[#071c1a]/95 lg:via-[#092a26]/72 lg:to-[#092a26]/5"
       />
-      <FloatingChip
-        icon={Tag}
-        label="برچسب کالا"
-        className="absolute top-1/3 end-0 animate-wb-float-delay"
-      />
-      <FloatingChip
-        icon={Handshake}
-        label="معامله‌ای ساده"
-        className="absolute bottom-1/4 -start-4 animate-wb-float-delay"
-      />
-      <FloatingChip
-        icon={ShieldCheck}
-        label="معاملهٔ آگاهانه"
-        className="absolute -bottom-4 end-10 animate-wb-float-slow"
-      />
-    </div>
-  );
-}
-
-function FloatingChip({
-  icon: Icon,
-  label,
-  className,
-}: {
-  icon: LucideIcon;
-  label: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        'flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-2 shadow-card',
-        className,
-      )}
-    >
-      <Icon className="size-4 text-primary" aria-hidden />
-      <span className="text-caption font-semibold text-foreground">{label}</span>
-    </div>
-  );
-}
-
-/** Renders a kit icon SVG as a crisp, unoptimized vector (mirrors `BrandLogo`). */
-function KitIcon({ src, className }: { src: string; className?: string }) {
-  return (
-    <Image
-      src={src}
-      alt=""
-      width={120}
-      height={120}
-      unoptimized
-      className={cn('size-6', className)}
-    />
-  );
-}
-
-function HeroWave() {
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 text-surface">
-      <svg viewBox="0 0 1440 90" preserveAspectRatio="none" className="block h-[52px] w-full sm:h-[88px]">
-        <path
-          fill="currentColor"
-          d="M0,60 C240,112 480,0 720,30 C960,60 1200,88 1440,40 L1440,90 L0,90 Z"
-        />
-      </svg>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Why WeshBazar                                                      */
-/* ------------------------------------------------------------------ */
-
-function WhyWeshBazar() {
-  return (
-    <section id="why" className="scroll-mt-24">
-      <div className="container py-16 lg:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <TitleWithLines>چرا ویش‌بازار؟</TitleWithLines>
-        </div>
-
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          <WhyCard
-            icon={sectionIcon.pin}
-            title="پوشش و دسترسی بازار"
-            desc="آگهی‌ها را بر اساس شهر و محل جست‌وجو کنید و کالای مورد نظر را در نزدیکی خود بیابید."
-          />
-          <WhyCard
-            icon={sectionIcon.users}
-            title="جامعهٔ کاربران"
-            desc="فضایی مشترک برای خریداران و فروشندگان؛ هر آگهی در دسترس جست‌وجوکنندگان قرار می‌گیرد."
-          />
-          <WhyCard
-            icon={sectionIcon.scale}
-            title="خرید و فروش آگاهانه"
-            desc="جزئیات آگهی را پیش از معامله بررسی کنید و با آگاهی کامل تصمیم بگیرید."
-          />
-          <WhyCard
-            icon={sectionIcon.search}
-            title="جست‌وجوی سریع و آسان"
-            desc="با کلمهٔ کلیدی یا دسته‌بندی، آگهی مورد نظر را به‌سادگی پیدا کنید."
-          />
-        </div>
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -end-20 top-20 size-72 rounded-full bg-primary/30 blur-[100px]" />
+        <div className="absolute -start-20 bottom-0 size-64 rounded-full bg-accent/15 blur-[90px]" />
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#071c1a]/70 to-transparent" />
       </div>
-    </section>
-  );
-}
 
-function WhyCard({
-  icon,
-  title,
-  desc,
-}: {
-  icon: string;
-  title: string;
-  desc: string;
-}) {
-  return (
-    <article className="group rounded-surface border border-border bg-surface p-6 shadow-soft transition-all duration-medium hover:-translate-y-1 hover:shadow-card">
-      <span className="flex size-12 items-center justify-center rounded-2xl bg-primary-soft transition-colors duration-small group-hover:bg-primary">
-        <KitIcon src={icon} className="size-6" />
-      </span>
-      <h3 className="mt-5 text-card-title font-bold text-foreground">{title}</h3>
-      <p className="mt-2 text-body leading-7 text-muted-foreground">{desc}</p>
-    </article>
-  );
-}
-
-/** Centered heading with thin teal rules on both sides (§3.2). */
-function TitleWithLines({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center justify-center gap-4">
-      <span aria-hidden className="h-px w-10 bg-primary/30 sm:w-16" />
-      <h2 className="text-heading font-bold text-foreground sm:text-display">{children}</h2>
-      <span aria-hidden className="h-px w-10 bg-primary/30 sm:w-16" />
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* How it works                                                       */
-/* ------------------------------------------------------------------ */
-
-const howSteps = [
-  {
-    icon: sectionIcon.search,
-    title: 'جست‌وجوی کالا',
-    desc: 'با کلمهٔ کلیدی یا دسته‌بندی، آگهی مورد نظر خود را پیدا کنید.',
-  },
-  {
-    icon: sectionIcon.listing,
-    title: 'بررسی آگهی',
-    desc: 'عکس‌ها، توضیحات و شرایط آگهی را با دقت ببینید.',
-  },
-  {
-    icon: sectionIcon.handshake,
-    title: 'تماس با فروشنده',
-    desc: 'برای جزئیات بیشتر و هماهنگی، با فروشنده در تماس شوید.',
-  },
-] as const;
-
-function HowItWorks() {
-  return (
-    <section id="how" className="scroll-mt-24 overflow-x-clip bg-primary-soft/40">
-      <div className="container py-16 lg:py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <TitleWithLines>چگونه کار می‌کند؟</TitleWithLines>
-        </div>
-
-        <div className="mt-12 grid items-center gap-10 lg:grid-cols-2">
-          {/* Steps — first child renders on the right in RTL */}
-          <ol className="mx-auto w-full max-w-lg space-y-2">
-            {howSteps.map((step, index) => (
-              <li key={step.title}>
-                <HowStep
-                  step={index + 1}
-                  icon={step.icon}
-                  title={step.title}
-                  desc={step.desc}
-                  isLast={index === howSteps.length - 1}
-                />
-              </li>
-            ))}
-          </ol>
-
-          {/* Art — second child renders on the left in RTL */}
-          <ProcessArt />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function HowStep({
-  step,
-  icon,
-  title,
-  desc,
-  isLast,
-}: {
-  step: number;
-  icon: string;
-  title: string;
-  desc: string;
-  isLast: boolean;
-}) {
-  return (
-    <div className="flex items-start gap-4">
-      <div className="flex flex-col items-center">
-        <span className="relative flex size-14 shrink-0 items-center justify-center rounded-full bg-surface shadow-card ring-1 ring-primary/15">
-          <KitIcon src={icon} className="size-6" />
-        </span>
-        {!isLast && (
-          <span className="my-1 flex h-9 items-center text-primary/40" aria-hidden>
-            <ArrowDown className="size-4" />
+      <div className="container relative flex min-h-[680px] flex-col justify-end pb-16 pt-20 sm:min-h-[720px] sm:pb-20 lg:min-h-[660px] lg:justify-center lg:pb-16 lg:pt-16 xl:min-h-[720px]">
+        <div className="max-w-2xl animate-fade-up text-center lg:me-auto lg:text-start">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-caption font-bold text-white shadow-lg backdrop-blur-md">
+            <BrandStar className="size-4 text-accent" />
+            بازار آنلاین خرید و فروش افغانستان
           </span>
-        )}
-      </div>
-      <div className="pt-1.5">
-        <span className="inline-flex items-center rounded-full bg-accent/15 px-3 py-0.5 text-caption font-bold text-accent-dark">
-          قدم {toFa(step)}
-        </span>
-        <h3 className="mt-2 text-card-title font-bold text-foreground">{title}</h3>
-        <p className="mt-1.5 text-body leading-7 text-muted-foreground">{desc}</p>
-      </div>
-    </div>
-  );
-}
 
-function ProcessArt() {
-  return (
-    <div aria-hidden className="relative mx-auto flex w-full max-w-md items-center justify-center">
-      <div className="pointer-events-none absolute inset-0 rounded-[2rem] bg-primary/10 blur-3xl" />
-      <Leaf className="absolute -top-3 -start-2 h-10 w-10 -rotate-12 text-primary/30" />
-      <Leaf className="absolute bottom-4 end-0 h-12 w-12 rotate-12 text-accent/40" />
-      <Leaf className="absolute top-1/2 -end-3 h-8 w-8 -rotate-45 text-primary/40" />
+          <h1 className="mt-5 text-[2.35rem] font-black leading-[1.3] tracking-tight text-white sm:text-[3.1rem] sm:leading-[1.24] lg:text-[3.65rem]">
+            چیزهای خوب،
+            <span className="mt-1 block text-[#ffc45d]">همین نزدیکی‌ها پیدا می‌شوند</span>
+          </h1>
 
-      <div className="relative aspect-[62/51] w-full max-w-[360px]">
-        <Image
-          src={art.processSeller.src}
-          alt="فروشنده‌ای که با موبایل آگهی خود را مدیریت می‌کند"
-          fill
-          sizes="(max-width: 1024px) 100vw, 360px"
-          className="object-contain mix-blend-multiply"
-        />
-      </div>
-    </div>
-  );
-}
-
-function Leaf({ className }: { className?: string }) {
-  return (
-    <span aria-hidden className={cn('absolute', className)}>
-      <svg viewBox="0 0 24 24" fill="currentColor" className="h-full w-full">
-        <path d="M12 3C6.5 6.5 3.5 11.5 4.5 17c.3 1.5.9 2.5 1.5 3C11 22.5 19.5 17.5 21 9c-4.5-2-7-4-9-6z" />
-      </svg>
-    </span>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Trust & safety                                                     */
-/* ------------------------------------------------------------------ */
-
-const safetyFeatures = [
-  {
-    icon: sectionIcon.listing,
-    title: 'بررسی کامل آگهی',
-    desc: 'جزئیات، عکس‌ها و توضیحات آگهی را با دقت بخوانید.',
-  },
-  {
-    icon: sectionIcon.scale,
-    title: 'معاملهٔ منصفانه',
-    desc: 'شرایط قیمت و تحویل را پیش از معامله روشن کنید.',
-  },
-  {
-    icon: sectionIcon.lock,
-    title: 'احتیاط در پرداخت',
-    desc: 'پیش از واریز هر مبلغ، کالا و فروشنده را ارزیابی کنید.',
-  },
-  {
-    icon: sectionIcon.shieldCheck,
-    title: 'آگاهی از قوانین',
-    desc: 'نکات ایمنی و راهنمای معامله را مطالعه کنید.',
-  },
-] as const;
-
-function TrustSafety() {
-  return (
-    <section id="safety" className="scroll-mt-24 bg-primary-soft/30 py-16 lg:py-20">
-      <div className="container">
-        <div className="mx-auto max-w-2xl text-center">
-          <TitleWithLines>اعتماد و امنیت</TitleWithLines>
-          <p className="mt-4 text-body leading-8 text-muted-foreground">
-            پیش از هر معامله، آگاهی و دقت را در اولویت قرار دهید.
+          <p className="mx-auto mt-5 max-w-xl text-[15px] font-medium leading-8 text-white/85 sm:text-[17px] sm:leading-9 lg:mx-0">
+            از موبایل و موتر تا خانه و وسایل مورد نیاز؛ آگهی‌ها را ببین و برای خرید یا فروش، مستقیم با طرف مقابل در تماس شو.
           </p>
-        </div>
 
-        <div className="mt-10 grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-          {/* Shield art — first child renders on the right in RTL */}
-          <div aria-hidden className="relative mx-auto w-full max-w-[340px]">
-            <div className="pointer-events-none absolute inset-4 rounded-full bg-primary/10 blur-3xl" />
-            <Image
-              src={art.trustShield.src}
-              alt="سپر امنیت با نمای شهری و روبان نارنجی"
-              width={art.trustShield.width}
-              height={art.trustShield.height}
-              unoptimized
-              className="relative h-auto w-full"
-            />
-          </div>
-
-          <div className="rounded-surface border border-border bg-surface p-6 shadow-soft sm:p-8">
-            <h3 className="text-heading font-bold text-foreground">معاملهٔ آگاهانه</h3>
-            <p className="mt-3 text-body leading-8 text-muted-foreground">
-              ویش‌بازار فضایی برای معرفی و پیدا کردن کالاست؛ معاملهٔ نهایی میان خریدار و فروشنده انجام می‌شود.
-              پیش از پرداخت، آگهی را با دقت بررسی کنید و در مکان امن معامله کنید.
-            </p>
-            <Link
-              href="/help/safety"
-              className="mt-5 inline-flex items-center gap-1.5 text-ui font-medium text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
+            <EnterMarketCta
+              variant="accent"
+              size="lg"
+              className="min-h-[54px] gap-2 px-7 text-sm font-extrabold shadow-[0_12px_35px_rgba(245,158,11,0.28)] hover:-translate-y-0.5"
             >
-              مشاهدهٔ نکات ایمنی کامل
+              گشت‌وگذار در بازار
               <ArrowLeft aria-hidden className="size-4" />
-            </Link>
-          </div>
-        </div>
+            </EnterMarketCta>
 
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {safetyFeatures.map((feature) => (
-            <li
-              key={feature.title}
-              className="rounded-surface border border-border bg-surface p-5 shadow-soft"
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="min-h-[54px] border-white/35 bg-white/10 px-7 text-sm font-bold text-white shadow-lg backdrop-blur-md hover:border-white/60 hover:bg-white/20 hover:text-white"
             >
-              <span className="flex size-11 items-center justify-center rounded-xl bg-primary-soft">
-                <KitIcon src={feature.icon} className="size-6" />
-              </span>
-              <h3 className="mt-4 text-ui font-bold text-foreground">{feature.title}</h3>
-              <p className="mt-1.5 text-meta leading-6 text-muted-foreground">{feature.desc}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* CTA banner                                                         */
-/* ------------------------------------------------------------------ */
-
-function CtaBanner() {
-  return (
-    <section className="container pb-16 pt-2 lg:pb-20">
-      <div className="relative overflow-hidden rounded-[1.75rem] bg-primary-dark px-6 py-10 text-white shadow-lift sm:px-10">
-        <div aria-hidden className="pointer-events-none absolute -end-10 -top-10 h-48 w-48 rounded-full bg-accent/25 blur-3xl" />
-        <div aria-hidden className="pointer-events-none absolute -start-16 bottom-0 h-52 w-52 rounded-full bg-primary/60 blur-3xl" />
-
-        <div className="relative grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto]">
-          {/* Products art — first child → right in RTL */}
-          <div aria-hidden className="relative mx-auto w-full max-w-[380px]">
-            <Image
-              src={art.ctaProducts.src}
-              alt="مجموعه‌ای از کالاهای قابل معامله در ویش‌بازار"
-              width={art.ctaProducts.width}
-              height={art.ctaProducts.height}
-              unoptimized
-              className="h-auto w-full"
-            />
-          </div>
-
-          <div className="text-center lg:text-start">
-            <h2 className="text-display font-bold sm:text-[2rem]">کالایی برای فروش دارید؟</h2>
-            <p className="mt-3 text-body leading-8 text-white/80">
-              همین حالا به ویش‌بازار بپیوندید و آگهی خود را ثبت کنید.
-            </p>
-          </div>
-
-          <div className="flex justify-center lg:justify-start">
-            <Button asChild variant="accent" size="lg" className="font-semibold">
-              <Link href="/sell">ثبت آگهی</Link>
+              <Link href="/sell">
+                ثبت آگهی رایگان
+                <Tag aria-hidden className="size-4" />
+              </Link>
             </Button>
           </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-xs font-semibold text-white/80 lg:justify-start">
+            <HeroPerk icon={Search}>جست‌وجوی آسان</HeroPerk>
+            <HeroPerk icon={Eye}>دیدن جزئیات آگهی</HeroPerk>
+            <HeroPerk icon={PhoneCall}>تماس مستقیم</HeroPerk>
+          </div>
+        </div>
+
+        <div className="pointer-events-none absolute bottom-10 start-6 hidden items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 shadow-2xl backdrop-blur-xl xl:flex">
+          <span className="flex size-11 items-center justify-center rounded-xl bg-accent text-primary-dark">
+            <Store aria-hidden className="size-5" />
+          </span>
+          <span className="text-start">
+            <span className="block text-sm font-extrabold text-white">بازار برای همه</span>
+            <span className="mt-0.5 block text-xs text-white/70">برای خرید و فروش روزمره</span>
+          </span>
+          <BrandStar className="ms-2 size-4 text-accent" />
         </div>
       </div>
+
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-5 rounded-t-[50%] bg-background/95" />
     </section>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Shared design primitives                                           */
-/* ------------------------------------------------------------------ */
-
-function Eyebrow({ children }: { children: React.ReactNode }) {
+function HeroPerk({
+  icon: Icon,
+  children,
+}: {
+  icon: LucideIcon;
+  children: React.ReactNode;
+}) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-surface/80 px-3 py-1 text-caption font-semibold text-primary shadow-soft">
-      <BrandStar className="h-3.5 w-3.5 text-accent" />
+    <span className="inline-flex items-center gap-2">
+      <span className="flex size-6 items-center justify-center rounded-full bg-white/15 text-accent">
+        <Icon aria-hidden className="size-3.5" />
+      </span>
       {children}
     </span>
   );
 }
 
-function SectionBackdrop() {
+/* -------------------------------------------------------------------------- */
+/* Search entry                                                               */
+/* -------------------------------------------------------------------------- */
+
+function QuickSearch() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-      <div className="absolute start-1/4 top-24 h-72 w-72 rounded-full bg-white/40 blur-3xl" />
-      <div className="absolute end-0 top-40 h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
+    <div className="container relative z-20 -mt-7 sm:-mt-8">
+      <Link
+        href="/search"
+        aria-label="جست‌وجوی آگهی‌ها"
+        className="group flex min-h-[76px] items-center gap-3 rounded-2xl border border-white bg-white p-3 shadow-[0_18px_48px_rgba(14,55,49,0.14)] transition-all duration-300 hover:-translate-y-1 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:gap-4 sm:p-4"
+      >
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary transition-colors duration-200 group-hover:bg-primary group-hover:text-white sm:size-14 sm:rounded-2xl">
+          <Search aria-hidden className="size-5 sm:size-6" />
+        </span>
+        <span className="min-w-0 flex-1 text-start">
+          <span className="block truncate text-sm font-extrabold text-foreground sm:text-base">
+            دنبال چی می‌گردی؟
+          </span>
+          <span className="mt-1 block truncate text-xs text-muted-foreground sm:text-sm">
+            نام کالا، موتر، موبایل یا هر چیزی را جست‌وجو کن
+          </span>
+        </span>
+        <span className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl bg-accent px-3.5 text-xs font-extrabold text-primary-dark transition-transform duration-200 group-hover:-translate-x-1 sm:px-5 sm:text-sm">
+          جست‌وجو
+          <ArrowLeft aria-hidden className="size-4" />
+        </span>
+      </Link>
     </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Visual category discovery                                                  */
+/* -------------------------------------------------------------------------- */
+
+const categories = [
+  {
+    slug: 'vehicles',
+    title: 'وسایط نقلیه',
+    caption: 'موتر و انواع وسایط',
+    icon: CarFront,
+    image: photos.vehicles,
+    position: 'center 54%',
+    className: 'col-span-2 aspect-[2.08/1] lg:row-span-2 lg:aspect-auto lg:min-h-[390px]',
+  },
+  {
+    slug: 'mobiles-electronics',
+    title: 'موبایل و الکترونیک',
+    caption: 'موبایل، لپتاپ و وسایل دیجیتال',
+    icon: Laptop,
+    image: photos.electronics,
+    position: 'center 48%',
+    className: 'aspect-[1.08/1]',
+  },
+  {
+    slug: 'real-estate',
+    title: 'املاک',
+    caption: 'خانه، زمین و دکان',
+    icon: House,
+    image: photos.realEstate,
+    position: 'center 52%',
+    className: 'aspect-[1.08/1]',
+  },
+  {
+    slug: 'home-furniture',
+    title: 'خانه و مبلمان',
+    caption: 'مبلمان و لوازم خانه',
+    icon: Sofa,
+    image: photos.home,
+    position: 'center 52%',
+    className: 'aspect-[1.08/1]',
+  },
+  {
+    slug: 'fashion-beauty',
+    title: 'مد و زیبایی',
+    caption: 'لباس و وسایل شخصی',
+    icon: Shirt,
+    image: photos.fashion,
+    position: 'center 42%',
+    className: 'aspect-[1.08/1]',
+  },
+] as const;
+
+function CategoryDiscovery() {
+  return (
+    <section id="categories" className="scroll-mt-24 bg-background pb-14 pt-14 sm:pb-16 sm:pt-16 lg:pb-20 lg:pt-20">
+      <div className="container">
+        <div className="flex items-end justify-between gap-4">
+          <div className="min-w-0">
+            <span className="inline-flex items-center gap-2 text-xs font-extrabold text-primary">
+              <Compass aria-hidden className="size-4" />
+              کشف بازار
+            </span>
+            <h2 className="mt-2 text-[1.55rem] font-black leading-relaxed text-foreground sm:text-3xl">
+              از کدام دسته شروع کنیم؟
+            </h2>
+            <p className="mt-1.5 max-w-xl text-sm leading-7 text-muted-foreground">
+              دستهٔ مورد نظرت را انتخاب کن و آگهی‌های همان بخش را ببین.
+            </p>
+          </div>
+
+          <Link
+            href="/categories"
+            className="mb-1 hidden min-h-11 shrink-0 items-center gap-1 rounded-full px-3 text-xs font-extrabold text-primary transition-colors hover:bg-primary-soft sm:inline-flex sm:text-sm"
+          >
+            همهٔ دسته‌ها
+            <ArrowLeft aria-hidden className="size-4" />
+          </Link>
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4 lg:grid-cols-4">
+          {categories.map((category, index) => (
+            <CategoryPhotoCard key={category.slug} category={category} index={index} />
+          ))}
+        </div>
+
+        <Link
+          href="/categories"
+          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-primary/15 bg-primary-soft/55 px-4 text-sm font-extrabold text-primary transition-colors hover:bg-primary-soft sm:hidden"
+        >
+          دیدن همهٔ دسته‌بندی‌ها
+          <ArrowLeft aria-hidden className="size-4" />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function CategoryPhotoCard({
+  category,
+  index,
+}: {
+  category: (typeof categories)[number];
+  index: number;
+}) {
+  const Icon = category.icon;
+
+  return (
+    <Link
+      href={`/category/${category.slug}`}
+      className={cn(
+        'group relative isolate block overflow-hidden rounded-[1.35rem] bg-[#263c39] text-white shadow-card transition-all duration-300',
+        'hover:-translate-y-1 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+        category.className,
+      )}
+    >
+      <Image
+        src={category.image}
+        alt=""
+        fill
+        sizes="(max-width: 767px) 50vw, (max-width: 1279px) 33vw, 25vw"
+        style={{ objectPosition: category.position }}
+        className="z-0 object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+      />
+      <div
+        aria-hidden
+        className={cn(
+          'absolute inset-0 z-10',
+          index === 0
+            ? 'bg-gradient-to-t from-[#071f1b]/95 via-[#071f1b]/35 to-transparent'
+            : 'bg-gradient-to-t from-[#071f1b]/95 via-[#071f1b]/30 to-[#071f1b]/5',
+        )}
+      />
+
+      <span className="absolute end-3 top-3 z-20 flex size-9 items-center justify-center rounded-xl border border-white/30 bg-white/15 text-white shadow-lg backdrop-blur-md transition-all duration-300 group-hover:rotate-[-8deg] group-hover:bg-accent group-hover:text-primary-dark sm:end-4 sm:top-4 sm:size-10">
+        <Icon aria-hidden className="size-5" />
+      </span>
+
+      <span className="absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-2 p-3.5 sm:p-4 lg:p-5">
+        <span className="min-w-0 text-start">
+          <span className="block text-sm font-black leading-6 text-white sm:text-lg">{category.title}</span>
+          <span className="mt-0.5 block text-[10px] font-medium leading-5 text-white/75 sm:text-xs">
+            {category.caption}
+          </span>
+        </span>
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md transition-all duration-300 group-hover:-translate-x-1 group-hover:bg-accent group-hover:text-primary-dark sm:size-9">
+          <ArrowLeft aria-hidden className="size-4" />
+        </span>
+      </span>
+    </Link>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* How it works                                                               */
+/* -------------------------------------------------------------------------- */
+
+const steps = [
+  {
+    number: '۰۱',
+    icon: Search,
+    title: 'جست‌وجو کن',
+    detail: 'نام کالا را بنویس یا از دسته‌بندی‌ها شروع کن.',
+    tone: 'bg-[#e3f3f0] text-primary',
+  },
+  {
+    number: '۰۲',
+    icon: Eye,
+    title: 'با دقت بررسی کن',
+    detail: 'عکس‌ها، توضیحات و شرایط آگهی را ببین.',
+    tone: 'bg-[#fff0d5] text-[#a55e00]',
+  },
+  {
+    number: '۰۳',
+    icon: MessageCircle,
+    title: 'با فروشنده تماس بگیر',
+    detail: 'برای پرسش و هماهنگی، مستقیم صحبت کن.',
+    tone: 'bg-[#eee8fb] text-[#6546a0]',
+  },
+] as const;
+
+function HowItWorks() {
+  return (
+    <section className="relative isolate overflow-hidden bg-[#f0f7f5] py-14 sm:py-16 lg:py-20">
+      <div aria-hidden className="pointer-events-none absolute -end-24 top-0 -z-10 size-72 rounded-full bg-primary/10 blur-[90px]" />
+      <div aria-hidden className="pointer-events-none absolute -start-24 bottom-0 -z-10 size-72 rounded-full bg-accent/10 blur-[90px]" />
+
+      <div className="container">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3.5 py-1.5 text-xs font-extrabold text-primary shadow-soft">
+            <Sparkles aria-hidden className="size-3.5 text-accent" />
+            ساده و روشن
+          </span>
+          <h2 className="mt-3 text-[1.55rem] font-black leading-relaxed text-foreground sm:text-3xl">
+            پیدا کن، بررسی کن، تماس بگیر
+          </h2>
+          <p className="mt-2 text-sm leading-7 text-muted-foreground sm:text-base">
+            مسیر خرید و فروش در ویش‌بازار همین‌قدر ساده است.
+          </p>
+        </div>
+
+        <ol className="mt-8 grid gap-3 sm:mt-10 md:grid-cols-3 md:gap-4">
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <li
+                key={step.number}
+                className="group relative overflow-hidden rounded-[1.4rem] border border-white/80 bg-white/85 p-5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-card sm:p-6"
+              >
+                <span aria-hidden className="absolute -end-2 -top-7 text-[5.5rem] font-black leading-none text-primary/[0.045] transition-colors duration-300 group-hover:text-primary/[0.09]">
+                  {step.number}
+                </span>
+                <div className="relative flex items-start justify-between gap-3">
+                  <span className={cn('flex size-14 items-center justify-center rounded-2xl shadow-inner shadow-white/70 transition-transform duration-300 group-hover:-translate-y-1 group-hover:rotate-[-5deg]', step.tone)}>
+                    <Icon aria-hidden className="size-6" />
+                  </span>
+                  <span className="rounded-full bg-background px-3 py-1 text-[10px] font-extrabold tracking-wider text-muted-foreground">
+                    قدم {index + 1}
+                  </span>
+                </div>
+                <h3 className="relative mt-5 text-lg font-black text-foreground">{step.title}</h3>
+                <p className="relative mt-2 text-sm leading-7 text-muted-foreground">{step.detail}</p>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Seller invitation                                                          */
+/* -------------------------------------------------------------------------- */
+
+function SellerInvitation() {
+  return (
+    <section className="container py-14 sm:py-16 lg:py-20">
+      <div className="relative isolate min-h-[410px] overflow-hidden rounded-[1.8rem] bg-[#102b28] text-white shadow-lift sm:min-h-[360px] lg:min-h-[400px]">
+        <Image
+          src={photos.seller}
+          alt=""
+          fill
+          sizes="(max-width: 767px) 100vw, 1280px"
+          className="z-0 object-cover object-[center_40%]"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 z-10 bg-gradient-to-t from-[#071c1a]/95 via-[#071c1a]/70 to-[#071c1a]/20 lg:bg-gradient-to-l lg:from-[#071c1a]/95 lg:via-[#071c1a]/65 lg:to-[#071c1a]/10"
+        />
+        <div className="relative z-20 flex min-h-[410px] flex-col justify-end p-6 sm:min-h-[360px] sm:p-9 lg:min-h-[400px] lg:max-w-[650px] lg:justify-center lg:p-12">
+          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-extrabold text-white backdrop-blur-md">
+            <Store aria-hidden className="size-4 text-accent" />
+            برای فروشندگان
+          </span>
+          <h2 className="mt-4 text-[1.75rem] font-black leading-relaxed text-white sm:text-3xl">
+            چیزی برای فروش داری؟
+          </h2>
+          <p className="mt-2 max-w-lg text-sm leading-7 text-white/80 sm:text-base sm:leading-8">
+            از کالایت عکس بگیر، مشخصاتش را بنویس و آگهی‌ات را در ویش‌بازار معرفی کن تا خریداران آن را ببینند.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <Button asChild variant="accent" size="lg" className="min-h-[52px] gap-2 px-6 font-extrabold">
+              <Link href="/sell">
+                ثبت آگهی
+                <Tag aria-hidden className="size-4" />
+              </Link>
+            </Button>
+            <Link
+              href="/about"
+              className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-control border border-white/35 bg-white/10 px-6 text-sm font-bold text-white backdrop-blur-md transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              آشنایی با ویش‌بازار
+              <ArrowUpLeft aria-hidden className="size-4" />
+            </Link>
+          </div>
+        </div>
+
+        <span aria-hidden className="pointer-events-none absolute end-6 top-6 hidden size-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-accent backdrop-blur-md lg:flex">
+          <BrandStar className="size-7 animate-wb-float-slow" />
+        </span>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Honest safety reminder                                                     */
+/* -------------------------------------------------------------------------- */
+
+function SafetyNote() {
+  return (
+    <section className="bg-[#fff8eb] py-8 sm:py-10">
+      <div className="container">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+          <div className="flex items-start gap-3.5">
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-white text-[#a55e00] shadow-soft">
+              <ShieldCheck aria-hidden className="size-6" />
+            </span>
+            <div>
+              <h2 className="text-base font-black text-foreground">پیش از معامله، با دقت بررسی کن</h2>
+              <p className="mt-1 text-xs leading-6 text-muted-foreground sm:text-sm">
+                ویش‌بازار خریدار و فروشنده را وصل می‌کند؛ معاملهٔ نهایی میان خودشان انجام می‌شود.
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href="/help/safety"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl px-3 text-sm font-extrabold text-[#925200] transition-colors hover:bg-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#a55e00]"
+          >
+            نکات ایمنی معامله
+            <ArrowLeft aria-hidden className="size-4" />
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }

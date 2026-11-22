@@ -40,6 +40,13 @@ describe('SiteFooter', () => {
     expect(screen.getByRole('link', { name: 'تماس با ما' })).toHaveAttribute('href', '/contact');
   });
 
+  it('uses a compact mobile-first footer layout', () => {
+    const { container } = render(<SiteFooter />);
+    const grid = container.querySelector('footer > div');
+    expect(grid).toHaveClass('grid-cols-2');
+    expect(screen.getByRole('navigation', { name: 'راهنما' })).toHaveClass('col-span-2');
+  });
+
   it('keeps the existing marketplace links intact', () => {
     render(<SiteFooter />);
     expect(screen.getByRole('link', { name: 'جست‌وجوی آگهی‌ها' })).toHaveAttribute('href', '/search');

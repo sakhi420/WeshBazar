@@ -69,21 +69,31 @@ export class TaxonomyService {
   async getTree(locale: Locale): Promise<PublicCategoryNode[]> {
     const visible = await this.loadVisibleCategories();
     const byId = new Map(visible.map((category) => [category.id, category]));
-    const nodeById = new Map<string, PublicCategoryNode>();
     const sorted = sortCategories(visible);
+    const childrenByParent = new Map<string, CategoryWithTranslations[]>();
 
-    // Build children bottom-up so each parent node owns fully built subtrees.
-    for (const category of [...sorted].reverse()) {
-      const children = sorted
-        .filter((candidate) => candidate.parentId === category.id)
-        .map((child) => nodeById.get(child.id))
-        .filter((node): node is PublicCategoryNode => node !== undefined);
-      nodeById.set(category.id, toPublicCategoryNode(category, locale, children));
+    // Group siblings first. A global sortOrder does not guarantee that a
+    // child is visited before its parent, so building bottom-up from that
+    // order can silently omit children from the public tree.
+    for (const category of sorted) {
+      if (category.parentId === null) {
+        continue;
+      }
+      const siblings = childrenByParent.get(category.parentId) ?? [];
+      siblings.push(category);
+      childrenByParent.set(category.parentId, siblings);
     }
+
+    // Build recursively from each root so parent/child sortOrder values are
+    // independent and every visible descendant is included.
+    const buildNode = (category: CategoryWithTranslations): PublicCategoryNode => {
+      const children = childrenByParent.get(category.id) ?? [];
+      return toPublicCategoryNode(category, locale, children.map(buildNode));
+    };
+
     return sorted
       .filter((category) => category.parentId === null || !byId.has(category.parentId))
-      .map((category) => nodeById.get(category.id))
-      .filter((node): node is PublicCategoryNode => node !== undefined);
+      .map(buildNode);
   }
 
   async getBySlug(slug: string, locale: Locale): Promise<PublicCategoryDetail> {

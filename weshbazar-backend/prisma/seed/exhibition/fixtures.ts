@@ -1,7 +1,6 @@
 /**
- * Exhibition fixtures — REAL marketplace listings seeded under the admin
- * seller account (Dari copy). Generated from WeshBazar_150_Exhibition_Listings_FA.md.
- * Slug-upsert idempotency key: `slug` (stable, derived from fixture key).
+ * Dari-language exhibition fixture dataset.
+ * Stable slugs are the idempotency keys; seller ownership is assigned in sellers.ts.
  */
 
 export interface ExhibitionFixture {
@@ -295,7 +294,7 @@ export const EXHIBITION_FIXTURES: ExhibitionFixture[] = [
     key: "exh-properties-for-rent-001",
     slug: "properties-for-rent-001",
     categorySlug: "properties-for-rent",
-    title: "کرایه آپارتمان دو اتاقه در مزارشریف",
+    title: "کرایه آپارتمان دو اتاقه در نیلی",
     description: "ملک یادشده برای کرایه آماده است. (آپارتمان با 2 خواب، مساحت 95 متر مربع). وضعیت خوب و 18,000 افغانی است. محل نیلی — برای بازدید و جزئیات بیشتر تماس بگیرید.",
     pricingType: "PAID",
     price: "18000.00",
