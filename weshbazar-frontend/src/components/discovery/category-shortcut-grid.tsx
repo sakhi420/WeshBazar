@@ -340,10 +340,12 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
           </div>
           {hasOverflow ? (
             <>
+              {/* The marquee scrolls through these repeated groups. Keep their
+                  links pointer-clickable; aria-hidden and tabIndex=-1 keep the
+                  visual copies out of the accessibility tree and tab order. */}
               <div
                 dir="rtl"
                 aria-hidden="true"
-                inert
                 className="flex w-max shrink-0 items-start gap-2.5 pe-3"
               >
                 {renderCategoryLinks(true)}
@@ -351,7 +353,6 @@ export function CategoryShortcutGrid({ categories, className }: CategoryShortcut
               <div
                 dir="rtl"
                 aria-hidden="true"
-                inert
                 className="flex w-max shrink-0 items-start gap-2.5 pe-3"
               >
                 {renderCategoryLinks(true)}
