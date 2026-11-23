@@ -27,7 +27,10 @@ describe('NeonObjectStorageProvider', () => {
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     const [url, init] = fetchSpy.mock.calls[0];
-    expect(String(url)).toBe(
+    if (!(url instanceof URL)) {
+      throw new Error('Expected the storage provider to fetch with a URL instance.');
+    }
+    expect(url.href).toBe(
       'https://object-storage.example.neon.tech/weshbazar-media/listings/a/b/original.jpg',
     );
     expect(init?.method).toBe('PUT');
