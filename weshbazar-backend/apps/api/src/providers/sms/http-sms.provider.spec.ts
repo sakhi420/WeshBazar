@@ -63,7 +63,7 @@ describe('HttpSmsProvider', () => {
 
   it('POSTs a JSON payload with the configured auth header', async () => {
     fetchMock = jest.fn().mockResolvedValue(new Response('', { status: 200 }));
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await buildProvider().sendVerificationCode(input);
 
@@ -86,7 +86,7 @@ describe('HttpSmsProvider', () => {
 
   it('prefixes the API key when configured (e.g. Bearer tokens)', async () => {
     fetchMock = jest.fn().mockResolvedValue(new Response('', { status: 200 }));
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await buildProvider({ apiKeyHeader: 'Authorization', apiKeyPrefix: 'Bearer ' }).sendVerificationCode(
       input,
@@ -101,7 +101,7 @@ describe('HttpSmsProvider', () => {
 
   it('omits the sender field when none is configured', async () => {
     fetchMock = jest.fn().mockResolvedValue(new Response('', { status: 200 }));
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await buildProvider({ sender: undefined }).sendVerificationCode(input);
 
@@ -111,7 +111,7 @@ describe('HttpSmsProvider', () => {
 
   it('throws when the gateway responds with a non-2xx status', async () => {
     fetchMock = jest.fn().mockResolvedValue(new Response('nope', { status: 401 }));
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await expect(buildProvider({ maxRetries: 0 }).sendVerificationCode(input)).rejects.toThrow(
       /responded 401/,
@@ -124,7 +124,7 @@ describe('HttpSmsProvider', () => {
       .fn()
       .mockRejectedValueOnce(new Error('ECONNREFUSED'))
       .mockResolvedValueOnce(new Response('', { status: 200 }));
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     jest.useFakeTimers();
     const promise = buildProvider({ maxRetries: 1 }).sendVerificationCode(input);
@@ -136,7 +136,7 @@ describe('HttpSmsProvider', () => {
 
   it('gives up after exhausting all retries', async () => {
     fetchMock = jest.fn().mockRejectedValue(new Error('boom'));
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await expect(buildProvider({ maxRetries: 1 }).sendVerificationCode(input)).rejects.toThrow('boom');
     expect(fetchMock).toHaveBeenCalledTimes(2);
