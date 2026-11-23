@@ -25,7 +25,7 @@ export interface ApiErrorEnvelope {
   error: {
     code: string;
     message: string;
-    details?: ApiFieldError[];
+    details?: unknown;
   };
   requestId: string;
 }

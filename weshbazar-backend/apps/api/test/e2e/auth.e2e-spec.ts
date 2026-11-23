@@ -35,7 +35,7 @@ interface SuccessEnvelope<T> {
 
 interface ErrorEnvelope {
   success: false;
-  error: { code: string; message: string; details?: Record<string, unknown> };
+  error: { code: string; message: string; details?: unknown };
   requestId: string;
 }
 
@@ -214,6 +214,21 @@ describe('Auth (e2e)', () => {
         .expect(200);
       const meBody = me.body as SuccessEnvelope<{ user: AuthData['user'] }>;
       expect(meBody.data.user.phoneVerified).toBe(false);
+    });
+
+    it('returns validation details in the frozen API v1 field/message array shape', async () => {
+      const response = await request(server)
+        .post('/api/v1/auth/register')
+        .send({ password: PASSWORD })
+        .expect(400);
+
+      const error = errorOf(response);
+      expect(error.code).toBe('VALIDATION_ERROR');
+      expect(error.details).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ field: 'phone', message: expect.any(String) }),
+        ]),
+      );
     });
 
     it('rejects a duplicate phone number with PHONE_ALREADY_REGISTERED', async () => {

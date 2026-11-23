@@ -3,6 +3,7 @@
  */
 import type { ValidationError } from 'class-validator';
 import { flattenValidationErrors } from './validation.pipe';
+import { toApiFieldErrors } from './field-issues';
 
 function error(
   property: string,
@@ -46,5 +47,21 @@ describe('flattenValidationErrors', () => {
   it('ignores nodes without constraints or children', () => {
     expect(flattenValidationErrors([error('noise')])).toEqual([]);
     expect(flattenValidationErrors([])).toEqual([]);
+  });
+});
+
+
+describe('toApiFieldErrors', () => {
+  it('converts grouped internal messages to the frozen API v1 field/message array', () => {
+    expect(
+      toApiFieldErrors([
+        { field: 'phone', messages: ['phone is required', 'phone must be a string'] },
+        { field: 'attributes.cityId', messages: ['cityId must be a UUID'] },
+      ]),
+    ).toEqual([
+      { field: 'phone', message: 'phone is required' },
+      { field: 'phone', message: 'phone must be a string' },
+      { field: 'attributes.cityId', message: 'cityId must be a UUID' },
+    ]);
   });
 });
