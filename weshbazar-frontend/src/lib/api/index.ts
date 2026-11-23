@@ -33,6 +33,7 @@ export {
   refreshAccessToken,
   parseEnvelope,
   newIdempotencyKey,
+  type RefreshAccessTokenOptions,
   type Query,
   type QueryValue,
   type RequestOptions,
