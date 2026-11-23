@@ -1,5 +1,6 @@
 import { clearAccessToken, getAccessToken, setAccessToken } from './token-store';
-import { ApiError, refreshAccessToken, request } from './client';
+import { refreshAccessToken, request } from './client';
+import { ApiError } from './errors';
 
 type HeaderMap = Record<string, string>;
 
@@ -126,7 +127,7 @@ describe('request refresh and replay', () => {
       );
 
     await expect(request('/protected')).rejects.toBeInstanceOf(ApiError);
-    await expect(getAccessToken()).toBeNull();
+    expect(getAccessToken()).toBeNull();
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 });
