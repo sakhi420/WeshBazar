@@ -15,7 +15,9 @@ export function bindFieldErrors(error: unknown): Record<string, string> {
   const map: Record<string, string> = {};
   if (error instanceof ApiError && error.code === ApiErrorCode.VALIDATION_ERROR) {
     for (const detail of error.fieldErrors) {
-      map[detail.field] = detail.message;
+      map[detail.field] = map[detail.field]
+        ? `${map[detail.field]}؛ ${detail.message}`
+        : detail.message;
     }
   }
   return map;
