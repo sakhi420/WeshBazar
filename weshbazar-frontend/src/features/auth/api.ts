@@ -14,6 +14,7 @@ import {
   publishAuthSessionEvent,
   get,
   hasAccessToken,
+  hasLocalLogoutMarker,
   post,
   refreshAccessToken,
   setAccessToken,
@@ -69,6 +70,17 @@ export function fetchCurrentUser(): Promise<MeResponse> {
  * refreshable session.
  */
 export async function bootstrapCurrentUser(): Promise<MeResponse> {
+  // An explicit local sign-out wins over a still-present HttpOnly refresh
+  // cookie. Only a successful explicit login/register clears this marker.
+  if (hasLocalLogoutMarker()) {
+    clearAccessToken();
+    throw new ApiError({
+      code: ApiErrorCode.UNAUTHORIZED,
+      message: 'No active session',
+      status: 401,
+    });
+  }
+
   if (!hasAccessToken()) {
     const token = await refreshAccessToken();
     if (!token) {
