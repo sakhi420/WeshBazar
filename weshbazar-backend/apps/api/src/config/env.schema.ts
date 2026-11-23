@@ -209,13 +209,14 @@ export const envSchema = z
           message: 'SMS_GATEWAY_URL is required when SMS_PROVIDER=http',
         });
       } else {
-        let validUrl = false;
-        try {
-          const url = new URL(env.SMS_GATEWAY_URL);
-          validUrl = url.protocol === 'http:' || url.protocol === 'https:';
-        } catch {
-          validUrl = false;
-        }
+        const validUrl = (() => {
+          try {
+            const url = new URL(env.SMS_GATEWAY_URL);
+            return url.protocol === 'http:' || url.protocol === 'https:';
+          } catch {
+            return false;
+          }
+        })();
         if (!validUrl) {
           ctx.addIssue({
             code: 'custom',
