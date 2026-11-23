@@ -8,6 +8,7 @@
  *  - `x-request-id` on every request
  *  - in-memory access token attached as `Authorization: Bearer`
  *  - single-flight silent refresh + one replay on 401 TOKEN_EXPIRED
+ *  - same-origin Web Lock serialization for refresh rotation across browser tabs
  *  - session cleared on terminal 401 codes
  *  - typed ApiError thrown on any non-2xx / transport failure
  *
