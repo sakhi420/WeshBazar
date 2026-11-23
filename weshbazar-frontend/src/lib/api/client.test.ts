@@ -21,6 +21,7 @@ async function loadIsolatedClient(): Promise<typeof import('./client')> {
 describe('refreshAccessToken cross-tab coordination', () => {
   const originalFetch = global.fetch;
   const originalLocksDescriptor = Object.getOwnPropertyDescriptor(navigator, 'locks');
+  const originalDocumentCookieDescriptor = Object.getOwnPropertyDescriptor(document, 'cookie');
 
   afterEach(() => {
     global.fetch = originalFetch;
@@ -28,6 +29,11 @@ describe('refreshAccessToken cross-tab coordination', () => {
       Object.defineProperty(navigator, 'locks', originalLocksDescriptor);
     } else {
       delete (navigator as Navigator & { locks?: LockManager }).locks;
+    }
+    if (originalDocumentCookieDescriptor) {
+      Object.defineProperty(document, 'cookie', originalDocumentCookieDescriptor);
+    } else {
+      delete (document as unknown as { cookie?: string }).cookie;
     }
     jest.clearAllMocks();
   });
@@ -108,4 +114,18 @@ describe('refreshAccessToken cross-tab coordination', () => {
     await expect(client.refreshAccessToken()).resolves.toBe('access-fallback');
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
+  it('does not rotate the refresh cookie after an explicit local sign-out', async () => {
+    Object.defineProperty(document, 'cookie', {
+      configurable: true,
+      value: 'weshbazar_logged_out=1',
+      writable: true,
+    });
+    global.fetch = jest.fn() as unknown as typeof fetch;
+
+    const client = await loadIsolatedClient();
+
+    await expect(client.refreshAccessToken()).resolves.toBeNull();
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
 });
