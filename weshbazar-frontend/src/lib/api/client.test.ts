@@ -114,6 +114,23 @@ describe('refreshAccessToken cross-tab coordination', () => {
     await expect(client.refreshAccessToken()).resolves.toBe('access-fallback');
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
+
+  it('allows only the explicit logout flow to refresh after setting the logout marker', async () => {
+    Object.defineProperty(document, 'cookie', {
+      configurable: true,
+      value: 'weshbazar_logged_out=1',
+      writable: true,
+    });
+    global.fetch = jest.fn(async () => successResponse('logout-access-token')) as unknown as typeof fetch;
+
+    const client = await loadIsolatedClient();
+
+    await expect(client.refreshAccessToken({ allowLocalLogout: true })).resolves.toBe(
+      'logout-access-token',
+    );
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
   it('does not rotate the refresh cookie after an explicit local sign-out', async () => {
     Object.defineProperty(document, 'cookie', {
       configurable: true,
