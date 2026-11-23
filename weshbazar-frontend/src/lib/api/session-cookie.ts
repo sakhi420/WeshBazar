@@ -60,7 +60,11 @@ export function hasLocalLogoutMarker(): boolean {
 /** Notify other same-origin tabs after an explicit login or logout. */
 export function publishAuthSessionEvent(event: AuthSessionEvent): void {
   if (typeof BroadcastChannel === 'undefined') return;
-  const channel = new BroadcastChannel(AUTH_SESSION_CHANNEL);
-  channel.postMessage(event);
-  channel.close();
+  try {
+    const channel = new BroadcastChannel(AUTH_SESSION_CHANNEL);
+    channel.postMessage(event);
+    channel.close();
+  } catch {
+    // The marker cookies still protect reloads if cross-tab messaging is unavailable.
+  }
 }
