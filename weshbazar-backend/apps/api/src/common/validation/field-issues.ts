@@ -1,18 +1,36 @@
 /**
- * Helpers for service-level payload issues that mirror the DTO validation
- * shape (`details.errors` with per-field messages), so custom checks in
- * services surface exactly like failures from the global validation pipe.
+ * Shared validation issue types and helpers.
+ *
+ * Internally, validators may group several messages for one field. The frozen
+ * API v1 contract exposes each issue as a separate { field, message } item.
  */
 import { AppException } from '../errors/app.exception';
 import { isValidSlugFormat } from '../utils/slug.utils';
-import type { FieldValidationIssue } from './validation.pipe';
+export interface FieldValidationIssue {
+  field: string;
+  messages: string[];
+}
+
+export interface ApiFieldValidationError {
+  field: string;
+  message: string;
+}
+
+/** Convert grouped internal issues to the API v1 field/message array. */
+export function toApiFieldErrors(
+  issues: readonly FieldValidationIssue[],
+): ApiFieldValidationError[] {
+  return issues.flatMap((issue) =>
+    issue.messages.map((message) => ({ field: issue.field, message })),
+  );
+}
 
 export const SLUG_ISSUE_MESSAGE =
   'Slug must be 2–140 characters of lowercase letters, digits and hyphens.';
 
 export function assertNoIssues(issues: FieldValidationIssue[]): void {
   if (issues.length > 0) {
-    throw new AppException('VALIDATION_ERROR', { details: { errors: issues } });
+    throw new AppException('VALIDATION_ERROR', { details: toApiFieldErrors(issues) });
   }
 }
 
