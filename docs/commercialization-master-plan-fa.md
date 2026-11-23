@@ -1,4 +1,7 @@
-| D-007 | مصرف اعتبار Boost | Standard=۱ و Featured=۲؛ grantهای پلن ۰/۳/۸/۲۰ در هر ۳۰ روز | `SUPERSEDED_BY_V2` | بخش ۴۵ | Credit ledger | — |nها | قیمت‌های v1 تاریخی؛ قیمت پایلوت v2 در بخش ۴۷ | `SUPERSEDED_BY_V2_PILOT` | بخش ۴۷ | revision قیمت | — |ntitlement هر پلن اکنون quota مستقل دارد | `SUPERSEDED_BY_V2` | بخش ۴۰ | entitlement resolver | — |nding عمومی ۱۰ | مقدار تاریخی؛ سقف جاری ۴/۱۵/۲۵/۴۰ بر اساس پلن | `SUPERSEDED_BY_V2` | بخش ۴۰.۵ | quota پلن‌محور | — |ndfathering سقف قبلی | مقدار تاریخی؛ سیاست جاری downgrade در بخش ۴۸ و V2-029 تعریف شده است | `SUPERSEDED_BY_V2` | بخش ۴۸ | حفظ آگهی بدون حذف خودکار | — |ntitlement پلن‌محور | — |numها/قطعه‌کدها به انگلیسی و مطابق repository  
+# طرح مادر تجاری‌سازی WeshBazar — سند جامع طراحی، پیاده‌سازی، تست و انتشار
+
+> **نوع سند:** مرجع مادر فنی/محصولی (ممیزی‌شده از repository واقعی)  
+> **زبان:** دری افغانستان؛ اصطلاحات فنی، نام جدول‌ها/ستون‌ها/راه‌ها/enumها/قطعه‌کدها به انگلیسی و مطابق repository  
 > **وضعیت:** `PRODUCT BASELINE v2.0 — طراحی مبنا با اختیار تفویض‌شده؛ پیاده‌سازی نشده`  
 > **محدودهٔ مجاز این مأموریت:** تنها ایجاد همین یک فایل Markdown مجاز بود؛ هیچ کد، Schema، Migration، API، تست، تنظیمات امنیتی، وابستگی یا Git تغییری نکرده است.  
 > **نسخهٔ سند:** `2.0` · **تاریخ تهیه:** از روی وضعیت زندهٔ repository در همین جلسه
@@ -168,7 +171,8 @@ WeshBazar بازار آنلاین آگهی برای افغانستان است. �
 
 ## ۸. سقف آگهی فعال عمومی — نسخهٔ تاریخی 1.0؛ سیاست جاری در بخش دوم v2.0
 
-> **یادداشت نسخهٔ ۲٫۰:** تمام شمارش‌ها، سقف ۲۰/۵۰، Pending=۱۰، grandfathering و تحلیل‌های این فصل فقط وضعیت تاریخی نسخهٔ 1.0 را توصیف می‌کنند. برای تصمیم جاری، فقط بخش‌های ۴۰، ۴۸، ۶۰، ۷۱ و Decision Register نسخهٔ 2.0 معتبرند.
+> **یادداشت نسخهٔ ۲٫۰:** تمام شمارش‌ها، سقف ۲۰/۵۰، Pending=۱۰، grandfathering و تحلیل‌های این فصل فقط وضعیت تاریخی نسخهٔ 1.0 را توصیف می‌کنند. برای تصمیم جاری، بخش‌های ۴۰، ۴۸، ۶۰، ۷۱ و Decision Register نسخهٔ 2.0 معتبرند.
+
 
 > **تاریخچه:** سقف عمومی ۲۰ در نسخهٔ 1.0 ثبت شده بود. این سیاست در نسخهٔ 2.0 با سقف پلن‌محور جایگزین شده است: رایگان ۸، Business ۸۰، Business Plus ۱۵۰ و Pro ۳۰۰ آگهی فعال هم‌زمان. جدول entitlement نسخهٔ 2.0 مرجع جاری است؛ این سیاست هنوز در کد پیاده نشده است.
 
@@ -247,6 +251,7 @@ WeshBazar بازار آنلاین آگهی برای افغانستان است. �
 
 > **یادداشت نسخهٔ ۲٫۰:** جدول تعرفهٔ این فصل snapshot تاریخی v1 است. قیمت پایلوت و محصول‌های جاری در بخش‌های ۴۰، ۴۵ و ۴۷ نسخهٔ 2.0 آمده‌اند و بر این جدول اولویت دارند.
 
+
 ### ۹.۱ جداسازی پول از قیمت Listing
 
 - تمام مبالغ خدمات تجاری از `Listing.price` جدا هستند.
@@ -272,6 +277,7 @@ WeshBazar بازار آنلاین آگهی برای افغانستان است. �
 ## ۱۰. کاتالوگ Plan و تصمیم‌های قیمت‌گذاری
 
 > **یادداشت نسخهٔ ۲٫۰:** کاتالوگ این فصل طراحی تاریخی v1 است. چهار پلن FREE، BUSINESS، BUSINESS_PLUS و PRO و entitlement کامل آن‌ها در بخش‌های ۴۰ تا ۴۳ نسخهٔ 2.0 مرجع جاری‌اند.
+
 
 **`CommercialPlan` (کاتالوگ، علی الظاهر mutable با audited change) و `CommercialPlanRevision` (تغییرناپذیر — snapshot):**
 
@@ -688,19 +694,19 @@ pino structured events با `requestId`؛ رویدادهای کلیدی: `order.
 
 | ID | موضوع | گزینه/تصمیم | وضعیت | شاهد | اثر فنی | مسئول تأیید |
 |---|---|---|---|---|---|---|
-| D-001 | سقف آگهی فعال کاربر عادی | ۵۰ → **۲۰** | `CONFIRMED_BY_OWNER` | `env.schema.ts:128` (فعلی 50) | تغییر سقف + enforcement اتمی | مالک |
-| D-002 | کاربران >۲۰ | grandfathering؛ ممنوعیت فعال جدید تا زیر سقف | `CONFIRMED_BY_OWNER` | — | سیاست rollout | مالک |
-| D-003 | سقف pending | ۱۰ (بدون تغییر) | `CONFIRMED_BY_EXISTING_CODE` | `env.schema.ts:129` | — | — |
-| D-004 | اثر اشتراک بر quota | اشتراک به‌طور خودکار سقف ۲۰ را افزایش نمی‌دهد | `CONFIRMED_BY_OWNER` | — | بدون quota بالاتر؛ افزایش آینده فقط با entitlement جداگانه | مالک |
-| D-005 | قیمت نهایی planها | جدول فصل ۹/۱۰ | `PROPOSED_NOT_APPROVED` | — | snapshot | مالک |
+| D-001 | سقف فعال عمومی | مقدار تاریخی ۲۰؛ منسوخ و جایگزین‌شده با V2-002 تا V2-005 (۸/۸۰/۱۵۰/۳۰۰) | `SUPERSEDED_BY_V2` | بخش ۴۰ | entitlement پلن‌محور | — |
+| D-002 | grandfathering سقف قبلی | مقدار تاریخی؛ سیاست جاری downgrade در بخش ۴۸ و V2-029 تعریف شده است | `SUPERSEDED_BY_V2` | بخش ۴۸ | حفظ آگهی بدون حذف خودکار | — |
+| D-003 | سقف pending عمومی ۱۰ | مقدار تاریخی؛ سقف جاری ۴/۱۵/۲۵/۴۰ بر اساس پلن | `SUPERSEDED_BY_V2` | بخش ۴۰.۵ | quota پلن‌محور | — |
+| D-004 | اثر اشتراک بر quota | مقدار تاریخی؛ entitlement هر پلن اکنون quota مستقل دارد | `SUPERSEDED_BY_V2` | بخش ۴۰ | entitlement resolver | — |
+| D-005 | قیمت planها | قیمت‌های v1 تاریخی؛ قیمت پایلوت v2 در بخش ۴۷ | `SUPERSEDED_BY_V2_PILOT` | بخش ۴۷ | revision قیمت | — |
 | D-006 | نسبت AFN/pul | 1 AFN=100 pul | `OWNER_DECISION_REQUIRED` | — | integer small-unit | مالک |
-| D-007 | هزینه credit boost | Standard=1،Featured=2 | `PROPOSED_NOT_APPROVED` | — | `creditsRequired` | مالک |
-| D-008 | refund cooling-off | 72h | `PROPOSED_NOT_APPROVED` | — | refund eligibility | مالک |
-| D-009 | correction window | 48h | `PROPOSED_NOT_APPROVED` | — | `correctionDeadlineAt` | مالک |
-| D-010 | شواهد/verified ref | CONFIRMED:ref+reviewer؛ FAILED:evidence+reviewer | `PROPOSED_NOT_APPROVED` | — | trigger/uniq | مالک |
+| D-007 | مصرف اعتبار Boost | Standard=۱ و Featured=۲؛ grantهای پلن ۰/۳/۸/۲۰ در هر ۳۰ روز | `SUPERSEDED_BY_V2` | بخش ۴۵ | Credit ledger | — |
+| D-008 | refund cooling-off | قاعدهٔ ۷۲ ساعتهٔ v1 منسوخ؛ سیاست سناریومحور بخش ۵۰ مرجع جاری است | `SUPERSEDED_BY_V2` | بخش ۵۰ | Refund eligibility | — |
+| D-009 | correction window | مقدار ۴۸ ساعت v1 به‌عنوان حد ثابت منسوخ؛ مهلت باید در order/policy revision پیکربندی شود | `SUPERSEDED_BY_V2` | بخش ۴۹ | Payment correction | — |
+| D-010 | نشان/مدرک Verified | پولی نیست؛ تأیید مستقل و سطح‌بندی‌شده طبق بخش ۵۱ | `SUPERSEDED_BY_V2` | بخش ۵۱ | Verification workflow | — |
 | D-011 | refund terminal timeout | 72h | `PROPOSED_NOT_APPROVED` | — | fail-terminal | مالک |
 | D-012 | compensation هنگام rewind | یک Exception = یک تعهد | `PROPOSED_NOT_APPROVED` | — | `credit_grant_exception_uk` | مالک |
-| D-013 | promotion slot caps | config | `PROPOSED_NOT_APPROVED` | — | bounded tray | مالک |
+| D-013 | ظرفیت جایگاه Promotion | guardrail آغازین: یک Sponsored در برابر ۸ Organic؛ Home حداکثر ۲ از ۲۰ | `SUPERSEDED_BY_V2` | بخش ۴۵ | Sponsored inventory | — |
 | D-014 | auto-cancel promotion on suspension | بله؛ بدون auto-restore | `PROPOSED_NOT_APPROVED` | — | suspension tx | مالک |
 | D-015 | PaymentSubmission immutability | immutable | `PROPOSED_NOT_APPROVED` | — | trigger+REVOKE | مالک |
 | D-016 | zero-credit expiration | بدون رویداد | `PROPOSED_NOT_APPROVED` | — | expiry guard | مالک |
