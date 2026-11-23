@@ -4,7 +4,7 @@
  * DTOs are validated with class-validator/class-transformer; unknown fields are
  * rejected (`forbidNonWhitelisted`), values are transformed to DTO instances,
  * and the failure shape is normalized into a `VALIDATION_ERROR` AppException
- * whose `details.errors` lists per-field messages.
+ * whose `details` is the API-contract array of `{ field, message }` entries.
  */
 import { ValidationPipe } from '@nestjs/common';
 import type { ValidationError } from 'class-validator';
@@ -32,6 +32,23 @@ export function flattenValidationErrors(
   return issues;
 }
 
+/**
+ * Convert the internal validation tree to the stable public API error shape.
+ * Keep one entry per constraint so clients can bind every message to its field.
+ */
+export interface ApiFieldValidationError {
+  field: string;
+  message: string;
+}
+
+export function toApiFieldErrors(
+  errors: readonly ValidationError[],
+): ApiFieldValidationError[] {
+  return flattenValidationErrors(errors).flatMap(({ field, messages }) =>
+    messages.map((message) => ({ field, message })),
+  );
+}
+
 export function createValidationPipe(): ValidationPipe {
   return new ValidationPipe({
     whitelist: true,
@@ -42,7 +59,7 @@ export function createValidationPipe(): ValidationPipe {
     transformOptions: { enableImplicitConversion: false },
     exceptionFactory: (errors: ValidationError[]) =>
       new AppException('VALIDATION_ERROR', {
-        details: { errors: flattenValidationErrors(errors) },
+        details: toApiFieldErrors(errors),
       }),
   });
 }
