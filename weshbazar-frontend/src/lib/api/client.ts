@@ -165,9 +165,16 @@ async function doRefresh(): Promise<string | null> {
  * sends the cookie set by the preceding response. Browsers without Web Locks
  * retain the previous single-tab behavior rather than losing authentication.
  */
-async function doRefreshWithCrossTabLock(): Promise<string | null> {
+export interface RefreshAccessTokenOptions {
+  /** Allow the explicit logout flow to refresh once after setting the local sign-out marker. */
+  allowLocalLogout?: boolean;
+}
+
+async function doRefreshWithCrossTabLock(
+  options: RefreshAccessTokenOptions = {},
+): Promise<string | null> {
   const refreshUnlessLocallyLoggedOut = async (): Promise<string | null> => {
-    if (hasLocalLogoutMarker()) {
+    if (hasLocalLogoutMarker() && !options.allowLocalLogout) {
       clearAccessToken();
       return null;
     }
@@ -176,7 +183,7 @@ async function doRefreshWithCrossTabLock(): Promise<string | null> {
 
   // A local sign-out marker must win even if another tab still has a refresh
   // operation queued behind the shared lock.
-  if (hasLocalLogoutMarker()) {
+  if (hasLocalLogoutMarker() && !options.allowLocalLogout) {
     clearAccessToken();
     return null;
   }
@@ -209,9 +216,11 @@ async function doRefreshWithCrossTabLock(): Promise<string | null> {
 }
 
 /** Rotate the access token once, de-duplicating callers in this tab and across tabs. */
-export function refreshAccessToken(): Promise<string | null> {
+export function refreshAccessToken(
+  options: RefreshAccessTokenOptions = {},
+): Promise<string | null> {
   if (!refreshInFlight) {
-    refreshInFlight = doRefreshWithCrossTabLock().finally(() => {
+    refreshInFlight = doRefreshWithCrossTabLock(options).finally(() => {
       refreshInFlight = null;
     });
   }
