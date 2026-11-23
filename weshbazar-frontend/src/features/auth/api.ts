@@ -10,6 +10,8 @@ import {
   ApiError,
   ApiErrorCode,
   clearAccessToken,
+  clearLocalLogoutMarker,
+  publishAuthSessionEvent,
   get,
   hasAccessToken,
   post,
@@ -31,14 +33,18 @@ const AUTH_BASE = '/auth';
 /** Sign in with phone + password; stores the access token in memory only. */
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
   const data = await post<AuthResponse>(`${AUTH_BASE}/login`, payload);
+  clearLocalLogoutMarker();
   setAccessToken(data.tokens.accessToken);
+  publishAuthSessionEvent('login');
   return data;
 }
 
 /** Create an account (also signs in: the response carries tokens + session). */
 export async function register(payload: RegisterPayload): Promise<AuthResponse> {
   const data = await post<AuthResponse>(`${AUTH_BASE}/register`, payload);
+  clearLocalLogoutMarker();
   setAccessToken(data.tokens.accessToken);
+  publishAuthSessionEvent('login');
   return data;
 }
 
