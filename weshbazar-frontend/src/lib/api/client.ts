@@ -24,6 +24,7 @@ import {
   parseRetryAfter,
 } from './errors';
 import { clearAccessToken, getAccessToken, setAccessToken } from './token-store';
+import { hasLocalLogoutMarker } from './session-cookie';
 import type {
   ApiErrorEnvelope,
   ApiSuccessEnvelope,
@@ -137,19 +138,34 @@ async function doRefresh(): Promise<string | null> {
  * retain the previous single-tab behavior rather than losing authentication.
  */
 async function doRefreshWithCrossTabLock(): Promise<string | null> {
+  const refreshUnlessLocallyLoggedOut = async (): Promise<string | null> => {
+    if (hasLocalLogoutMarker()) {
+      clearAccessToken();
+      return null;
+    }
+    return doRefresh();
+  };
+
+  // A local sign-out marker must win even if another tab still has a refresh
+  // operation queued behind the shared lock.
+  if (hasLocalLogoutMarker()) {
+    clearAccessToken();
+    return null;
+  }
+
   const lockManager = typeof navigator === 'undefined' ? undefined : navigator.locks;
-  if (!lockManager) return doRefresh();
+  if (!lockManager) return refreshUnlessLocallyLoggedOut();
 
   try {
     return await lockManager.request(
       'weshbazar-auth-refresh',
       { mode: 'exclusive' },
-      () => doRefresh(),
+      refreshUnlessLocallyLoggedOut,
     );
   } catch {
     // If the browser exposes but cannot acquire Web Locks, preserve the
-    // existing refresh behavior. The server's replay detection remains intact.
-    return doRefresh();
+    // existing refresh behavior unless this browser has explicitly signed out.
+    return refreshUnlessLocallyLoggedOut();
   }
 }
 
