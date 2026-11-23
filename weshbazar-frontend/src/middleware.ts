@@ -12,7 +12,8 @@ import { INTRO_COOKIE_NAME, MARKET_PATH } from '@/features/welcome/constants';
  * Therefore we watch a lightweight non‑HttpOnly `weshbazar_session`
  * cookie that the frontend AuthProvider sets (path=/) after a successful
  * bootstrap. Its presence means "the browser has an active server session";
- * absence means guest.
+ * absence means guest. An explicit local logout marker overrides a stale
+ * session marker when the backend was unreachable during sign-out.
  */
 
 /** Paths that should redirect authenticated users to `/`. */
@@ -23,7 +24,8 @@ const PROTECTED_PREFIXES = ['/favorites', '/account', '/my-listings', '/sell', '
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const hasSession = request.cookies.has('weshbazar_session');
+  const locallyLoggedOut = request.cookies.has('weshbazar_logged_out');
+  const hasSession = request.cookies.has('weshbazar_session') && !locallyLoggedOut;
 
   // First-visit intro: a returning visitor (intro already seen) skips the
   // welcome landing page and goes straight to the marketplace. This runs
