@@ -35,6 +35,8 @@ cookie** (HttpOnly, browser-managed).
 
 The browser API client serializes refresh rotations across same-origin tabs with the Web Locks API when available. This prevents two tabs from presenting the same shared refresh cookie concurrently. Browsers without Web Locks retain the single-tab refresh behavior. If Web Locks exists but cannot acquire the lock, the client surfaces a recoverable error rather than bypassing serialization; backend reuse detection is never relaxed.
 
+On explicit browser sign-out, the frontend sets a non-secret `weshbazar_logged_out` marker before attempting server revocation. This prevents that browser from silently restoring the HttpOnly refresh cookie after an offline sign-out; a successful login/register clears the marker. Same-origin tabs are notified with `BroadcastChannel` when supported. **This is local browser sign-out, not proof of server-side revocation:** if the API cannot be reached, the refresh session remains active on the server until a later successful revocation or its configured expiry, and other devices are unaffected.
+
 ### 2.1 Auth endpoints (`@ApiTags('auth')`)
 
 | Method | Path | operationId | Auth | Purpose |
