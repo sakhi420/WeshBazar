@@ -49,10 +49,26 @@ export async function register(payload: RegisterPayload): Promise<AuthResponse> 
   return data;
 }
 
-/** Revoke the current session server-side, then drop the local token. */
+/**
+ * Revoke the current session server-side, then drop the local token.
+ *
+ * The logout caller may have already set the local sign-out marker to prevent
+ * other tabs from bootstrapping. If the access token has expired, allow this
+ * one explicit logout flow to rotate the shared refresh cookie, then retry the
+ * revocation with the new access token. Other background refreshes stay blocked.
+ */
 export async function logout(): Promise<void> {
   try {
-    await post<void>(`${AUTH_BASE}/logout`);
+    try {
+      await post<void>(`${AUTH_BASE}/logout`, undefined, { skipAuthRefresh: true });
+    } catch (error) {
+      if (!(error instanceof ApiError) || !error.isTokenExpired) throw error;
+
+      const token = await refreshAccessToken({ allowLocalLogout: true });
+      if (!token) throw error;
+
+      await post<void>(`${AUTH_BASE}/logout`, undefined, { skipAuthRefresh: true });
+    }
   } finally {
     clearAccessToken();
   }
