@@ -1,5 +1,3 @@
-import type { LockManager } from 'typescript';
-
 function successResponse(accessToken: string): Response {
   return {
     ok: true,
@@ -35,7 +33,6 @@ describe('refreshAccessToken cross-tab coordination', () => {
   });
 
   it('serializes refreshes from separate tab contexts through the shared browser lock', async () => {
-    let releasePrevious: (() => void) | undefined;
     let previousLock = Promise.resolve();
 
     const lockRequest = jest.fn(
@@ -45,14 +42,15 @@ describe('refreshAccessToken cross-tab coordination', () => {
         callback: () => Promise<string | null>,
       ) => {
         const waitFor = previousLock;
+        let releaseCurrent: () => void = () => undefined;
         previousLock = new Promise<void>((resolve) => {
-          releasePrevious = resolve;
+          releaseCurrent = resolve;
         });
         await waitFor;
         try {
           return await callback();
         } finally {
-          releasePrevious?.();
+          releaseCurrent();
         }
       },
     );
