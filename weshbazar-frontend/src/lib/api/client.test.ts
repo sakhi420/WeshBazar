@@ -81,7 +81,8 @@ describe('refreshAccessToken cross-tab coordination', () => {
 
     // Two isolated module instances represent two tabs, each with its own
     // module-local refreshInFlight promise.
-    const [tabA, tabB] = await Promise.all([loadIsolatedClient(), loadIsolatedClient()]);
+    const tabA = await loadIsolatedClient();
+    const tabB = await loadIsolatedClient();
     const results = await Promise.all([
       tabA.refreshAccessToken(),
       tabB.refreshAccessToken(),
