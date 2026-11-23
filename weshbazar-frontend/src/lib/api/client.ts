@@ -123,10 +123,39 @@ async function doRefresh(): Promise<string | null> {
   }
 }
 
-/** Rotate the access token once, de-duplicating concurrent callers. */
+/**
+ * Rotate the refresh cookie under a same-origin browser lock.
+ *
+ * The refresh cookie is shared by every tab, but each tab has its own
+ * in-memory `refreshInFlight` promise. Without a cross-tab lock, two tabs
+ * can submit the same cookie concurrently; the backend correctly treats the
+ * second rotation as token replay and revokes the whole session family.
+ *
+ * Web Locks serializes refreshes across same-origin tabs. The next tab then
+ * sends the cookie set by the preceding response. Browsers without Web Locks
+ * retain the previous single-tab behavior rather than losing authentication.
+ */
+async function doRefreshWithCrossTabLock(): Promise<string | null> {
+  const lockManager = typeof navigator === 'undefined' ? undefined : navigator.locks;
+  if (!lockManager) return doRefresh();
+
+  try {
+    return await lockManager.request(
+      'weshbazar-auth-refresh',
+      { mode: 'exclusive' },
+      () => doRefresh(),
+    );
+  } catch {
+    // If the browser exposes but cannot acquire Web Locks, preserve the
+    // existing refresh behavior. The server's replay detection remains intact.
+    return doRefresh();
+  }
+}
+
+/** Rotate the access token once, de-duplicating callers in this tab and across tabs. */
 export function refreshAccessToken(): Promise<string | null> {
   if (!refreshInFlight) {
-    refreshInFlight = doRefresh().finally(() => {
+    refreshInFlight = doRefreshWithCrossTabLock().finally(() => {
       refreshInFlight = null;
     });
   }
