@@ -9,7 +9,16 @@ export * from './errors';
 export * from './token-store';
 export { queryKeys } from './query-keys';
 export { clearUserScopedCaches } from './cache';
-export { clearSessionCookie, setSessionCookie, SESSION_COOKIE } from './session-cookie';
+export {
+  clearSessionCookie,
+  setSessionCookie,
+  markLocalLogout,
+  clearLocalLogoutMarker,
+  hasLocalLogoutMarker,
+  publishAuthSessionEvent,
+  SESSION_COOKIE,
+  LOCAL_LOGOUT_COOKIE,
+} from './session-cookie';
 
 // Browser-side verbs.
 export {
