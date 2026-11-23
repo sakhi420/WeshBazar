@@ -88,10 +88,14 @@ export interface ApiErrorInit {
   message: string;
   status: number;
   requestId?: string;
-  details?: ApiFieldError[];
+  details?: unknown;
   /** Value of the `Retry-After` header (seconds) when present on 429. */
   retryAfterSeconds?: number;
   cause?: unknown;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 /**
@@ -102,7 +106,7 @@ export class ApiError extends Error {
   readonly code: string;
   readonly status: number;
   readonly requestId?: string;
-  readonly details?: ApiFieldError[];
+  readonly details?: unknown;
   readonly retryAfterSeconds?: number;
 
   constructor(init: ApiErrorInit) {
@@ -115,9 +119,31 @@ export class ApiError extends Error {
     this.retryAfterSeconds = init.retryAfterSeconds;
   }
 
-  /** Field-level validation details for form binding (frontend-error-map.md §4). */
+  /** Field-level validation details, including the pre-fix nested shape during rollout. */
   get fieldErrors(): ApiFieldError[] {
-    return this.details ?? [];
+    const entries = Array.isArray(this.details)
+      ? this.details
+      : isRecord(this.details) && Array.isArray(this.details.errors)
+        ? this.details.errors
+        : [];
+
+    return entries.flatMap((entry): ApiFieldError[] => {
+      if (!isRecord(entry) || typeof entry.field !== 'string') return [];
+
+      if (typeof entry.message === 'string') {
+        return [{ field: entry.field, message: entry.message }];
+      }
+
+      // Accept the old backend shape temporarily so a staggered deployment
+      // does not break field-level errors.
+      if (Array.isArray(entry.messages)) {
+        return entry.messages
+          .filter((message): message is string => typeof message === 'string')
+          .map((message) => ({ field: entry.field as string, message }));
+      }
+
+      return [];
+    });
   }
 
   /** True when this is a transport-level failure (no HTTP response received). */
