@@ -33,7 +33,7 @@ cookie** (HttpOnly, browser-managed).
 | Sent automatically? | No — attach header per request | Yes, browser sends to `/api/v1/auth/*` |
 | Rotation | n/a | **Yes** — each refresh issues a new cookie; reuse of an old token → `SESSION_REUSE_DETECTED` (revokes the session) |
 
-The browser API client serializes refresh rotations across same-origin tabs with the Web Locks API when available. This prevents two tabs from presenting the same shared refresh cookie concurrently. Browsers without Web Locks retain the single-tab refresh behavior; backend reuse detection is never relaxed.
+The browser API client serializes refresh rotations across same-origin tabs with the Web Locks API when available. This prevents two tabs from presenting the same shared refresh cookie concurrently. Browsers without Web Locks retain the single-tab refresh behavior. If Web Locks exists but cannot acquire the lock, the client surfaces a recoverable error rather than bypassing serialization; backend reuse detection is never relaxed.
 
 ### 2.1 Auth endpoints (`@ApiTags('auth')`)
 
