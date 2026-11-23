@@ -100,29 +100,57 @@ export function buildQuery(query?: Query): string {
 let refreshInFlight: Promise<string | null> | null = null;
 
 async function doRefresh(): Promise<string | null> {
+  let res: Response;
   try {
-    const res = await fetch(apiUrl('/auth/refresh'), {
+    res = await fetch(apiUrl('/auth/refresh'), {
       method: 'POST',
       credentials: 'include',
       headers: { 'content-type': 'application/json', 'x-request-id': newRequestId() },
       body: JSON.stringify({}),
     });
-    if (!res.ok) {
+  } catch (cause) {
+    // A transport failure says nothing about whether the refresh session is
+    // valid. Preserve the current token so auth bootstrap reports unreachable
+    // instead of signing the user out during a temporary network outage.
+    throw new ApiError({
+      code: ApiErrorCode.NETWORK,
+      message: 'Refresh request could not reach the server',
+      status: 0,
+      cause,
+    });
+  }
+
+  if (!res.ok) {
+    if (res.status === 401) {
       clearAccessToken();
       return null;
     }
-    const envelope = (await res.json()) as ApiSuccessEnvelope<AuthTokensResponse>;
-    const token = envelope?.data?.tokens?.accessToken ?? null;
-    if (token) {
-      setAccessToken(token);
-      return token;
-    }
-    clearAccessToken();
-    return null;
-  } catch {
-    clearAccessToken();
-    return null;
+
+    // A 429 or 5xx response is a service failure, not proof that the session
+    // is invalid. Preserve the token and expose the backend's stable error.
+    await parseEnvelope<AuthTokensResponse, unknown>(res);
+    throw new ApiError({
+      code: ApiErrorCode.INTERNAL_ERROR,
+      message: 'The refresh endpoint returned an unexpected response.',
+      status: 502,
+      requestId: res.headers.get('x-request-id') ?? undefined,
+    });
   }
+
+  const envelope = await parseEnvelope<AuthTokensResponse, unknown>(res);
+  const token = envelope?.data?.tokens?.accessToken ?? null;
+  if (!token) {
+    clearAccessToken();
+    throw new ApiError({
+      code: ApiErrorCode.INTERNAL_ERROR,
+      message: 'The refresh response did not contain an access token.',
+      status: 502,
+      requestId: envelope?.requestId,
+    });
+  }
+
+  setAccessToken(token);
+  return token;
 }
 
 /**
@@ -156,16 +184,27 @@ async function doRefreshWithCrossTabLock(): Promise<string | null> {
   const lockManager = typeof navigator === 'undefined' ? undefined : navigator.locks;
   if (!lockManager) return refreshUnlessLocallyLoggedOut();
 
+  let refreshStarted = false;
   try {
     return await lockManager.request(
       'weshbazar-auth-refresh',
       { mode: 'exclusive' },
-      refreshUnlessLocallyLoggedOut,
+      () => {
+        refreshStarted = true;
+        return refreshUnlessLocallyLoggedOut();
+      },
     );
-  } catch {
-    // If the browser exposes but cannot acquire Web Locks, preserve the
-    // existing refresh behavior unless this browser has explicitly signed out.
-    return refreshUnlessLocallyLoggedOut();
+  } catch (cause) {
+    // Never retry outside the lock: that could recreate the concurrent cookie
+    // rotation this lock is meant to prevent. Preserve errors thrown by the
+    // refresh callback; only lock-acquisition failures are normalized here.
+    if (refreshStarted) throw cause;
+    throw new ApiError({
+      code: ApiErrorCode.NETWORK,
+      message: 'Could not coordinate session refresh across browser tabs',
+      status: 0,
+      cause,
+    });
   }
 }
 
@@ -298,8 +337,16 @@ export async function request<TData, TMeta = unknown>(
     if (error instanceof ApiError && error.isTokenExpired && !options.skipAuthRefresh) {
       const token = await refreshAccessToken();
       if (token) {
-        // Replay exactly once with the fresh token.
-        return executeRequest<TData, TMeta>(path, options);
+        // Replay exactly once with the fresh token. Await inside this try/catch
+        // so a second 401 is handled here instead of escaping the catch block.
+        try {
+          return await executeRequest<TData, TMeta>(path, options);
+        } catch (replayError) {
+          if (replayError instanceof ApiError && replayError.status === 401) {
+            clearAccessToken();
+          }
+          throw replayError;
+        }
       }
       clearAccessToken();
     }
