@@ -8,6 +8,7 @@
  *  - `x-request-id` on every request
  *  - in-memory access token attached as `Authorization: Bearer`
  *  - single-flight silent refresh + one replay on 401 TOKEN_EXPIRED
+ *  - same-origin Web Lock serialization for refresh rotation across browser tabs
  *  - session cleared on terminal 401 codes
  *  - typed ApiError thrown on any non-2xx / transport failure
  *
@@ -23,6 +24,7 @@ import {
   parseRetryAfter,
 } from './errors';
 import { clearAccessToken, getAccessToken, setAccessToken } from './token-store';
+import { hasLocalLogoutMarker } from './session-cookie';
 import type {
   ApiErrorEnvelope,
   ApiSuccessEnvelope,
@@ -98,35 +100,127 @@ export function buildQuery(query?: Query): string {
 let refreshInFlight: Promise<string | null> | null = null;
 
 async function doRefresh(): Promise<string | null> {
+  let res: Response;
   try {
-    const res = await fetch(apiUrl('/auth/refresh'), {
+    res = await fetch(apiUrl('/auth/refresh'), {
       method: 'POST',
       credentials: 'include',
       headers: { 'content-type': 'application/json', 'x-request-id': newRequestId() },
       body: JSON.stringify({}),
     });
-    if (!res.ok) {
+  } catch (cause) {
+    // A transport failure says nothing about whether the refresh session is
+    // valid. Preserve the current token so auth bootstrap reports unreachable
+    // instead of signing the user out during a temporary network outage.
+    throw new ApiError({
+      code: ApiErrorCode.NETWORK,
+      message: 'Refresh request could not reach the server',
+      status: 0,
+      cause,
+    });
+  }
+
+  if (!res.ok) {
+    if (res.status === 401) {
       clearAccessToken();
       return null;
     }
-    const envelope = (await res.json()) as ApiSuccessEnvelope<AuthTokensResponse>;
-    const token = envelope?.data?.tokens?.accessToken ?? null;
-    if (token) {
-      setAccessToken(token);
-      return token;
-    }
+
+    // A 429 or 5xx response is a service failure, not proof that the session
+    // is invalid. Preserve the token and expose the backend's stable error.
+    await parseEnvelope<AuthTokensResponse, unknown>(res);
+    throw new ApiError({
+      code: ApiErrorCode.INTERNAL_ERROR,
+      message: 'The refresh endpoint returned an unexpected response.',
+      status: 502,
+      requestId: res.headers.get('x-request-id') ?? undefined,
+    });
+  }
+
+  const envelope = await parseEnvelope<AuthTokensResponse, unknown>(res);
+  const token = envelope?.data?.tokens?.accessToken ?? null;
+  if (!token) {
     clearAccessToken();
-    return null;
-  } catch {
+    throw new ApiError({
+      code: ApiErrorCode.INTERNAL_ERROR,
+      message: 'The refresh response did not contain an access token.',
+      status: 502,
+      requestId: envelope?.requestId,
+    });
+  }
+
+  setAccessToken(token);
+  return token;
+}
+
+/**
+ * Rotate the refresh cookie under a same-origin browser lock.
+ *
+ * The refresh cookie is shared by every tab, but each tab has its own
+ * in-memory `refreshInFlight` promise. Without a cross-tab lock, two tabs
+ * can submit the same cookie concurrently; the backend correctly treats the
+ * second rotation as token replay and revokes the whole session family.
+ *
+ * Web Locks serializes refreshes across same-origin tabs. The next tab then
+ * sends the cookie set by the preceding response. Browsers without Web Locks
+ * retain the previous single-tab behavior rather than losing authentication.
+ */
+export interface RefreshAccessTokenOptions {
+  /** Allow the explicit logout flow to refresh once after setting the local sign-out marker. */
+  allowLocalLogout?: boolean;
+}
+
+async function doRefreshWithCrossTabLock(
+  options: RefreshAccessTokenOptions = {},
+): Promise<string | null> {
+  const refreshUnlessLocallyLoggedOut = async (): Promise<string | null> => {
+    if (hasLocalLogoutMarker() && !options.allowLocalLogout) {
+      clearAccessToken();
+      return null;
+    }
+    return doRefresh();
+  };
+
+  // A local sign-out marker must win even if another tab still has a refresh
+  // operation queued behind the shared lock.
+  if (hasLocalLogoutMarker() && !options.allowLocalLogout) {
     clearAccessToken();
     return null;
   }
+
+  const lockManager = typeof navigator === 'undefined' ? undefined : navigator.locks;
+  if (!lockManager) return refreshUnlessLocallyLoggedOut();
+
+  let refreshStarted = false;
+  try {
+    return await lockManager.request(
+      'weshbazar-auth-refresh',
+      { mode: 'exclusive' },
+      () => {
+        refreshStarted = true;
+        return refreshUnlessLocallyLoggedOut();
+      },
+    );
+  } catch (cause) {
+    // Never retry outside the lock: that could recreate the concurrent cookie
+    // rotation this lock is meant to prevent. Preserve errors thrown by the
+    // refresh callback; only lock-acquisition failures are normalized here.
+    if (refreshStarted) throw cause;
+    throw new ApiError({
+      code: ApiErrorCode.NETWORK,
+      message: 'Could not coordinate session refresh across browser tabs',
+      status: 0,
+      cause,
+    });
+  }
 }
 
-/** Rotate the access token once, de-duplicating concurrent callers. */
-export function refreshAccessToken(): Promise<string | null> {
+/** Rotate the access token once, de-duplicating callers in this tab and across tabs. */
+export function refreshAccessToken(
+  options: RefreshAccessTokenOptions = {},
+): Promise<string | null> {
   if (!refreshInFlight) {
-    refreshInFlight = doRefresh().finally(() => {
+    refreshInFlight = doRefreshWithCrossTabLock(options).finally(() => {
       refreshInFlight = null;
     });
   }
@@ -252,8 +346,16 @@ export async function request<TData, TMeta = unknown>(
     if (error instanceof ApiError && error.isTokenExpired && !options.skipAuthRefresh) {
       const token = await refreshAccessToken();
       if (token) {
-        // Replay exactly once with the fresh token.
-        return executeRequest<TData, TMeta>(path, options);
+        // Replay exactly once with the fresh token. Await inside this try/catch
+        // so a second 401 is handled here instead of escaping the catch block.
+        try {
+          return await executeRequest<TData, TMeta>(path, options);
+        } catch (replayError) {
+          if (replayError instanceof ApiError && replayError.status === 401) {
+            clearAccessToken();
+          }
+          throw replayError;
+        }
       }
       clearAccessToken();
     }
