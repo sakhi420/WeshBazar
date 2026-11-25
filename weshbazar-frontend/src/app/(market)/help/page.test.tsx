@@ -27,7 +27,9 @@ describe('HelpPage', () => {
     render(<HelpPage />);
     expect(screen.getByRole('link', { name: /جست‌وجو کنید/ })).toHaveAttribute('href', '/search');
     expect(screen.getByRole('link', { name: /آگهی ثبت کنید/ })).toHaveAttribute('href', '/sell');
-    expect(screen.getByRole('link', { name: /مدیریت کنید/ })).toHaveAttribute('href', '/my-listings');
+    expect(
+      screen.getByRole('link', { name: /آگهی‌های خود را مدیریت کنید/ }),
+    ).toHaveAttribute('href', '/my-listings');
   });
 
   it('keeps in-product steps as plain text', () => {
