@@ -26,7 +26,9 @@ describe('AboutPage', () => {
   it('states the marketplace scope limits (no escrow/payment/delivery)', () => {
     render(<AboutPage />);
     expect(screen.getByText(/ویش‌بازار چه کاری انجام نمی‌دهد/)).toBeInTheDocument();
-    expect(screen.getByText(/نگهداری پول/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/پول معامله را دریافت یا نگهداری نمی‌کنیم/),
+    ).toBeInTheDocument();
   });
 
   it('attributes the founder', () => {
